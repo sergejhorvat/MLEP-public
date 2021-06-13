@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html> 
+	<head> 
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0, shrink-to-fit=no">
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
+		<link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg" color="#00695c">
+		<link rel="shortcut icon" href="/images/favicon/favicon.ico">
+		<meta name="msapplication-TileColor" content="#da532c">
+		<meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+		<meta name="theme-color" content="#ffffff">
+		<meta property="og:url" content="https://design.google/ai-guidebook" />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content="People + AI Guidebook" />
+		<meta property="og:description" content="A toolkit for teams building human-centered AI products." />
+
+		<meta property="og:image" content="https://pair.withgoogle.com/images/gbv2-social.png" />
+		<meta name="twitter:image" content="https://pair.withgoogle.com/images/gbv2-social.png" />
+		<meta property="og:image:width" content="1600" />
+		<meta property="og:image:height" content="900" />
+		<meta name="twitter:card" content="summary_large_image" />
+
+		<meta name=”robots” content=”index, follow”>
+    <title>Data Collection &#43; Evaluation</title>
+		
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700,900">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Google+Sans:400,500,700,900">
+		<link rel="stylesheet" href="/css/material.min.css">
+		<link rel="stylesheet" href="/css/main.css">
+		<link rel="stylesheet" href="/css/nav.css">
+  </head>
+	
+	
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-138505774-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'UA-138505774-1');
+	</script>
+
+	<body>
+		<div class="top-navigation-bar">
+			<div class="nav-left">
+				<a href="/guidebook">
+					<img src="/images/logo.svg" width="32" height="32" class="new-pair-logo"/>
+					<h1>People + AI Guidebook</h1>
+				</a>
+				<div class="flex-middle"></div>
+				<span class="material-icons nav-icon" id="mobile-nav-button">menu</span>
+			</div>
+
+			<div class="nav-right">
+				<ul class="nav-contents">
+					<li class="nav-item"><a href="/guidebook/patterns">Patterns</a></li>
+					<li class="nav-item active"><a href="/guidebook/chapters">Chapters</a></li>
+					<li class="nav-item"><a href="/guidebook/case-studies">Case Studies</a></li>
+					<li class="nav-item"><a href="/guidebook/workshop">Workshop</a></li>
+					<li class="nav-item"><a href="/chapter/glossary">Glossary</a></li>
+				</ul>
+				<div class="nav-footer">
+					<a href="https://pair.withgoogle.com" target="_blank">
+						<span>People + AI Research</span><span class="material-icons" aria-hidden="true">open_in_new</span>
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--overlay-drawer-button">
+
+	    
+		
+			<div class="chapter-nav">
+				<div class="chapter-nav-element block-nav-link"><a href="/guidebook/chapters">Overview</a></div>
+				<div class="chapter-nav-element block-nav-link-1"><a href="/chapter/user-needs/">User Needs + Defining Success</a></div>
+				<div class="chapter-nav-element block-nav-link-2"><a href="/chapter/data-collection/">Data Collection + Evaluation</a></div>
+				<div class="chapter-nav-element block-nav-link-3"><a href="/chapter/mental-models/">Mental Models</a></div>
+				<div class="chapter-nav-element block-nav-link-4"><a href="/chapter/explainability-trust/">Explainability + Trust</a></div>
+				<div class="chapter-nav-element block-nav-link-5"><a href="/chapter/feedback-controls/">Feedback + Control</a></div>
+				<div class="chapter-nav-element block-nav-link-6"><a href="/chapter/errors-failing/">Errors + Graceful Failure</a></div>
+			</div>
+
+			
+			
+		</nav>
+		<main class="mdl-layout__content">
+			<section id="main-content" class="mdl-grid">
+				<div class="responsive-nav-button noselect"><span class="material-icons">menu</span></div>
+        
+
+
+<a style="display:inline; float:left;" id="whats-new" name="whats-new"></a>
+<div class="mdl-cell mdl-cell--12-col chapter-container" id="2">
+  <div class="chapter-title-content" style="background-image:url(/images/2-100.svg)">
+			<div class="display1">Data Collection &#43; Evaluation</div>
+			
+			
+				
+			
+	</div>
+	
+	<div class="single-page-content">
+		
+		
+
+<div class="uber-box uber-box-2">
+
+<h4 id="sourcing-and-evaluating-the-data-used-to-train-ai-involve-important-considerations-this-chapter-covers-the-following-questions">Sourcing and evaluating the data used to train AI involve important considerations. This chapter covers the following questions:</h4>
+
+<ul>
+<li>Does our training dataset have the features and breadth to ensure our AI meets our users’ needs?</li>
+<li>Should we use an existing training dataset or develop our own?</li>
+<li>How can we ensure that the data quality is high?</li>
+<li>How can we work with labelers to prevent errors and bias in datasets when generating labels?</li>
+<li>Are we treating data workers fairly?</li>
+</ul>
+
+<p>Want to drive discussions, speed iteration, and avoid pitfalls? <a class="worksheet-link worksheet-link-2" href="https://art-analytics.appspot.com/r.html?uaid=UA-139355838-1&amp;utm_source=aRT-data-collection-worksheet&amp;utm_medium=aRT-clicks&amp;utm_campaign=data-collection-worksheet&amp;destination=data-collection-worksheet&amp;url=https%3A%2F%2Fpair.withgoogle.com%2Fworksheet%2Fdata-collection.pdf" target="_blank">Use the worksheet</a>.</p>
+
+<p>Want to read the chapter offline? <a href="/chapter/People%20+%20AI%20Guidebook%20-%20Data%20Collection%20+%20Evaluation.pdf" target="_blank">Download PDF</a></p>
+
+
+</div>
+
+<h1 id="what-s-new-when-working-with-ai">What’s new when working with AI</h1>
+
+<p>In order to make predictions, AI-driven products must teach their underlying <a target="_blank" class="glossary-link" href="/chapter/glossary/#machine-learning">machine learning</a> model to recognize patterns and correlations in data. This data is called <a target="_blank" class="glossary-link" href="/chapter/glossary/#training-data">training data</a>, and can be collections of images, videos, text, audio and more.  You can use existing data sources or collect new data expressly to train your system. For example, you might use a database of responsibly crowdsourced data on plants from different regions around the world to train an AI-powered app that recognizes plants that are safe to touch.</p>
+
+<p>The training data you source or collect, and how those data are <a target="_blank" class="glossary-link" href="/chapter/glossary/#labeling">labeled</a>, directly determines the output of your system — and the quality of the user experience.  Once you’re sure that using AI is indeed the right path for your product (see <a class="chapter-link cl1" href="/chapter/user-needs/">User Needs &#43; Defining Success</a>) consider the following:</p>
+
+<div class="custom-bullet-list">
+  <p><a href="#section1"><strong>➀ Plan to gather high-quality data from the start</strong></a>. Data is critical to AI, but more time and resources are often invested in model development than data quality. You’ll need to plan ahead as you gather and prepare data, to avoid the effects of poor data choices further downstream in the AI development cycle.</p>
+
+<p><a href="#section2"><strong>➁ Translate user needs into data needs</strong></a>. Determine the type of data needed to train your model. You’ll need to consider <a target="_blank" class="glossary-link" href="/chapter/glossary/#predictive-power">predictive power</a>, relevance, fairness, privacy, and security.</p>
+
+<p><a href="#section3"><strong>➂ Source your data responsibly</strong></a>. Whether using pre-labeled data or collecting your own, it’s critical to evaluate your data and their collection method to ensure they’re appropriate for your project.</p>
+
+<p><a href="#section4"><strong>➃ Prepare and document your data</strong></a>. Prepare your dataset for AI, and document its contents and the decisions that you made while gathering and processing the data.</p>
+
+<p><a href="#section5"><strong>➄ Design for labelers &amp; labeling</strong></a>. For <a target="_blank" class="glossary-link" href="/chapter/glossary/#supervised-learning">supervised learning</a>, having accurate data labels is crucial to getting useful output from your model. Thoughtful design of labeler instructions and UI flows will help yield better quality labels and therefore better output.</p>
+
+<p><a href="#section6"><strong>➅ Tune your model</strong></a>. Once your model is running, interpret the AI output to ensure it’s aligned with product goals and user needs. If it’s not, then troubleshoot: explore potential issues with your data.</p>
+
+</div>
+
+<div class="divider"></div>
+
+<a class="named-anchor" id="section1" name="section1"></a>
+
+<h2 id="➀-plan-to-gather-high-quality-data-from-the-start">➀ Plan to gather high-quality data from the start</h2>
+
+<p>Data is critical to AI, but the time and resources invested in model development and performance often outweigh those spent on data quality.</p>
+
+<p>This can lead to significant downstream effects throughout the development pipeline, which we call “<a target="_blank" class="glossary-link" href="/chapter/glossary/#data-cascades">data cascades</a>”. Here’s a hypothetical example of a data cascade:</p>
+
+<div class="indent-content">
+
+  <p>Let’s say you’re developing an app that allows the user to upload the picture of a plant, and then displays a prediction for the plant’s type, and whether it is safe for humans and pets to touch and eat it.</p>
+
+<p>When you prepared a dataset to train the image classification model, you used mostly images of plants native to North America because you found a dataset that was already labeled and easy to use to train the model.</p>
+
+<p>Once you released the Plant Pal app, however, you found out that many users were reporting plant detection errors in South America.</p>
+
+<p>This is an example of a <a target="_blank" class="glossary-link" href="/chapter/glossary/#data-cascades">data cascade</a>, as the effects of the mismatch between training data and user data in the real world were delayed. This cascade could have been avoided by including images of plants native to South America when developing the AI model, or releasing the app to users in North America only.</p>
+
+
+</div>
+
+<p>Some data cascades may be hard to diagnose, and you may not see their impact until users report a poor experience.</p>
+
+<p>It’s best to plan to use high-quality data from the beginning, whether you’re creating a dataset from scratch or reusing existing datasets, and good planning and interrogating your dataset can help you detect issues earlier. High-quality data can be defined as:</p>
+
+<ul>
+<li>Accurately representing a real-world phenomenon or entity</li>
+<li>Collected, stored, and used responsibly</li>
+<li>Reproducible</li>
+<li>Maintainable over time</li>
+<li>Reusable across relevant applications</li>
+<li>Having empirical and explanatory power</li>
+</ul>
+
+<div class="mdl-grid vignette-pair">
+  <div class="mdl-layout-spacer"></div>
+  
+<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+  <div>
+    <img class="visual-example-image" src="/assets/DC_Vis0-high-quality.png"/>
+  </div>
+  <div class="aimfor-content">
+    <p>Example of how data issues can compound into <a target="_blank" class="glossary-link" href="/chapter/glossary/#data-cascades">data cascades</a></p>
+
+  </div>
+</div>
+
+  <div class="mdl-layout-spacer"></div>
+</div>
+
+<p>Most roles on a product team and their data partners are involved in the data pipeline when developing with AI. Understanding their priorities, workflows, and challenges can point us to solutions for higher-quality data.</p>
+
+<div class="divider"></div>
+
+<a class="named-anchor" id="section2" name="section2"></a>
+
+<h2 id="➁-translate-user-needs-into-data-needs">➁ Translate user needs into data needs</h2>
+
+<p>Datasets that can be used to train AI models contain <a target="_blank" class="glossary-link" href="/chapter/glossary/#data-examples">examples</a>, which contain one or more <a target="_blank" class="glossary-link" href="/chapter/glossary/#features">features</a>, and possibly <a target="_blank" class="glossary-link" href="/chapter/glossary/#labeling">labels</a>.</p>
+
+<div class="mdl-grid vignette-pair">
+  <div class="mdl-layout-spacer"></div>
+  
+<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+  <div>
+    <img class="visual-example-image" src="/assets/DC_Vis1.png"/>
+  </div>
+  <div class="aimfor-content">
+    
+  </div>
+</div>
+
+  <div class="mdl-layout-spacer"></div>
+</div>
+
+<p>The scope of features, the quality of the labels, and representativeness of the examples in your training dataset are all factors that affect the quality of your AI system.</p>
+
+<p>The table above contains data about races that an app could use to train an ML model to predict how enjoyable a given race will be. Here’s how examples, features and labels could affect the quality of that model:</p>
+
+<p class="no-bottom-margin"><h4 id="examples">Examples</h4>
+</p>
+
+<p>If examples used to train the run recommendation algorithm only come from elite runners, then they would likely not be useful in creating an effective model to make predictions for a wider user base. However, they may be useful in creating a model geared towards elite runners.</p>
+
+<p class="no-bottom-margin"><h4 id="features">Features</h4>
+</p>
+
+<p>If the elevation gain feature was missing from the dataset, then the ML model would treat a 3.0 mile uphill run equally to a 3.0 downhill mile run, even though the human experience of these is vastly different.</p>
+
+<p class="no-bottom-margin"><h4 id="labels">Labels</h4>
+</p>
+
+<p>Labels that reveal the subjective experience of the runners are necessary to help the system to identify the features that are most likely to result in a fun run.</p>
+
+<p>When deciding which examples, features, and labels are needed to train your ML model, work through your data needs on a conceptual level, as shown in the example below.</p>
+
+<p>The example shows the data needs breakdown for a product that aims to solve the user need of “I want to fit runs into my busy schedule.”</p>
+
+<p class="no-bottom-margin"><h4 id="create-a-dataset-specification">Create a dataset specification</h4>
+</p>
+
+<p>Just as you would create a product specification (such as a <a href="https://en.wikipedia.org/wiki/Product_requirements_document">Product Requirements Document</a>) before starting work on a new feature or product, consider writing a document to specify your data needs (<a href="https://arxiv.org/pdf/2010.13561.pdf">example dataset design document</a>). Use the problem statement that you defined from the user needs to define the dataset that you will need.</p>
+
+<p>For example, let’s say that you are working on developing the Plant Pal app to help users identify different types of plants and signal whether they are safe to touch and eat or not. You know that you’ll need to train an image classification model to do this, and you can start specifying the sort of the data that you’ll need to do this, the formats that you’ll need the data to be in (image formats, plant properties, and “safe to touch” and “safe to eat” labels), and potential data sources.</p>
+
+<p class="no-bottom-margin"><h4 id="get-the-data">Get the data</h4>
+</p>
+
+<p>Once you’ve defined the data requirements, you’ll start gathering the data.</p>
+
+<p>A good place to start is to determine if there are any existing datasets that you can reuse.</p>
+
+<ul>
+<li>Do you have access to existing datasets that meet your project requirements? Explore <a href="https://datasetsearch.research.google.com/">Dataset Search</a> to start looking for available datasets.</li>
+<li>Can you acquire an existing dataset by partnering with another organization, purchasing a dataset, or using client data?</li>
+</ul>
+
+<p>If you decide to acquire an existing dataset, make sure that you have the following information:</p>
+
+<ul>
+<li>Is this data appropriate for your users and use case?</li>
+<li>How was the data collected?</li>
+<li>Which transformations were applied to it?</li>
+<li>Do you need to augment it with additional data sources to be useful?</li>
+<li>Were any trade-offs and assumptions made when creating it?</li>
+<li>What are the data compliance standards and licensing information for the dataset?</li>
+<li>Does the dataset have any documentation, such as a <a href="https://pair-code.github.io/datacardsplaybook/">Data Card</a>?</li>
+</ul>
+
+<p>Alternatively, or in addition to existing datasets, you might need to create a new dataset using an in-house data collection tool or a crowdsourcing platform.</p>
+
+<p class="no-bottom-margin"><h4 id="identify-the-data-that-you-need-vs-the-data-that-you-have">Identify the data that you need vs. the data that you have</h4>
+</p>
+
+<p>How much data and what type of data do you actually need for your project? Sometimes, “more data” is not the best solution for your data needs issues.</p>
+
+<p>Use the following questions to assess the data that you have as you determine what you need. For each of your variables:</p>
+
+<ul>
+<li>Does any of the data need to be treated differently? Some examples of such data include:
+
+<ul>
+<li>Personally Identifiable Information (PII)</li>
+<li>Protected Characteristics</li>
+<li>Variables that can be used to infer PII or Protected Characteristics.</li>
+</ul></li>
+<li>What benefit are you providing to the user by using this data?</li>
+<li>Can you store and use the data securely?</li>
+<li>How long will you keep the data?</li>
+<li>How much data do you actually need to label?</li>
+<li>Is the data representative of your users?
+
+<ul>
+<li>How would you define representativeness for your use case?</li>
+<li>How would you collect representative data?</li>
+</ul></li>
+</ul>
+
+<p class="no-bottom-margin"><h4 id="balance-underfitting-overfitting">Balance underfitting &amp; overfitting</h4>
+</p>
+
+<p>To build products to work in one context, use datasets that are expected to reliably reflect that context. For example, for a natural language understanding model meant to work for speech, it wouldn’t be helpful to use words that users type into a search engine as training data — people don’t type searches the same way they talk.</p>
+
+<p>If your training data isn&rsquo;t properly suited to the context, you also increase the risk of <a target="_blank" class="glossary-link" href="/chapter/glossary/#overfitting">overfitting</a> or <a target="_blank" class="glossary-link" href="/chapter/glossary/#underfitting">underfitting</a> your training set. Overfitting means the ML model is tailored too specifically to  the training data, and it can stem from a variety of causes. If an ML model has overfit the training data, it can make great predictions on the training data but performs worse on the test set or when given new data.</p>
+
+<p>Models can also make poor predictions due to underfitting, where a model hasn’t properly captured the complexity of the relationships among the training dataset features and therefore can’t make good predictions with training data or with new data.</p>
+
+<p>There are many resources that can help the software engineers and research scientists on your team with understanding the nuances of training ML models so you can avoid overfitting and underfitting, for example <a href="https://developers.google.com/machine-learning/crash-course/generalization/peril-of-overfitting">these</a> from Google AI. But first, involve everyone on your product team in a conceptual discussion about the examples, features, and labels that are likely required for a good training set. Then, talk about which features are likely to be most important based on user needs.</p>
+
+<p class="no-bottom-margin"><h4 id="commit-to-fairness">Commit to fairness</h4>
+</p>
+
+<p>At every stage of development, human bias can be introduced into the ML model. Data is collected in the real world, from humans, and reflects their personal experiences and biases — and these patterns can be implicitly identified and amplified by the ML model.</p>
+
+<p>While the guidebook provides some advice related to ML fairness, it is not an exhaustive resource on the topic. Addressing fairness in AI, and minimizing unfair bias, is an active area of research. See Google’s <a href="https://ai.google/education/responsible-ai-practices?category=general">Responsible AI Practices</a> for recent ML fairness guidance and recommended practices.</p>
+
+<p>Here are some examples of how ML systems can fail users:</p>
+
+<ul>
+<li><strong>Representational harm</strong>, when a system amplifies or reflects negative stereotypes about particular groups.</li>
+<li><strong>Opportunity denial</strong>, when systems make predictions and decisions that have real-life consequences and lasting impacts on individuals’ access to opportunities, resources, and overall quality of life. Take a look at <a href="https://pair.withgoogle.com/explorables/">PAIR’s Explorables</a> for a series of interactive essays that explore these ideas.</li>
+<li><strong>Disproportionate product failure</strong>, when a product doesn&rsquo;t work or gives skewed outputs more frequently for certain groups of users.</li>
+<li><strong>Harm by disadvantage</strong>, when a system infers disadvantageous associations between certain demographic characteristics and user behaviors or interests.</li>
+</ul>
+
+<p>While there is no standard definition of fairness, and the fairness of your model may vary based on the situation, there are steps you can take to mitigate problematic biases in your dataset.</p>
+
+<p class="no-bottom-margin"><h4 id="use-data-that-applies-to-different-groups-of-users">Use data that applies to different groups of users</h4>
+</p>
+
+<p>Your training data should reflect the diversity and cultural context of the people who will use it. Use tools like <a href="https://pair-code.github.io/facets/">Facets</a> and <a href="https://pair-code.github.io/what-if-tool/">WIT</a> to explore your dataset and better understand its biases. In doing so, note that to properly train your model, you might need to collect data from equal proportions of different user groups that might not exist in equal proportions in the real world. For example, to have speech recognition software work equally on all users in the United States, the training dataset might need to contain 50% of data from non-native English speakers even if they are a minority of the population.</p>
+
+<p class="no-bottom-margin"><h4 id="consider-bias-in-the-data-collection-and-evaluation-process">Consider bias in the data collection and evaluation process</h4>
+</p>
+
+<p>There is no such thing as truly neutral data. Even in a simple image, the equipment and lighting used shapes the outcome. Moreover, humans are involved with data collection and evaluation, and so, as with any human endeavor, their output will include human bias. See more in the section on <a target="_blank" class="glossary-link" href="/chapter/glossary/#labeling">labeling</a> below.</p>
+
+<div class="indent-content">
+
+  <p>For example, say you&rsquo;re creating a recommendation system to recommend new health and fitness goals to users. If the intent is to set goals that are safely achievable by users with a wide range of baseline fitness levels, it&rsquo;s important that the training dataset includes data from a variety of user types and not just young, healthy people.</p>
+
+
+</div>
+
+<p>For more on the topic of fairness, see Google’s Machine Learning Fairness <a href="https://developers.google.com/machine-learning/crash-course/fairness/video-lecture">Overview</a> and <a href="https://developers.google.com/machine-learning/crash-course">Crash Course</a>.</p>
+
+<p class="no-bottom-margin"><h4 id="manage-privacy-security">Manage privacy &amp; security</h4>
+</p>
+
+<p>As with any product, protecting user privacy and security is essential. Even in the running-related example above, the physiological and demographic data required to train this model could be considered sensitive.</p>
+
+<p>Here are some suggestions for managing privacy and security:</p>
+
+<ul>
+<li>You may want to review the data for <a href="https://ico.org.uk/for-organisations/guide-to-data-protection/guide-to-the-general-data-protection-regulation-gdpr/key-definitions/what-is-personal-data/">PII</a> and <a href="https://www.equalityhumanrights.com/en/equality-act/protected-characteristics">Protected Characteristics</a></li>
+<li>You may want to consult with a lawyer to see before collecting or using such data in your region (and your product’s users’ regions).</li>
+<li>Don’t assume basic data policies are enough to protect personal privacy.</li>
+<li>Set up the infrastructure, training and guidance programs for privacy protection and plan for situations where an adversary might get a hold of the data.</li>
+<li>Take extra steps to protect privacy (e.g., anonymize names, even if people agreed to have their name used) when personal details (e.g., addresses) could be exposed as part of AI predictions.</li>
+</ul>
+
+<p>There are a number of important questions that arise due to the unique nature of AI and machine learning. Below are two such questions, but you should discuss these and others with privacy and security experts on your team.</p>
+
+<div class="indent-content">
+
+  <p class="no-bottom-margin"><h6 id="what-limits-exist-around-user-consent-for-data-use">What limits exist around user consent for data use?</h6>
+</p>
+
+<p>When collecting data, a best practice, and a legal requirement in many countries, is to give users as much control as possible over what data the system can use and how data can be used. You may need to provide users the ability to opt out or delete their account. Ensure your system is built to accommodate this.</p>
+
+<p class="no-bottom-margin"><h6 id="is-there-a-risk-of-inadvertently-revealing-user-data-what-would-the-consequences-be">Is there a risk of inadvertently revealing user data? What would the consequences be?</h6>
+</p>
+
+<p>For example, though an individual’s health data might be private and secure, if an AI assistant reminds the user to take medication through a home smart speaker, this could partially reveal private medical data to others who might be in the room.</p>
+
+
+</div>
+
+<div class="mdl-grid vignette-pair">
+  
+
+	<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+		<div class="aimfor-image-container">
+			<img class="aimfor-image" src="/assets/DC2_aim-for.png"/>
+		</div>
+		<div class="aimfor-title"><i class="material-icons icon-green">check_circle_outline</i> Aim for</div>
+		<div class="aimfor-content">
+			<p>Take extra steps to protect privacy (anonymize names for example, even if people agreed to have their name used in community reviews) when personal details (such as where people live) could be exposed as part of AI recommendations or predictions. <a href="/chapter/user-needs/#section1">Learn more</a></p>
+
+		</div>
+	</div>
+	
+
+	<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+		<div class="avoid-image-container">
+			<img class="avoid-image" src="/assets/DC2_avoid.png"/>
+		</div>
+		<div class="avoid-title"><i class="material-icons icon-red">not_interested</i> Avoid</div>
+		<div class="avoid-content">
+			<p>Don&rsquo;t assume basic data policies are enough to protect personal privacy. In this case, the runner agreed to expose her name in community reviews, but because she often starts runs from the same spot, another user could infer where she lives.</p>
+
+		</div>
+	</div>
+
+
+</div>
+
+<div class="gray-content-area">
+
+  <h4 id="key-concept">Key concept</h4>
+
+<p>Once your team has a high-level understanding of the data your product needs, work through your own translation between specific user needs and the data needed to produce them.</p>
+
+<p><br/>Try to be as specific as possible during this step. This will have a direct impact on which user experiences your team decides to spend your resources on going forward.<br/><br/></p>
+
+<p>Apply the concepts from this section using Exercise 1 <a class="worksheet-link worksheet-link-2" href="https://art-analytics.appspot.com/r.html?uaid=UA-139355838-1&amp;utm_source=aRT-data-collection-worksheet&amp;utm_medium=aRT-clicks&amp;utm_campaign=data-collection-worksheet&amp;destination=data-collection-worksheet&amp;url=https%3A%2F%2Fpair.withgoogle.com%2Fworksheet%2Fdata-collection.pdf" target="_blank">in the worksheet</a></p>
+
+
+</div>
+
+<div class="divider"></div>
+
+<a class="named-anchor" id="section3" name="section3"></a>
+
+<h2 id="➂-source-your-data-responsibly">➂ Source your data responsibly</h2>
+
+<p class="no-bottom-margin"><h4 id="use-existing-datasets">Use existing datasets</h4>
+</p>
+
+<p>It may not be possible to build your dataset from scratch. As an alternative, you may need to use existing data from sources such as <a href="https://cloud.google.com/automl/">Google Cloud AutoML</a>, <a href="https://toolbox.google.com/datasetsearch">Google Dataset Search</a>, <a href="https://ai.google/tools/datasets/">Google AI datasets</a>, or <a href="https://www.kaggle.com/datasets">Kaggle</a>. If you’re considering <a target="_blank" class="glossary-link" href="/chapter/glossary/#supervised-learning">supervised learning</a>, this data may be pre-labeled or you may need to add labels (see more on <a target="_blank" class="glossary-link" href="/chapter/glossary/#labeling">labeling</a>, below). Be sure to check the terms of use for the dataset and consider whether it’s appropriate for your use case.</p>
+
+<p>Before using an existing dataset, take the time to thoroughly explore it using tools like <a href="https://pair-code.github.io/facets/">Facets</a> to better understand any gaps or biases. Real data is often messy, so you should expect to spend a fair amount of time cleaning it up. During this process, you may detect issues, such as missing values, misspellings, and incorrect formatting. For more information on data preparation techniques, check out the developer guidelines on <a href="https://developers.google.com/machine-learning/data-prep">Data Preparation</a>. They can help you make sure that this data will be able to help you deliver the user experience you identified at the outset.</p>
+
+<p class="no-bottom-margin"><h4 id="build-your-own-dataset">Build your own dataset</h4>
+</p>
+
+<p>When creating your own dataset, it’s wise to start by observing someone who is an expert in the domain your product aims to serve — for example, watching an accountant analyze financial data, or a botanist classify plants. If you can interview them as they think or work through the non-ML solution to the problem, you may be able to pick up some insights into which data they look at when making a decision or before taking an action. Instead of one-off partnerships with domain experts, strive for tighter, ongoing collaborations and sustained relationships with domain experts throughout the project lifecycle.</p>
+
+<p>You’ll also want to research available datasets that seem relevant and evaluate the signals available in those datasets. You may need to combine data from multiple sources for your model to have enough information to learn.</p>
+
+<p>Once you’ve gathered potential sources for your dataset, spend some time getting to know your data. You’ll need to go through the following steps:</p>
+
+<ol>
+<li>Identify your data source(s).</li>
+<li>Review how often your data source(s) are refreshed.</li>
+<li>Inspect the features’ possible values, units, and data types.</li>
+<li>Identify any outliers, and investigate whether they&rsquo;re actual outliers or due to errors in the data.</li>
+</ol>
+
+<p>Understanding where your dataset came from and how it was collected will help you discover potential issues.</p>
+
+<p>You may need to assemble a team of data collectors if you need to build a new dataset. Document your data collection plan to help avoid quality issues, and review it for bias:</p>
+
+<ul>
+<li>Does the way you’re asking a question affect the answer?</li>
+<li>Have you provided all of the necessary label options?</li>
+<li>Are you likely to get imbalanced classes? If so, consider over-sampling the rarer class.</li>
+</ul>
+
+<p class="no-bottom-margin"><h4 id="collect-live-data-from-users">Collect live data from users</h4>
+</p>
+
+<p>Once your model has been trained and your product is being used in the real world, you can start collecting data in your product to continually improve your ML model. How you collect this data has a direct impact on its quality. Data can be collected <a target="_blank" class="glossary-link" href="/chapter/glossary/#implicit-feedback">implicitly</a> in the background of user activity within your app or <a target="_blank" class="glossary-link" href="/chapter/glossary/#explicit-feedback">explicitly</a> when you ask users directly. There are different design considerations for each, which are covered in depth in the <a class="chapter-link cl5" href="/chapter/feedback-controls/">Feedback &#43; Control</a> chapter.</p>
+
+<p class="no-bottom-margin"><h4 id="capture-the-real-world">Capture the real world</h4>
+</p>
+
+<p>Make sure that your input data is as similar as possible to real-world data to avoid model failure in production. Consider your user: do they have the time to take high-quality photographs, or will your model have to work with users’ blurry smartphone images?</p>
+
+<p>In many cases, you’ll find that the data captured by users can be starkly different from that in your training dataset. Instead of striving for a very “clean” dataset that contains only very high-resolution images for an image classification problem, or only correctly formatted and typo-free movie reviews for a sentiment analysis problem, allow some ‘noise’ into your training dataset because you’ll have plenty of it in the real world.</p>
+
+<p class="no-bottom-margin"><h4 id="consider-formatting">Consider formatting</h4>
+</p>
+
+<p>Real data can be messy! A “zero” value could be an actual measured “0,” or an indicator for a missing measurement. A “country” feature may contain entries in different formats, such as “US,” “USA,” and “United States.”</p>
+
+<p>While a human can spot the meaning just by looking at the data, an ML model learns better from data that is consistently formatted.</p>
+
+<p class="no-bottom-margin"><h4 id="avoid-compounding-errors-from-other-ml-models">Avoid compounding errors from other ML models</h4>
+</p>
+
+<p>If you’re using the output of another ML system as an input feature to train your model, keep in mind that this is a risky data source. Errors associated with this feature will be compounded with your system’s overall error, and the further you are from the original training data, the more difficult it will be to identify error sources.</p>
+
+<p>There’s more information on determining error sources in the chapter on <a class="chapter-link cl6" href="/chapter/errors-failing/">Errors &#43; Graceful Failure</a>.</p>
+
+<p class="no-bottom-margin"><h4 id="protect-personally-identifiable-information">Protect personally identifiable information</h4>
+</p>
+
+<p>No matter what data you’re using, it’s possible that it could contain personally identifiable information. Some approaches to anonymizing data include aggregation and redaction. However, even these approaches may not be able to completely anonymize your data in all circumstances, so consider consulting an expert.</p>
+
+<p><a target="_blank" class="glossary-link" href="/chapter/glossary/#aggregation">Aggregation</a> is the process of replacing unique values with a summary value. For example, you may replace a list of a user’s maximum heartbeats per minute from every day of the month with a single value: their average beats per minute or a categorical high / medium / low label.</p>
+
+<p><a target="_blank" class="glossary-link" href="/chapter/glossary/#redaction">Redaction</a> removes some data to create a less complete picture. Such anonymization approaches aim to reduce the number of features available for identifying a single user.</p>
+
+<p class="no-bottom-margin"><h4 id="prepare-a-data-maintenance-plan">Prepare a data maintenance plan</h4>
+</p>
+
+<p>If you want to create a dataset, consider whether you can maintain it and if you can afford the risks of something going unexpectedly wrong. Until the dataset is deprecated, focus on these tasks to maintain dataset quality:</p>
+
+<ul>
+<li><strong>Preventive maintenance</strong>: Prevent problems before they occur. Store your dataset in a stable repository that provides different levels of access and stable identifiers. This can be difficult for datasets hosted on personal and lab websites.</li>
+<li><strong>Adaptive maintenance</strong>: Preserve the dataset while the real world changes. Decide which properties of the dataset should be preserved, and keep this data updated over time. The dataset should still fulfill requirements, and continue to represent the reality of the phenomena that it measures.</li>
+<li><strong>Corrective maintenance</strong>: Fix errors. Problems can occur as a result of <a target="_blank" class="glossary-link" href="/chapter/glossary/#data-cascades">data cascades</a>. Make sure you have a plan B in case of unforeseen problems and human error. Keep a detailed, human-readable log of everything that you change in the dataset.</li>
+</ul>
+
+<div class="divider"></div>
+
+<a class="named-anchor" id="section4" name="section4"></a>
+
+<h2 id="➃-prepare-and-document-your-data">➃ Prepare and document your data</h2>
+
+<p class="no-bottom-margin"><h4 id="split-your-dataset-into-training-and-test-sets">Split your dataset into training and test sets</h4>
+</p>
+
+<p>And finally, you’ll need to split the data into <a target="_blank" class="glossary-link" href="/chapter/glossary/#training-data">training</a> and <a target="_blank" class="glossary-link" href="/chapter/glossary/#test-data">test</a> sets. The model is trained to learn from the training data, and then evaluated with the test data. Test sets are data that your model hasn’t seen before — this is how you’ll find out if, and how well, your model works. The split will depend on factors such as the number of examples in your dataset and the data distribution.</p>
+
+<p>The training set needs to be large enough to successfully teach your model, and your test set should be large enough that you can adequately assess your model’s performance. This is usually the time when developers realize that adequate data can make or break the success of a model. So take the time to determine the most efficient split percentage. A typical split of your dataset could result in: 60% for training, and 40% for testing. <a href="https://developers.google.com/machine-learning/data-prep/construct/sampling-splitting/example">This lab</a> from Google AI offers more details on data splitting.</p>
+
+<p class="no-bottom-margin"><h4 id="analyze-and-prepare-your-data">Analyze and prepare your data</h4>
+</p>
+
+<p>An important step in all model training pipelines is handling “dirty” or inconsistent data. Data cleaning often consists of two stages: detecting and addressing issues.</p>
+
+<p>Examples of operations performed to clean data include:</p>
+
+<ul>
+<li>Extracting structure</li>
+<li>Dealing with missing values</li>
+<li>Removing duplicates</li>
+<li>Handling incorrect data</li>
+<li>Correcting values to fall within certain ranges</li>
+<li>Adjusting values to map to existing values in external data sources</li>
+</ul>
+
+<p>Data cleaning and analysis require iteration. Analyzing and visualizing data may help identify issues in your dataset, possibly requiring further cleaning. Your team may need to return to this stage once you begin to evaluate your model, as previously undetected issues with your data may surface then, too. And if you find something unexpected in the data, consult with your domain expert.</p>
+
+<p>To learn more about data preparation, see <a href="https://developers.google.com/machine-learning/data-prep">Data Preparation and Feature Engineering in ML</a> and this <a href="https://services.google.com/fh/files/blogs/data-prep-checklist-ml-bd-wp-v2.pdf">pre-ML checklist</a>.</p>
+
+<p class="no-bottom-margin"><h4 id="document-your-data">Document your data</h4>
+</p>
+
+<p>Dataset documentation can be just as important as code documentation.</p>
+
+<p>Having a record of your dataset&rsquo;s sources, a list of operations and transformations that have been applied to it, its history over time, and recommended uses can help when you do the following:</p>
+
+<ul>
+<li>Share your dataset with colleagues on your team or on another team</li>
+<li>Review whether you can use or publish your dataset</li>
+<li>Compare multiple datasets side by side</li>
+<li>Use the data responsibly in to train a model for an AI-powered product</li>
+<li>Interpret the behavior of an AI model that you trained with the data</li>
+<li>Maintain the dataset for teams and systems that rely on it</li>
+</ul>
+
+<p>Data Cards are a form of documentation for datasets, and include information that can help answer the following questions about the data:</p>
+
+<ul>
+<li>What does it represent?</li>
+<li>What does it look like?</li>
+<li>Where does it come from?</li>
+<li>How was it prepared?</li>
+<li>Can it be used for a specific use case?</li>
+<li>How should it be used responsibly?</li>
+</ul>
+
+<p>To learn more about how to create a Data Card to document your dataset, explore the <a href="https://pair-code.github.io/datacardsplaybook/">Data Cards Playbook</a>.</p>
+
+<div class="gray-content-area">
+
+  <h4 id="key-concept">Key concept</h4>
+
+<p>ML-driven products require a lot of data to work, and this is often where product teams falter. Getting enough data to both train and test your ML model is critical to delivering a functional product. To get you started, answer the key questions below:</p>
+
+<ul>
+<li>If you need to <strong>create a new dataset</strong>, how are you planning to collect the data?</li>
+<li>If you have <strong>an existing dataset</strong>, what, if any alterations or additions need to be made for your user population?</li>
+</ul>
+
+<p>Apply the concepts from this section using Exercise 2 <a class="worksheet-link worksheet-link-2" href="https://art-analytics.appspot.com/r.html?uaid=UA-139355838-1&amp;utm_source=aRT-data-collection-worksheet&amp;utm_medium=aRT-clicks&amp;utm_campaign=data-collection-worksheet&amp;destination=data-collection-worksheet&amp;url=https%3A%2F%2Fpair.withgoogle.com%2Fworksheet%2Fdata-collection.pdf" target="_blank">in the worksheet</a></p>
+
+
+</div>
+
+<div class="divider"></div>
+
+<a class="named-anchor" id="section5" name="section5"></a>
+
+<h2 id="➄-design-for-labelers-labeling">➄ Design for labelers &amp; labeling</h2>
+
+<p>For <a target="_blank" class="glossary-link" href="/chapter/glossary/#supervised-learning">supervised learning</a>, accurate data labels are a crucial ingredient for achieving relevant ML output. Labels can be added through automated processes or by people known as <a target="_blank" class="glossary-link" href="/chapter/glossary/#labeler">labelers</a>. “Labelers” is a generic term that covers a wide variety of contexts, skill sets, and levels of specialization. Labelers could be:</p>
+
+<ul>
+<li><strong>Your users</strong>: providing “derived” labels within your product, for example through actions like tagging photos</li>
+<li><strong>Generalists</strong>: adding labels to a wide variety of data through crowd-sourcing tools</li>
+<li><strong>Trained subject matter experts</strong>: using specialized tools to label things like medical images</li>
+</ul>
+
+<p>If people understand what you’re asking them to label, and why, and they have the tools to do so effectively, then they’re more likely to label the data correctly. Training your labelers and testing their ability to complete the labeling task responsibly are both central to ensuring the quality of your data.</p>
+
+<div class="indent-content">
+
+  <p class="no-bottom-margin"><h6 id="ensure-labeler-pool-diversity">Ensure labeler pool diversity</h6>
+</p>
+
+<p>Think about the perspectives and potential biases of the people in your pool, how to balance these with diversity, and how their points of view could impact the quality of the labels. In some cases, providing labelers with training to make them aware of unconscious bias has been effective in reducing biases.</p>
+
+<p>Here are some questions to ask when evaluating your labeler pool:</p>
+
+<ul>
+<li>Are your annotators similar to your end users? E.g., are you asking American annotators to label images of Indian cuisine, or vice versa?</li>
+<li>Are there cultural differences between labelers and users that could impact data quality? E.g., date formatting rules (DD/MM/YYYY vs. MM/DD/YYYY) and measurement scales (metric vs. imperial) can differ.</li>
+<li>Do labelers know what to do?
+
+<ul>
+<li>Are they domain experts, or do they need training?</li>
+<li>Are there guidelines on data quality, and have they been provided in the annotator’s native language?</li>
+<li>Do they know what the data will be used for?</li>
+</ul></li>
+</ul>
+
+<p class="no-bottom-margin"><h6 id="investigate-labeler-context-and-incentives">Investigate labeler context and incentives</h6>
+</p>
+
+<p>Think through the labeler experience, and how and why they are performing this task. There’s always a risk that they might complete the task incorrectly due to issues like boredom, repetition, or poor incentive design. Incentives that focus on volume rather than quality can lead to bias in your dataset.</p>
+
+<p class="no-bottom-margin"><h6 id="design-tools-for-labeling">Design tools for labeling</h6>
+</p>
+
+<p>Tools for labeling can range from in-product prompts to specialized software. When soliciting labels in-product, make sure to design the UI in a way that makes it easy for users to provide correct information. When building tools for professional labelers, the article <a href="https://design.google/library/first-raters/">First: Raters</a> offers some useful recommendations like the ones below:</p>
+
+<ul>
+<li><strong>Use multiple shortcuts to optimize key flows</strong>. This helps labelers move fast and stay efficient.</li>
+<li><strong>Provide easy access to labels</strong>. The full set of available labels should be visible and available to labelers for each item they are asked to address. It should be fast and easy in the UI to apply the labels.</li>
+<li><strong>Let labelers change their minds</strong>. Labeling can be complicated. Offer a flexible workflow and support for editing and out-of-sequence changes so that labelers can seek second opinions and correct errors.</li>
+<li><strong>Auto-detect and display errors</strong>. Make it easy to avoid accidental errors with checks and flags.</li>
+<li><strong>Review third-party tool capabilities and limitations</strong>. Learn how labelers are onboarded, and if their training can be improved, and pilot the process on the platform to verify that labelers have a way to provide feedback and flag ambiguous data.</li>
+<li><strong>Explain criteria for acceptance</strong>. Clearly state which errors can trigger task rejection.</li>
+<li><strong>Allow labelers to mark instances as ‘unsure’ or skip them altogether</strong>. Don’t force labelers to label an item without providing checks and balances.</li>
+<li><strong>Value labeler disagreements</strong>. Discovering discrepancies in how humans interpret labels makes model development more prepared for the real world, so make sure to revisit and review the data and labels.</li>
+</ul>
+
+<p>When compiling instructions for labeler tasks, don’t take specialized domain knowledge for granted. Labelers may not be as familiar with the domain and the task, which leaves room for ambiguities.</p>
+
+<p>Consider the following recommendations when writing instructions:</p>
+
+<ul>
+<li><strong>Provide examples for the task to illustrate expectations</strong>. Include ‘edge’ cases.</li>
+<li><strong>Give step-by-step task instructions</strong>. Explicitly describe all of the tools needed.</li>
+<li><strong>Break instructions down into manageable chunks</strong>. Use bullets for steps, or rules.</li>
+<li><strong>Strike the right balance for task instruction length</strong>. Compact tasks generally have greater uptake and turnaround time. However, longer task instructions are helpful when critical details are needed to perform the task accurately.</li>
+</ul>
+
+<p>Plan ahead to conduct research with your labelers to iterate on task design, and instruction clarity. Before fully launching the task, pilot the task with a small set of labelers to gather their feedback and example results. You’ll also want to identify points of confusion directly from the labelers.</p>
+
+<p>And finally, here are a few considerations for creating more accessible and inclusive labeler workflows:</p>
+
+<ul>
+<li><strong>Account for worker environments, and the language of your data collaborators</strong>. You can help improve the representativeness of your data by designing tasks for your data collaborators.</li>
+<li><strong>Carefully experiment with the time allotment to ensure that labelers are able to complete the task at their own pace</strong>. Make sure to give labelers enough time to complete tasks without rushing, and  allow them to request extra time if needed.</li>
+<li><strong>Plan for mobile users in task design and time allotment</strong>. Most traditional data labeling workflows are performed on laptops and desktops, but a growing online population is now ‘mobile-first’. While this can open up opportunities for data collection from more diverse groups, such tasks can take longer, and require different task design for low-resource settings. Consider the following ways to adapt the workflow: minimize reliance on text and leverage other modalities (e.g., images and audio), create intuitive icons, and provide local language support.</li>
+</ul>
+
+<p>Once you’ve collected data from labelers, you’ll need to conduct statistical tests to analyze <a target="_blank" class="glossary-link" href="/chapter/glossary/#inter-labeler-reliability">inter-labeler reliability</a>. A lack of reliability could be a sign that you have poorly-designed instructions.</p>
+
+
+</div>
+
+<div class="mdl-grid vignette-pair">
+  
+
+	<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+		<div class="aimfor-image-container">
+			<img class="aimfor-image" src="/assets/DC1_avoid.png"/>
+		</div>
+		<div class="aimfor-title"><i class="material-icons icon-green">check_circle_outline</i> Aim for</div>
+		<div class="aimfor-content">
+			<p>Make labeler instructions as specific and simple as possible. Here, the phrase “running shoes” easily rules out the selection of other athletic shoe types like soccer cleats. <a href="/chapter/user-needs/#section1">Learn more</a></p>
+
+		</div>
+	</div>
+	
+
+	<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+		<div class="avoid-image-container">
+			<img class="avoid-image" src="/assets/DC1_aim-for.png"/>
+		</div>
+		<div class="avoid-title"><i class="material-icons icon-red">not_interested</i> Avoid</div>
+		<div class="avoid-content">
+			<p>Don’t use instructions that can be interpreted multiple ways. Here, someone’s subjective definition of “athletic” might or might not include dance shoes, for example.</p>
+
+		</div>
+	</div>
+
+
+</div>
+
+<div class="gray-content-area">
+
+  <h4 id="key-concept">Key concept</h4>
+
+<p>Before designing tools for your labelers, research their needs the same way you would think about your end-users. Their motivation and ability to do their job well has a direct impact on everything else you build down the line.</p>
+
+<ul>
+<li>Who are your labelers?</li>
+<li>What is their context and incentive?</li>
+<li>What tools are they using?</li>
+</ul>
+
+<p>Apply the concepts from this section in Exercise 3 <a class="worksheet-link worksheet-link-2" href="https://art-analytics.appspot.com/r.html?uaid=UA-139355838-1&amp;utm_source=aRT-data-collection-worksheet&amp;utm_medium=aRT-clicks&amp;utm_campaign=data-collection-worksheet&amp;destination=data-collection-worksheet&amp;url=https%3A%2F%2Fpair.withgoogle.com%2Fworksheet%2Fdata-collection.pdf" target="_blank">in the worksheet</a></p>
+
+
+</div>
+
+<div class="divider"></div>
+
+<a class="named-anchor" id="section6" name="section6"></a>
+
+<h2 id="➅-tune-your-model">➅ Tune your model</h2>
+
+<p>Once your model has been trained with your training data, evaluate the output to assess whether it’s addressing your target user need according to the success metrics you defined. If not, you’ll need to <a target="_blank" class="glossary-link" href="/chapter/glossary/#tuning">tune</a> it accordingly. <a target="_blank" class="glossary-link" href="/chapter/glossary/#tuning">Tuning</a> can mean adjusting the <a href="https://cloud.google.com/ml-engine/docs/tensorflow/hyperparameter-tuning-overview">hyperparameters of your training process</a>, the parameters of the model or your reward function, or troubleshooting your training data.</p>
+
+<p>To evaluate your model:</p>
+
+<ul>
+<li>Use tools like the <a href="https://pair-code.github.io/what-if-tool/">What-If tool</a> and the <a href="https://pair-code.github.io/lit/">Language Interpretability Tool (LIT)</a> to inspect your model and identify blindspots.</li>
+<li>Test, test, test on an ongoing basis.
+
+<ul>
+<li>In early phases of development, get in-depth qualitative feedback with a diverse set of users from your target audience to find any “red flag” issues with your training dataset or your model tuning.</li>
+<li>As part of testing, ensure you’ve built appropriate and thoughtful mechanisms for user feedback. See more guidance for this in the <a class="chapter-link cl5" href="/chapter/feedback-controls/">Feedback &#43; Control</a> chapter.</li>
+<li>You may need to build custom dashboards and data visualizations to monitor user experience with your system.</li>
+<li>Be particularly careful to check for secondary effects that you may not have anticipated when determining your reward function, a concept covered in the <a class="chapter-link cl1" href="/chapter/user-needs/">User Needs &#43; Defining Success</a> chapter.</li>
+<li>Try to tie model changes to a clear metric of the subjective user experience like customer satisfaction, or how often users accept a model’s recommendations.</li>
+</ul></li>
+</ul>
+
+<p>In addition to improving standard metrics (e.g., accuracy), you need a strategy for how to deal with a system that doesn’t behave as expected. Make sure to test your model before and after any changes. You may have to troubleshoot the training data in particular.</p>
+
+<p>Consider the following:</p>
+
+<ul>
+<li><strong>Low data quality, or not enough high-quality data</strong>. Can you go back and collect additional better data?</li>
+<li><strong>Unintended consequences</strong>. These are opportunities for design changes. Look for:
+
+<ul>
+<li>Errors in output, and patterns in them</li>
+<li>Changes in data that can lead to changes in model performance (data drift)</li>
+<li>Errors from the system itself, the context it’s in or what the user wants</li>
+<li>How can you avoid these consequences in the next iteration?</li>
+<li>What other problems might arise next time &amp; how do you mitigate them?</li>
+</ul></li>
+<li><strong>Parts of the project which are particularly difficult for users to understand</strong>. A user might see something as an error if it’s not explained correctly
+
+<ul>
+<li>Scan for omissions or white lies</li>
+<li>Provide an explanation for these situations. E.g., “We use all your liked songs to generate recommendations, not just your favorite songs.”</li>
+</ul></li>
+</ul>
+
+<p>Once you’ve identified issues that need to be corrected, you’ll need to map them back to specific data features and labels (or lack thereof), or model parameters. This may not be easy or straightforward. Resolving the problem could involve steps like adjusting the training <a target="_blank" class="glossary-link" href="/chapter/glossary/#data-distribution">data distribution</a>, fixing a labeling issue or gathering more relevant data. Here’s a hypothetical example of how a team might tackle tuning:</p>
+
+<div class="indent-content">
+
+  <p>Let’s say our running app was launching a new feature to calculate calories burned and make recommendations for mid-run changes to help users burn their target number of calories.</p>
+
+<p>During beta testing, it was observed that users receiving these recommendations were far more likely than other users to quit mid-run. Moreover, users who followed the recommendations and completed the run and were less likely to return for a second run within the same week. The product manager originally assumed that this feature was a failure, but after user interviews and a deeper look at the data, it turned out that the algorithm wasn’t properly weighting important data when calculating estimated calorie burn like the outside temperature and a user’s weight.</p>
+
+<p>After some user research, it became clear that some users were quitting because they didn’t trust the calorie calculation and therefore didn’t see the point in accepting the app’s recommendations for mid-run changes.</p>
+
+<p>The engineering team was able to re-tune the algorithm and launch a successful feature.</p>
+
+
+</div>
+
+<div class="gray-content-area">
+
+  <h4 id="key-concept">Key concept</h4>
+
+<p>Tuning is an ongoing process for adjusting your ML model in response to user feedback and issues that arise due to unforeseen circumstances. Tuning never stops, but it is especially important in the early phases of development.</p>
+
+<ul>
+<li>What is our plan for doing early testing of our model?</li>
+<li>Is our set of early beta users diverse enough to properly test our model?</li>
+<li>What metrics will we use to determine if our tuning is successful?</li>
+</ul>
+
+<p>Apply the concepts from this section on tuning by exploring the <a href="https://pair-code.github.io/what-if-tool/">What-if tool</a>. Explore more about tuning models in response to user feedback in the <a class="chapter-link cl5" href="/chapter/feedback-controls/">Feedback &#43; Control</a> chapter.</p>
+
+
+</div>
+
+<div class="divider"></div>
+
+<a class="named-anchor" id="summary" name="summary"></a>
+
+<h2 id="summary">Summary</h2>
+
+<p>Data is the bedrock of any ML system. Having responsibly sourced data, from a relevant context, checked for problematic bias will help you build better systems and therefore more effectively address user needs. Key considerations for data collection and evaluation:</p>
+
+<div class="custom-bullet-list">
+  <p><a href="#section1"><strong>➀ Plan to gather high-quality data from the start</strong></a>. Plan ahead as you gather and prepare data, to avoid the effects of poor data choices further downstream in the AI development cycle.</p>
+
+<p><a href="#section2"><strong>➁ Translate user needs into data needs</strong></a>. Think carefully as a cross-functional team about what features, labels, and examples you will need to train an effective AI model. Work systematically to break down user needs, user actions, and ML predictions into the necessary datasets. As you identify potential datasets, or formulate a plan to collect them, you’ll need to be diligent about inspecting the data, identifying potential bias sources, and designing the data collection methods.</p>
+
+<p><a href="#section3"><strong>➂ Source your data responsibly</strong></a>. As part of sourcing data, you’ll need to consider relevance, fairness, privacy, and security. You can find more information in <a href="https://ai.google/principles/">Google’s AI Principles</a> and <a href="https://ai.google/education/responsible-ai-practices">Responsible AI Practices</a>. These apply whether you are using an existing dataset or building a new training dataset.</p>
+
+<p><a href="#section4"><strong>➃ Prepare and document your data</strong></a>. Prepare your dataset for AI, and document its contents and the decisions that you made while gathering and processing the data.</p>
+
+<p><a href="#section5"><strong>➄ Design for labelers &amp; labeling</strong></a>. Correctly labeled data is a crucial ingredient to an effective supervised ML system. Thoughtful consideration of your labelers and the tools they’ll be using will help ensure your labels are accurate.</p>
+
+<p><a href="#section6"><strong>➅ Tune your model</strong></a>. Once you have a model, you will need to test and tune it rigorously. The tuning phase involves not only adjusting the parameters of your model, but also inspecting your data – in many cases, output errors can be traced to problems in your data.</p>
+
+</div>
+
+<p>Want to drive discussions, speed iteration, and avoid pitfalls? <a class="worksheet-link worksheet-link-2" href="https://art-analytics.appspot.com/r.html?uaid=UA-139355838-1&amp;utm_source=aRT-data-collection-worksheet&amp;utm_medium=aRT-clicks&amp;utm_campaign=data-collection-worksheet&amp;destination=data-collection-worksheet&amp;url=https%3A%2F%2Fpair.withgoogle.com%2Fworksheet%2Fdata-collection.pdf" target="_blank">Use the worksheet</a></p>
+
+<div class="references-container">
+  <div class="divider"></div>
+  <button class="mdl-button references-toggle-button">
+    <span class="references-expand"><i class="material-icons md-dark">expand_more</i></span>
+    <span class="references-collapse"><i class="material-icons md-dark">expand_less</i></span>
+  </button>
+  <h2>References</h2>
+
+  <div class="references-content">
+    <p>In addition to the academic and industry references listed below, recommendations, best practices, and examples in the People + AI Guidebook draw from dozens of Google user research studies and design explorations. The details of these are proprietary, so they are not included in this list.</p>
+
+<ul>
+<li>Alexsoft. (2018, March 29). <a href="https://www.altexsoft.com/blog/datascience/how-to-organize-data-labeling-for-machine-learning-approaches-and-tools/">How to Organize Data Labeling for Machine Learning: Approaches and Tools</a>.</li>
+<li>Alexsoft. (2017, June 16). <a href="https://www.altexsoft.com/blog/datascience/preparing-your-dataset-for-machine-learning-8-basic-techniques-that-make-your-data-better/">Preparing Your Dataset for Machine Learning: 8 Basic Techniques That Make Your Data Better</a></li>
+<li><a href="https://docs.aws.amazon.com/machine-learning/latest/dg/machinelearning-dg.pdf">Amazon Machine Learning Developer Guide</a>. (2019). Amazon Web Services.</li>
+<li>Aroyo, Lora, and Chris Welty. “Truth Is a Lie: Crowd Truth and the Seven Myths of Human Annotation.” AI Magazine, vol. 36, no. 1, Mar. 2015, pp. 15–24, doi:10.1609/aimag.v36i1.2564</li>
+<li>Chopra, Manu, et al. “Exploring Crowdsourced Work in Low-Resource Settings.” Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems, Association for Computing Machinery, 2019, pp. 1–13, doi:10.1145/3290605.3300611.</li>
+<li>G, Y. (2017, August 31). <a href="https://towardsdatascience.com/the-7-steps-of-machine-learning-2877d7e5548e">The 7 Steps of Machine Learning</a>.</li>
+<li>Gray, Mary L., and Siddharth Suri. Ghost Work: How to Stop Silicon Valley from Building a New Global Underclass. Houghton Mifflin Harcourt, 2019.</li>
+<li>Hutchinson et al. <a href="https://doi.org/10.1145/3442188.3445918">“Towards Accountability for Machine Learning Datasets”</a>. Proceedings of the 2021 ACM Conference on Fairness, Accountability, and Transparency. FAccT ‘21.</li>
+<li>Giffin, D., Levy, A., Stefan, D., Terei, D., Mazières, D., Mitchell, J., &amp; Russo, A. (2017). Hails: Protecting data privacy in untrusted web applications. Journal of Computer Security, 25(4-5), 427-461.</li>
+<li>Korolov, M. (2018, February 13). <a href="https://www.cio.com/article/3254693/ais-biggest-risk-factor-data-gone-wrong.html">AI’s biggest risk factor: Data gone wrong</a>.</li>
+<li>McDonnell, Tyler, et al. <a href="https://aaai.org/ocs/index.php/HCOMP/HCOMP16/paper/view/14043">“Why Is That Relevant? Collecting Annotator Rationales for Relevance Judgments.”</a> Fourth AAAI Conference on Human Computation and Crowdsourcing, 2016.</li>
+<li>Mitchell, M., Wu, S., Zaldivar, A., Barnes, P., Vasserman, L., Hutchinson, B., &hellip; Gebru, T. (2019). Model Cards for Model Reporting. Proceedings of the Conference on Fairness, Accountability, and Transparency - FAT* 19.</li>
+<li>Pushkarna, M., Zaldivar, A., Nanas, D., et al. <a href="https://pair-code.github.io/datacardsplaybook/">Data Cards Playbook</a>. Published March 5, 2021.</li>
+<li>Rolfe, R., &amp; May, S. (2018, June 22). <a href="https://design.google/library/first-raters/">First: Raters Designing for AI’s unseen users can lead to better products in the long run</a>.</li>
+<li>Sambasivan, N., Kapania, S., Highfill, H., Akrong, D., Paritosh, P., Aroyo, L. “Everyone wants to do the model work, not the data work”: Data Cascades in High-stakes AI. CHI 2021.</li>
+<li>Schaekermann, Mike, et al. “Resolvable vs. Irresolvable Disagreement: A Study on Worker Deliberation in Crowd Work.” Proceedings of the ACM on Human-Computer Interaction, vol. 2, no. CSCW, Nov. 2018, pp. 154:1–154:19, doi:10.1145/3274423</li>
+<li>Seif, G. (2018, July 6). <a href="https://towardsdatascience.com/how-to-collect-your-deep-learning-dataset-2e0eefc0ba24">How to collect your deep learning dataset</a></li>
+<li>Shapiro, D. (2017, November 6). <a href="https://towardsdatascience.com/artificial-intelligence-and-bad-data-fbf2564c541a">Artificial Intelligence and Bad Data</a></li>
+<li>Shapiro, D. (2017, September 19). <a href="https://towardsdatascience.com/artificial-intelligence-get-your-users-to-label-your-data-b5fa7c0c9e00">Artificial Intelligence: Get your users to label your data</a></li>
+<li>Smith, D. (2019, January 29). <a href="https://gengo.ai/articles/what-is-ai-training-data/">What is AI Training Data?</a></li>
+<li>Smith, D. (2018, July 5). <a href="https://towardsdatascience.com/netflix-and-chill-building-a-recommendation-system-in-excel-c69b33c914f4">Netflix and Chill: Building a Recommendation System in Excel Learn the Machine Learning “Magic” behind the Binge</a></li>
+<li>Teltzrow, M., &amp; Kobsa, A. (2004). Impacts of User Privacy Preferences on Personalized Systems. Designing Personalized User Experiences in ECommerce Human-Computer Interaction Series, pp.315-332.</li>
+<li>Yang, Q., Scuito, A., Zimmerman, J., Forlizzi, J., &amp; Steinfeld, A. (2018). Investigating How Experienced UX Designers Effectively Work with Machine Learning. Proceedings of the 2018 on Designing Interactive Systems Conference 2018 - DIS 18.</li>
+</ul>
+
+  </div>
+  <div class="divider"></div>
+</div>
+
+  </div>
+	
+	
+	<div class="footer-nav mdl-grid">
+		
+		<div class="prev-navigation mdl-cell mdl-cell--4-col mdl-cell--3-col-tablet mdl-cell--4-col-phone">
+			<div class="footer-nav-header">Previous</div>
+			
+			<a class="footer-links" href="/chapter/user-needs/">
+				<div class="footer-nav-button footer-nav-button-1">
+					
+					<img class="footer-nav-icon" src="/images/1.svg"/>
+					
+					<span class="footer-nav-name">User Needs &#43; Defining Success</span>
+				</div>
+			</a>
+			
+		</div>
+		
+		<div class="mdl-layout-spacer"></div>
+
+		
+		<div class="next-navigation mdl-cell mdl-cell--4-col mdl-cell--3-col-tablet mdl-cell--4-col-phone">
+			<div class="footer-nav-header">Next</div>
+			
+			<a class="footer-links" href="/chapter/mental-models/">
+				<div class="footer-nav-button footer-nav-button-3">
+					
+					<img class="footer-nav-icon" src="/images/3.svg"/>
+					
+					<span class="footer-nav-name">Mental Models</span>
+				</div>
+			</a>
+			
+		</div>
+		
+	</div>
+</div>
+
+<script type="text/javascript">
+
+
+	var navEl = document.querySelector(".block-nav-link-2");
+	var cl = navEl.className.concat("-selected");
+	navEl.className = cl;
+
+
+
+</script>
+
+						<div class="guidebook-licensing-container">
+							<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">People + AI Guidebook</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://pair.withgoogle.com" property="cc:attributionName" rel="cc:attributionURL">People + AI Research team</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.<br />Based on a work at <a xmlns:dct="http://purl.org/dc/terms/" href="https://pair.withgoogle.com" rel="dct:source">pair.withgoogle.com</a>.
+						</div>
+					</section>
+				</main>
+			
+			</div>
+		</div>
+		<script src="/js/material.min.js"></script>
+		<script src="/js/smoothscroll.min.js"></script>
+		<script type="text/javascript" src="https://www.gstatic.com/feedback/js/help/prod/service/lazy.min.js"></script>
+		<script src="/js/page.js"></script>
+		<script data-autoload-cookie-consent-bar="true"
+    src="https://www.gstatic.com/brandstudio/kato/cookie_choice_component/cookie_consent_bar.v2.js"></script>
+  </body>
+</html>
+
+
