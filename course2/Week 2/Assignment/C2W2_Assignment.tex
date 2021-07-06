@@ -1,0 +1,1829 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+    \usepackage{iftex}
+    \ifPDFTeX
+    	\usepackage[T1]{fontenc}
+    	\usepackage{mathpazo}
+    \else
+    	\usepackage{fontspec}
+    \fi
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{C2W2\_Assignment}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{week-2-assignment-feature-engineering}{%
+\section{Week 2 Assignment: Feature
+Engineering}\label{week-2-assignment-feature-engineering}}
+
+    For this week's assignment, you will build a data pipeline using using
+\href{https://www.tensorflow.org/tfx}{Tensorflow Extended (TFX)} to
+prepare features from the
+\href{https://archive.ics.uci.edu/ml/datasets/Metro+Interstate+Traffic+Volume}{Metro
+Interstate Traffic Volume dataset}. Try to only use the documentation
+and code hints to accomplish the tasks but feel free to review the 2nd
+ungraded lab this week in case you get stuck.
+
+Upon completion, you will have:
+
+\begin{itemize}
+\tightlist
+\item
+  created an InteractiveContext to run TFX components interactively
+\item
+  used TFX ExampleGen component to split your dataset into training and
+  evaluation datasets
+\item
+  generated the statistics and the schema of your dataset using TFX
+  StatisticsGen and SchemaGen components
+\item
+  validated the evaluation dataset statistics using TFX ExampleValidator
+\item
+  performed feature engineering using the TFX Transform component
+\end{itemize}
+
+Let's begin!
+
+    \hypertarget{table-of-contents}{%
+\subsection{Table of Contents}\label{table-of-contents}}
+
+\begin{itemize}
+\tightlist
+\item
+  \hyperref[1]{1 - Setup}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \hyperref[1-1]{1.1 - Imports}
+  \item
+    \hyperref[1-2]{1.2 - Define Paths}
+  \item
+    \hyperref[1-3]{1.3 - Preview the Dataset}
+  \item
+    \hyperref[1-4]{1.4 - Create the InteractiveContext}
+  \end{itemize}
+\item
+  \hyperref[2]{2 - Run TFX components interactively}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \hyperref[2-1]{2.1 - ExampleGen}
+
+    \begin{itemize}
+    \tightlist
+    \item
+      \hyperref[ex-1]{Exercise 1 - ExampleGen}
+    \item
+      \hyperref[ex-2]{Exercise 2 - get_records()}
+    \end{itemize}
+  \item
+    \hyperref[2-2]{2.2 - StatisticsGen}
+
+    \begin{itemize}
+    \tightlist
+    \item
+      \hyperref[ex-3]{Exercise 3 - StatisticsGen}
+    \end{itemize}
+  \item
+    \hyperref[2-3]{2.3 - SchemaGen}
+
+    \begin{itemize}
+    \tightlist
+    \item
+      \hyperref[ex-4]{Exercise 4 - SchemaGen}
+    \end{itemize}
+  \item
+    \hyperref[2-4]{2.4 - ExampleValidator}
+
+    \begin{itemize}
+    \tightlist
+    \item
+      \hyperref[ex-5]{Exercise 5 - ExampleValidator}
+    \end{itemize}
+  \item
+    \hyperref[2-5]{2.5 - Transform}
+
+    \begin{itemize}
+    \tightlist
+    \item
+      \hyperref[ex-6]{Exercise 6 - preprocessing_fn()}
+    \item
+      \hyperref[ex-7]{Exercise 7 - Transform}
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+    \#\# 1 - Setup As usual, you will first need to import the necessary
+packages. For reference, the lab environment uses \emph{TensorFlow
+version: 2.3.1} and \emph{TFX version: 0.24.0}.
+
+    \#\#\# 1.1 Imports
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{tensorflow} \PY{k}{as} \PY{n+nn}{tf}
+
+\PY{k+kn}{from} \PY{n+nn}{tfx}\PY{n+nn}{.}\PY{n+nn}{components} \PY{k+kn}{import} \PY{n}{CsvExampleGen}
+\PY{k+kn}{from} \PY{n+nn}{tfx}\PY{n+nn}{.}\PY{n+nn}{components} \PY{k+kn}{import} \PY{n}{ExampleValidator}
+\PY{k+kn}{from} \PY{n+nn}{tfx}\PY{n+nn}{.}\PY{n+nn}{components} \PY{k+kn}{import} \PY{n}{SchemaGen}
+\PY{k+kn}{from} \PY{n+nn}{tfx}\PY{n+nn}{.}\PY{n+nn}{components} \PY{k+kn}{import} \PY{n}{StatisticsGen}
+\PY{k+kn}{from} \PY{n+nn}{tfx}\PY{n+nn}{.}\PY{n+nn}{components} \PY{k+kn}{import} \PY{n}{Transform}
+
+\PY{k+kn}{from} \PY{n+nn}{tfx}\PY{n+nn}{.}\PY{n+nn}{orchestration}\PY{n+nn}{.}\PY{n+nn}{experimental}\PY{n+nn}{.}\PY{n+nn}{interactive}\PY{n+nn}{.}\PY{n+nn}{interactive\PYZus{}context} \PY{k+kn}{import} \PY{n}{InteractiveContext}
+\PY{k+kn}{from} \PY{n+nn}{google}\PY{n+nn}{.}\PY{n+nn}{protobuf}\PY{n+nn}{.}\PY{n+nn}{json\PYZus{}format} \PY{k+kn}{import} \PY{n}{MessageToDict}
+
+\PY{k+kn}{import} \PY{n+nn}{os}
+\PY{k+kn}{import} \PY{n+nn}{pprint}
+
+\PY{n}{pp} \PY{o}{=} \PY{n}{pprint}\PY{o}{.}\PY{n}{PrettyPrinter}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \#\#\# 1.2 - Define paths
+
+You will define a few global variables to indicate paths in the local
+workspace.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} location of the pipeline metadata store}
+\PY{n}{\PYZus{}pipeline\PYZus{}root} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{metro\PYZus{}traffic\PYZus{}pipeline/}\PY{l+s+s1}{\PYZsq{}}
+
+\PY{c+c1}{\PYZsh{} directory of the raw data files}
+\PY{n}{\PYZus{}data\PYZus{}root} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{metro\PYZus{}traffic\PYZus{}pipeline/data}\PY{l+s+s1}{\PYZsq{}}
+
+\PY{c+c1}{\PYZsh{} path to the raw training data}
+\PY{n}{\PYZus{}data\PYZus{}filepath} \PY{o}{=} \PY{n}{os}\PY{o}{.}\PY{n}{path}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{\PYZus{}data\PYZus{}root}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{metro\PYZus{}traffic\PYZus{}volume.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \#\#\# 1.3 - Preview the dataset
+
+The
+\href{https://archive.ics.uci.edu/ml/datasets/Metro+Interstate+Traffic+Volume}{Metro
+Interstate Traffic Volume dataset} contains hourly traffic volume of a
+road in Minnesota from 2012-2018. With this data, you can develop a
+model for predicting the traffic volume given the date, time, and
+weather conditions. The attributes are:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{holiday} - US National holidays plus regional holiday,
+  Minnesota State Fair
+\item
+  \textbf{temp} - Average temp in Kelvin
+\item
+  \textbf{rain\_1h} - Amount in mm of rain that occurred in the hour
+\item
+  \textbf{snow\_1h} - Amount in mm of snow that occurred in the hour
+\item
+  \textbf{clouds\_all} - Percentage of cloud cover
+\item
+  \textbf{weather\_main} - Short textual description of the current
+  weather
+\item
+  \textbf{weather\_description} - Longer textual description of the
+  current weather
+\item
+  \textbf{date\_time} - DateTime Hour of the data collected in local CST
+  time
+\item
+  \textbf{traffic\_volume} - Numeric Hourly I-94 ATR 301 reported
+  westbound traffic volume
+\item
+  \textbf{month} - taken from date\_time
+\item
+  \textbf{day} - taken from date\_time
+\item
+  \textbf{day\_of\_week} - taken from date\_time
+\item
+  \textbf{hour} - taken from date\_time
+\end{itemize}
+
+\emph{Disclaimer: We added the last four attributes shown above
+(i.e.~month, day, day\_of\_week, hour) to the original dataset to
+increase the features you can transform later.}
+
+    Take a quick look at the first few rows of the CSV file.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Preview the dataset}
+\PY{o}{!}head \PY{o}{\PYZob{}}\PYZus{}data\PYZus{}filepath\PY{o}{\PYZcb{}}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+holiday,temp,rain\_1h,snow\_1h,clouds\_all,weather\_main,weather\_description,date\_ti
+me,traffic\_volume,month,day,day\_of\_week,hour
+None,288.28,0.0,0.0,40,Clouds,scattered clouds,2012-10-02 09:00:00,5545,10,2,1,9
+None,289.36,0.0,0.0,75,Clouds,broken clouds,2012-10-02 10:00:00,4516,10,2,1,10
+None,289.58,0.0,0.0,90,Clouds,overcast clouds,2012-10-02 11:00:00,4767,10,2,1,11
+None,290.13,0.0,0.0,90,Clouds,overcast clouds,2012-10-02 12:00:00,5026,10,2,1,12
+None,291.14,0.0,0.0,75,Clouds,broken clouds,2012-10-02 13:00:00,4918,10,2,1,13
+None,291.72,0.0,0.0,1,Clear,sky is clear,2012-10-02 14:00:00,5181,10,2,1,14
+None,293.17,0.0,0.0,1,Clear,sky is clear,2012-10-02 15:00:00,5584,10,2,1,15
+None,293.86,0.0,0.0,1,Clear,sky is clear,2012-10-02 16:00:00,6015,10,2,1,16
+None,294.14,0.0,0.0,20,Clouds,few clouds,2012-10-02 17:00:00,5791,10,2,1,17
+    \end{Verbatim}
+
+    \#\#\# 1.4 - Create the InteractiveContext
+
+You will need to initialize the \texttt{InteractiveContext} to enable
+running the TFX components interactively. As before, you will let it
+create the metadata store in the \texttt{\_pipeline\_root} directory.
+You can safely ignore the warning about the missing metadata config
+file.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Declare the InteractiveContext and use a local sqlite file as the metadata store.}
+\PY{c+c1}{\PYZsh{} You can ignore the warning about the missing metadata config file}
+\PY{n}{context} \PY{o}{=} \PY{n}{InteractiveContext}\PY{p}{(}\PY{n}{pipeline\PYZus{}root}\PY{o}{=}\PY{n}{\PYZus{}pipeline\PYZus{}root}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+WARNING:absl:InteractiveContext metadata\_connection\_config not provided: using
+SQLite ML Metadata database at metro\_traffic\_pipeline/metadata.sqlite.
+    \end{Verbatim}
+
+    \#\# 2 - Run TFX components interactively
+
+In the following exercises, you will create the data pipeline components
+one-by-one, run each of them, and visualize their output artifacts.
+Recall that we refer to the outputs of pipeline components as
+\emph{artifacts} and these can be inputs to the next stage of the
+pipeline.
+
+    \#\#\# 2.1 - ExampleGen
+
+The pipeline starts with the
+\href{https://www.tensorflow.org/tfx/guide/examplegen}{ExampleGen}
+component. It will:
+
+\begin{itemize}
+\tightlist
+\item
+  split the data into training and evaluation sets (by default: 2/3
+  train, 1/3 eval).
+\item
+  convert each data row into \texttt{tf.train.Example} format. This
+  \href{https://developers.google.com/protocol-buffers}{protocol buffer}
+  is designed for Tensorflow operations and is used by the TFX
+  components.
+\item
+  compress and save the data collection under the
+  \texttt{\_pipeline\_root} directory for other components to access.
+  These examples are stored in \texttt{TFRecord} format. This optimizes
+  read and write operations within Tensorflow especially if you have a
+  large collection of data.
+\end{itemize}
+
+    \#\#\#\# Exercise 1: ExampleGen
+
+Fill out the code below to ingest the data from the CSV file stored in
+the \texttt{\_data\_root} directory.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} START CODE HERE}
+
+\PY{c+c1}{\PYZsh{} Instantiate ExampleGen with the input CSV dataset}
+\PY{n}{example\PYZus{}gen} \PY{o}{=} \PY{n}{CsvExampleGen}\PY{p}{(}\PY{n}{input\PYZus{}base}\PY{o}{=}\PY{n}{\PYZus{}data\PYZus{}root}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Run the component using the InteractiveContext instance}
+\PY{n}{context}\PY{o}{.}\PY{n}{run}\PY{p}{(}\PY{n}{example\PYZus{}gen}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} END CODE HERE}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+ExecutionResult(
+    component\_id: CsvExampleGen
+    execution\_id: 8
+    outputs:
+        examples: Channel(
+            type\_name: Examples
+            artifacts: [Artifact(artifact: id: 12
+        type\_id: 5
+        uri: "metro\_traffic\_pipeline/CsvExampleGen/examples/8"
+        properties \{
+          key: "split\_names"
+          value \{
+            string\_value: "[\textbackslash{}"train\textbackslash{}", \textbackslash{}"eval\textbackslash{}"]"
+          \}
+        \}
+        custom\_properties \{
+          key: "input\_fingerprint"
+          value \{
+            string\_value: "split:single\_split,num\_files:1,total\_bytes:3648458,xo
+r\_checksum:1613618207,sum\_checksum:1613618207"
+          \}
+        \}
+        custom\_properties \{
+          key: "payload\_format"
+          value \{
+            string\_value: "FORMAT\_TF\_EXAMPLE"
+          \}
+        \}
+        custom\_properties \{
+          key: "span"
+          value \{
+            string\_value: "0"
+          \}
+        \}
+        custom\_properties \{
+          key: "state"
+          value \{
+            string\_value: "published"
+          \}
+        \}
+        , artifact\_type: id: 5
+        name: "Examples"
+        properties \{
+          key: "span"
+          value: INT
+        \}
+        properties \{
+          key: "split\_names"
+          value: STRING
+        \}
+        properties \{
+          key: "version"
+          value: INT
+        \}
+        )]
+        ))
+\end{Verbatim}
+\end{tcolorbox}
+        
+    You should see the output cell of the \texttt{InteractiveContext} above
+showing the metadata associated with the component execution. You can
+expand the items under \texttt{.component.outputs} and see that an
+\texttt{Examples} artifact for the train and eval split is created in
+\texttt{metro\_traffic\_pipeline/CsvExampleGen/examples/\{execution\_id\}}.
+
+You can also check that programmatically with the following snippet. You
+can focus on the \texttt{try} block. The \texttt{except} and
+\texttt{else} block is needed mainly for grading. \texttt{context.run()}
+yields no operation when executed in a non-interactive environment (such
+as the grader script that runs outside of this notebook). In such
+scenarios, the URI must be manually set to avoid errors.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{try}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} get the artifact object}
+    \PY{n}{artifact} \PY{o}{=} \PY{n}{example\PYZus{}gen}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{examples}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+    
+    \PY{c+c1}{\PYZsh{} print split names and uri}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{split names: }\PY{l+s+si}{\PYZob{}}\PY{n}{artifact}\PY{o}{.}\PY{n}{split\PYZus{}names}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{artifact uri: }\PY{l+s+si}{\PYZob{}}\PY{n}{artifact}\PY{o}{.}\PY{n}{uri}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} for grading since context.run() does not work outside the notebook}
+\PY{k}{except} \PY{n+ne}{IndexError}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{context.run() was no\PYZhy{}op}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{examples\PYZus{}path} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{./metro\PYZus{}traffic\PYZus{}pipeline/CsvExampleGen/examples}\PY{l+s+s1}{\PYZsq{}}
+    \PY{n}{dir\PYZus{}id} \PY{o}{=} \PY{n}{os}\PY{o}{.}\PY{n}{listdir}\PY{p}{(}\PY{n}{examples\PYZus{}path}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+    \PY{n}{artifact\PYZus{}uri} \PY{o}{=} \PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{examples\PYZus{}path}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{/}\PY{l+s+si}{\PYZob{}}\PY{n}{dir\PYZus{}id}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}
+
+\PY{k}{else}\PY{p}{:}
+    \PY{n}{artifact\PYZus{}uri} \PY{o}{=} \PY{n}{artifact}\PY{o}{.}\PY{n}{uri}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+split names: ["train", "eval"]
+artifact uri: metro\_traffic\_pipeline/CsvExampleGen/examples/8
+    \end{Verbatim}
+
+    The ingested data has been saved to the directory specified by the
+artifact Uniform Resource Identifier (URI). As a sanity check, you can
+take a look at some of the training examples. This requires working with
+Tensorflow data types, particularly \texttt{tf.train.Example} and
+\texttt{TFRecord} (you can read more about them
+\href{https://www.tensorflow.org/tutorials/load_data/tfrecord}{here}).
+Let's first load the \texttt{TFRecord} into a variable:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Get the URI of the output artifact representing the training examples, which is a directory}
+\PY{n}{train\PYZus{}uri} \PY{o}{=} \PY{n}{os}\PY{o}{.}\PY{n}{path}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{artifact\PYZus{}uri}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{train}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get the list of files in this directory (all compressed TFRecord files)}
+\PY{n}{tfrecord\PYZus{}filenames} \PY{o}{=} \PY{p}{[}\PY{n}{os}\PY{o}{.}\PY{n}{path}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{train\PYZus{}uri}\PY{p}{,} \PY{n}{name}\PY{p}{)}
+                      \PY{k}{for} \PY{n}{name} \PY{o+ow}{in} \PY{n}{os}\PY{o}{.}\PY{n}{listdir}\PY{p}{(}\PY{n}{train\PYZus{}uri}\PY{p}{)}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Create a `TFRecordDataset` to read these files}
+\PY{n}{dataset} \PY{o}{=} \PY{n}{tf}\PY{o}{.}\PY{n}{data}\PY{o}{.}\PY{n}{TFRecordDataset}\PY{p}{(}\PY{n}{tfrecord\PYZus{}filenames}\PY{p}{,} \PY{n}{compression\PYZus{}type}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{GZIP}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \#\#\#\# Exercise 2: get\_records()
+
+Complete the helper function below to return a specified number of
+examples.
+
+\emph{Hints: You may find the
+\href{https://googleapis.dev/python/protobuf/latest/google/protobuf/json_format.html\#google.protobuf.json_format.MessageToDict}{MessageToDict}
+helper function and tf.train.Example's
+\href{https://googleapis.dev/python/protobuf/latest/google/protobuf/message.html\#google.protobuf.message.Message.ParseFromString}{ParseFromString()}
+method useful here. You can also refer
+\href{https://www.tensorflow.org/tutorials/load_data/tfrecord}{here} for
+a refresher on TFRecord and tf.train.Example()}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{get\PYZus{}records}\PY{p}{(}\PY{n}{dataset}\PY{p}{,} \PY{n}{num\PYZus{}records}\PY{p}{)}\PY{p}{:}
+    \PY{l+s+sd}{\PYZsq{}\PYZsq{}\PYZsq{}Extracts records from the given dataset.}
+\PY{l+s+sd}{    Args:}
+\PY{l+s+sd}{        dataset (TFRecordDataset): dataset saved by ExampleGen}
+\PY{l+s+sd}{        num\PYZus{}records (int): number of records to preview}
+\PY{l+s+sd}{    \PYZsq{}\PYZsq{}\PYZsq{}}
+    
+    \PY{c+c1}{\PYZsh{} initialize an empty list}
+    \PY{n}{records} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+
+    \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} START CODE HERE}
+    \PY{c+c1}{\PYZsh{} Use the `take()` method to specify how many records to get}
+    \PY{k}{for} \PY{n}{tfrecord} \PY{o+ow}{in} \PY{n}{dataset}\PY{o}{.}\PY{n}{take}\PY{p}{(}\PY{n}{num\PYZus{}records}\PY{p}{)}\PY{p}{:}
+        
+        \PY{c+c1}{\PYZsh{} Get the numpy property of the tensor}
+        \PY{n}{serialized\PYZus{}example} \PY{o}{=} \PY{n}{tfrecord}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}
+        
+        \PY{c+c1}{\PYZsh{} Initialize a `tf.train.Example()` to read the serialized data}
+        \PY{n}{example} \PY{o}{=} \PY{n}{tf}\PY{o}{.}\PY{n}{train}\PY{o}{.}\PY{n}{Example}\PY{p}{(}\PY{p}{)}
+        
+        \PY{c+c1}{\PYZsh{} Read the example data (output is a protocol buffer message)}
+        \PY{n}{example}\PY{o}{.}\PY{n}{ParseFromString}\PY{p}{(}\PY{n}{serialized\PYZus{}example}\PY{p}{)}
+        
+        \PY{c+c1}{\PYZsh{} convert the protocol bufffer message to a Python dictionary}
+        \PY{n}{example\PYZus{}dict} \PY{o}{=} \PY{n}{MessageToDict}\PY{p}{(}\PY{n}{example}\PY{p}{)}
+        
+        \PY{c+c1}{\PYZsh{} append to the records list}
+        \PY{n}{records}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{example\PYZus{}dict}\PY{p}{)}
+        
+    \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} END CODE HERE}
+    \PY{k}{return} \PY{n}{records}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Get 3 records from the dataset}
+\PY{n}{sample\PYZus{}records} \PY{o}{=} \PY{n}{get\PYZus{}records}\PY{p}{(}\PY{n}{dataset}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Print the output}
+\PY{n}{pp}\PY{o}{.}\PY{n}{pprint}\PY{p}{(}\PY{n}{sample\PYZus{}records}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[\{'features': \{'feature': \{'clouds\_all': \{'int64List': \{'value': ['40']\}\},
+                           'date\_time': \{'bytesList': \{'value':
+['MjAxMi0xMC0wMiAwOTowMDowMA==']\}\},
+                           'day': \{'int64List': \{'value': ['2']\}\},
+                           'day\_of\_week': \{'int64List': \{'value': ['1']\}\},
+                           'holiday': \{'bytesList': \{'value': ['Tm9uZQ==']\}\},
+                           'hour': \{'int64List': \{'value': ['9']\}\},
+                           'month': \{'int64List': \{'value': ['10']\}\},
+                           'rain\_1h': \{'floatList': \{'value': [0.0]\}\},
+                           'snow\_1h': \{'floatList': \{'value': [0.0]\}\},
+                           'temp': \{'floatList': \{'value': [288.28]\}\},
+                           'traffic\_volume': \{'int64List': \{'value': ['5545']\}\},
+                           'weather\_description': \{'bytesList': \{'value':
+['c2NhdHRlcmVkIGNsb3Vkcw==']\}\},
+                           'weather\_main': \{'bytesList': \{'value':
+['Q2xvdWRz']\}\}\}\}\},
+ \{'features': \{'feature': \{'clouds\_all': \{'int64List': \{'value': ['75']\}\},
+                           'date\_time': \{'bytesList': \{'value':
+['MjAxMi0xMC0wMiAxMDowMDowMA==']\}\},
+                           'day': \{'int64List': \{'value': ['2']\}\},
+                           'day\_of\_week': \{'int64List': \{'value': ['1']\}\},
+                           'holiday': \{'bytesList': \{'value': ['Tm9uZQ==']\}\},
+                           'hour': \{'int64List': \{'value': ['10']\}\},
+                           'month': \{'int64List': \{'value': ['10']\}\},
+                           'rain\_1h': \{'floatList': \{'value': [0.0]\}\},
+                           'snow\_1h': \{'floatList': \{'value': [0.0]\}\},
+                           'temp': \{'floatList': \{'value': [289.36]\}\},
+                           'traffic\_volume': \{'int64List': \{'value': ['4516']\}\},
+                           'weather\_description': \{'bytesList': \{'value':
+['YnJva2VuIGNsb3Vkcw==']\}\},
+                           'weather\_main': \{'bytesList': \{'value':
+['Q2xvdWRz']\}\}\}\}\},
+ \{'features': \{'feature': \{'clouds\_all': \{'int64List': \{'value': ['90']\}\},
+                           'date\_time': \{'bytesList': \{'value':
+['MjAxMi0xMC0wMiAxMTowMDowMA==']\}\},
+                           'day': \{'int64List': \{'value': ['2']\}\},
+                           'day\_of\_week': \{'int64List': \{'value': ['1']\}\},
+                           'holiday': \{'bytesList': \{'value': ['Tm9uZQ==']\}\},
+                           'hour': \{'int64List': \{'value': ['11']\}\},
+                           'month': \{'int64List': \{'value': ['10']\}\},
+                           'rain\_1h': \{'floatList': \{'value': [0.0]\}\},
+                           'snow\_1h': \{'floatList': \{'value': [0.0]\}\},
+                           'temp': \{'floatList': \{'value': [289.58]\}\},
+                           'traffic\_volume': \{'int64List': \{'value': ['4767']\}\},
+                           'weather\_description': \{'bytesList': \{'value':
+['b3ZlcmNhc3QgY2xvdWRz']\}\},
+                           'weather\_main': \{'bytesList': \{'value':
+['Q2xvdWRz']\}\}\}\}\}]
+    \end{Verbatim}
+
+    You should see three of the examples printed above. Now that
+\texttt{ExampleGen} has finished ingesting the data, the next step is
+data analysis.
+
+    \#\#\# 2.2 - StatisticsGen The
+\href{https://www.tensorflow.org/tfx/guide/statsgen}{StatisticsGen}
+component computes statistics over your dataset for data analysis, as
+well as for use in downstream components. It uses the
+\href{https://www.tensorflow.org/tfx/data_validation/get_started}{TensorFlow
+Data Validation} library.
+
+\texttt{StatisticsGen} takes as input the dataset ingested using
+\texttt{CsvExampleGen}.
+
+    \#\#\#\# Exercise 3: StatisticsGen
+
+Fill the code below to generate statistics from the output examples of
+\texttt{CsvExampleGen}.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} START CODE HERE}
+\PY{c+c1}{\PYZsh{} Instantiate StatisticsGen with the ExampleGen ingested dataset}
+\PY{n}{statistics\PYZus{}gen} \PY{o}{=} \PY{n}{StatisticsGen}\PY{p}{(}\PY{n}{examples}\PY{o}{=}\PY{n}{example\PYZus{}gen}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{examples}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+    
+
+\PY{c+c1}{\PYZsh{} Run the component}
+\PY{n}{context}\PY{o}{.}\PY{n}{run}\PY{p}{(}\PY{n}{statistics\PYZus{}gen}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} END CODE HERE}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+ExecutionResult(
+    component\_id: StatisticsGen
+    execution\_id: 9
+    outputs:
+        statistics: Channel(
+            type\_name: ExampleStatistics
+            artifacts: [Artifact(artifact: id: 13
+        type\_id: 7
+        uri: "metro\_traffic\_pipeline/StatisticsGen/statistics/9"
+        properties \{
+          key: "split\_names"
+          value \{
+            string\_value: "[\textbackslash{}"train\textbackslash{}", \textbackslash{}"eval\textbackslash{}"]"
+          \}
+        \}
+        custom\_properties \{
+          key: "name"
+          value \{
+            string\_value: "statistics"
+          \}
+        \}
+        custom\_properties \{
+          key: "producer\_component"
+          value \{
+            string\_value: "StatisticsGen"
+          \}
+        \}
+        custom\_properties \{
+          key: "state"
+          value \{
+            string\_value: "published"
+          \}
+        \}
+        , artifact\_type: id: 7
+        name: "ExampleStatistics"
+        properties \{
+          key: "span"
+          value: INT
+        \}
+        properties \{
+          key: "split\_names"
+          value: STRING
+        \}
+        )]
+        ))
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Plot the statistics generated}
+\PY{n}{context}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{n}{statistics\PYZus{}gen}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{statistics}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+WARNING:tensorflow:From /opt/conda/lib/python3.8/site-
+packages/tensorflow\_data\_validation/utils/stats\_util.py:229: tf\_record\_iterator
+(from tensorflow.python.lib.io.tf\_record) is deprecated and will be removed in a
+future version.
+Instructions for updating:
+Use eager execution and:
+`tf.data.TFRecordDataset(path)`
+    \end{Verbatim}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    \#\#\# 2.3 - SchemaGen
+
+The \href{https://www.tensorflow.org/tfx/guide/schemagen}{SchemaGen}
+component also uses TFDV to generate a schema based on your data
+statistics. As you've learned previously, a schema defines the expected
+bounds, types, and properties of the features in your dataset.
+
+\texttt{SchemaGen} will take as input the statistics that we generated
+with \texttt{StatisticsGen}, looking at the training split by default.
+
+    \#\#\#\# Exercise 4: SchemaGen
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} START CODE HERE}
+\PY{c+c1}{\PYZsh{} Instantiate SchemaGen with the output statistics from the StatisticsGen}
+\PY{n}{schema\PYZus{}gen} \PY{o}{=} \PY{n}{SchemaGen}\PY{p}{(}\PY{n}{statistics}\PY{o}{=}\PY{n}{statistics\PYZus{}gen}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{statistics}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+    
+    
+
+\PY{c+c1}{\PYZsh{} Run the component}
+\PY{n}{context}\PY{o}{.}\PY{n}{run}\PY{p}{(}\PY{n}{schema\PYZus{}gen}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} END CODE HERE}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+ExecutionResult(
+    component\_id: SchemaGen
+    execution\_id: 10
+    outputs:
+        schema: Channel(
+            type\_name: Schema
+            artifacts: [Artifact(artifact: id: 14
+        type\_id: 9
+        uri: "metro\_traffic\_pipeline/SchemaGen/schema/10"
+        custom\_properties \{
+          key: "name"
+          value \{
+            string\_value: "schema"
+          \}
+        \}
+        custom\_properties \{
+          key: "producer\_component"
+          value \{
+            string\_value: "SchemaGen"
+          \}
+        \}
+        custom\_properties \{
+          key: "state"
+          value \{
+            string\_value: "published"
+          \}
+        \}
+        , artifact\_type: id: 9
+        name: "Schema"
+        )]
+        ))
+\end{Verbatim}
+\end{tcolorbox}
+        
+    If all went well, you can now visualize the generated schema as a table.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Visualize the output}
+\PY{n}{context}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{n}{schema\PYZus{}gen}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{schema}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+                         Type  Presence Valency                 Domain
+Feature name                                                          
+'clouds\_all'              INT  required  single                      -
+'date\_time'             BYTES  required  single                      -
+'day'                     INT  required  single                      -
+'day\_of\_week'             INT  required  single                      -
+'holiday'              STRING  required  single              'holiday'
+'hour'                    INT  required  single                      -
+'month'                   INT  required  single                      -
+'rain\_1h'               FLOAT  required  single                      -
+'snow\_1h'               FLOAT  required  single                      -
+'temp'                  FLOAT  required  single                      -
+'traffic\_volume'          INT  required  single                      -
+'weather\_description'  STRING  required  single  'weather\_description'
+'weather\_main'         STRING  required  single         'weather\_main'
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             Values
+Domain                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+'holiday'              'Christmas Day', 'Columbus Day', 'Independence Day', 'Labor Day', 'Martin Luther King Jr Day', 'Memorial Day', 'New Years Day', 'None', 'State Fair', 'Thanksgiving Day', 'Veterans Day', 'Washingtons Birthday'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+'weather\_description'  'SQUALLS', 'Sky is Clear', 'broken clouds', 'drizzle', 'few clouds', 'fog', 'freezing rain', 'haze', 'heavy intensity drizzle', 'heavy intensity rain', 'heavy snow', 'light intensity drizzle', 'light intensity shower rain', 'light rain', 'light rain and snow', 'light shower snow', 'light snow', 'mist', 'moderate rain', 'overcast clouds', 'proximity shower rain', 'proximity thunderstorm', 'proximity thunderstorm with drizzle', 'proximity thunderstorm with rain', 'scattered clouds', 'shower drizzle', 'sky is clear', 'sleet', 'smoke', 'snow', 'thunderstorm', 'thunderstorm with heavy rain', 'thunderstorm with light drizzle', 'thunderstorm with light rain', 'thunderstorm with rain', 'very heavy rain', 'shower snow', 'thunderstorm with drizzle'
+'weather\_main'         'Clear', 'Clouds', 'Drizzle', 'Fog', 'Haze', 'Mist', 'Rain', 'Smoke', 'Snow', 'Squall', 'Thunderstorm'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+    \end{Verbatim}
+
+    
+    Each attribute in your dataset shows up as a row in the schema table,
+alongside its properties. The schema also captures all the values that a
+categorical feature takes on, denoted as its domain.
+
+This schema will be used to detect anomalies in the next step.
+
+    \#\#\# 2.4 - ExampleValidator
+
+The
+\href{https://www.tensorflow.org/tfx/guide/exampleval}{ExampleValidator}
+component detects anomalies in your data based on the generated schema
+from the previous step. Like the previous two components, it also uses
+TFDV under the hood.
+
+\texttt{ExampleValidator} will take as input the statistics from
+\texttt{StatisticsGen} and the schema from \texttt{SchemaGen}. By
+default, it compares the statistics from the evaluation split to the
+schema from the training split.
+
+    \#\#\#\# Exercise 5: ExampleValidator
+
+Fill the code below to detect anomalies in your datasets.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} START CODE HERE}
+\PY{c+c1}{\PYZsh{} Instantiate ExampleValidator with the statistics and schema from the previous steps}
+\PY{n}{example\PYZus{}validator} \PY{o}{=} \PY{n}{ExampleValidator}\PY{p}{(}
+                                    \PY{n}{statistics}\PY{o}{=}\PY{n}{statistics\PYZus{}gen}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{statistics}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
+                                    \PY{n}{schema}\PY{o}{=}\PY{n}{schema\PYZus{}gen}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{schema}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+    
+    
+
+\PY{c+c1}{\PYZsh{} Run the component}
+\PY{n}{context}\PY{o}{.}\PY{n}{run}\PY{p}{(}\PY{n}{example\PYZus{}validator}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} END CODE HERE}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+ExecutionResult(
+    component\_id: ExampleValidator
+    execution\_id: 11
+    outputs:
+        anomalies: Channel(
+            type\_name: ExampleAnomalies
+            artifacts: [Artifact(artifact: id: 15
+        type\_id: 11
+        uri: "metro\_traffic\_pipeline/ExampleValidator/anomalies/11"
+        properties \{
+          key: "split\_names"
+          value \{
+            string\_value: "[\textbackslash{}"train\textbackslash{}", \textbackslash{}"eval\textbackslash{}"]"
+          \}
+        \}
+        custom\_properties \{
+          key: "name"
+          value \{
+            string\_value: "anomalies"
+          \}
+        \}
+        custom\_properties \{
+          key: "producer\_component"
+          value \{
+            string\_value: "ExampleValidator"
+          \}
+        \}
+        custom\_properties \{
+          key: "state"
+          value \{
+            string\_value: "published"
+          \}
+        \}
+        , artifact\_type: id: 11
+        name: "ExampleAnomalies"
+        properties \{
+          key: "span"
+          value: INT
+        \}
+        properties \{
+          key: "split\_names"
+          value: STRING
+        \}
+        )]
+        ))
+\end{Verbatim}
+\end{tcolorbox}
+        
+    As with the previous steps, you can visualize the anomalies as a table.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Visualize the output}
+\PY{n}{context}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{n}{example\PYZus{}validator}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{anomalies}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    If there are anomalies detected, you should examine how you should
+handle it. For example, you can relax distribution constraints or modify
+the domain of some features. You've had some practice with this last
+week when you used TFDV and you can also do that here.
+
+For this particular case, there should be no anomalies detected and we
+can proceed to the next step.
+
+    \#\#\# 2.5 - Transform
+
+In this section, you will use the
+\href{https://www.tensorflow.org/tfx/guide/transform}{Transform}
+component to perform feature engineering.
+
+\texttt{Transform} will take as input the data from \texttt{ExampleGen},
+the schema from \texttt{SchemaGen}, as well as a module containing the
+preprocessing function.
+
+The component expects an external module for your Transform code so you
+need to use the magic command \texttt{\%\%\ writefile} to save the file
+to disk. We have defined a few constants that group the data's
+attributes according to the transforms you will perform later. This file
+will also be saved locally.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Set the constants module filename}
+\PY{n}{\PYZus{}traffic\PYZus{}constants\PYZus{}module\PYZus{}file} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{traffic\PYZus{}constants.py}\PY{l+s+s1}{\PYZsq{}}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{o}{\PYZpc{}\PYZpc{}writefile} \PYZob{}\PYZus{}traffic\PYZus{}constants\PYZus{}module\PYZus{}file\PYZcb{}
+
+\PY{c+c1}{\PYZsh{} Features to be scaled to the z\PYZhy{}score}
+\PY{n}{DENSE\PYZus{}FLOAT\PYZus{}FEATURE\PYZus{}KEYS} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{temp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{snow\PYZus{}1h}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Features to bucketize}
+\PY{n}{BUCKET\PYZus{}FEATURE\PYZus{}KEYS} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{rain\PYZus{}1h}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Number of buckets used by tf.transform for encoding each feature.}
+\PY{n}{FEATURE\PYZus{}BUCKET\PYZus{}COUNT} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{rain\PYZus{}1h}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+m+mi}{3}\PY{p}{\PYZcb{}}
+
+\PY{c+c1}{\PYZsh{} Feature to scale from 0 to 1}
+\PY{n}{RANGE\PYZus{}FEATURE\PYZus{}KEYS} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{clouds\PYZus{}all}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Number of vocabulary terms used for encoding VOCAB\PYZus{}FEATURES by tf.transform}
+\PY{n}{VOCAB\PYZus{}SIZE} \PY{o}{=} \PY{l+m+mi}{1000}
+
+\PY{c+c1}{\PYZsh{} Count of out\PYZhy{}of\PYZhy{}vocab buckets in which unrecognized VOCAB\PYZus{}FEATURES are hashed.}
+\PY{n}{OOV\PYZus{}SIZE} \PY{o}{=} \PY{l+m+mi}{10}
+
+\PY{c+c1}{\PYZsh{} Features with string data types that will be converted to indices}
+\PY{n}{VOCAB\PYZus{}FEATURE\PYZus{}KEYS} \PY{o}{=} \PY{p}{[}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{holiday}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{weather\PYZus{}main}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{weather\PYZus{}description}\PY{l+s+s1}{\PYZsq{}}
+\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Features with int data type that will be kept as is}
+\PY{n}{CATEGORICAL\PYZus{}FEATURE\PYZus{}KEYS} \PY{o}{=} \PY{p}{[}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{hour}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{day}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{day\PYZus{}of\PYZus{}week}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{month}\PY{l+s+s1}{\PYZsq{}}
+\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Feature to predict}
+\PY{n}{VOLUME\PYZus{}KEY} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{traffic\PYZus{}volume}\PY{l+s+s1}{\PYZsq{}}
+
+\PY{k}{def} \PY{n+nf}{transformed\PYZus{}name}\PY{p}{(}\PY{n}{key}\PY{p}{)}\PY{p}{:}
+    \PY{k}{return} \PY{n}{key} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}xf}\PY{l+s+s1}{\PYZsq{}}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Overwriting traffic\_constants.py
+    \end{Verbatim}
+
+    \#\#\#\# Exercise 6
+
+    Next, you will fill out the transform module. As mentioned, this will
+also be saved to disk. Specifically, you will complete the
+\texttt{preprocessing\_fn} which defines the transformations. See the
+code comments for instructions and refer to the
+\href{https://www.tensorflow.org/tfx/transform/api_docs/python/tft}{tft
+module documentation} to look up which function to use for a given group
+of keys.
+
+For the label (i.e.~\texttt{VOLUME\_KEY}), you will transform it to
+indicate if it is greater than the mean of the entire dataset. For the
+transform to work, you will need to convert a
+\href{https://www.tensorflow.org/api_docs/python/tf/sparse/SparseTensor}{SparseTensor}
+to a dense one. We've provided a \texttt{\_fill\_in\_missing()} helper
+function for you to use.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Set the transform module filename}
+\PY{n}{\PYZus{}traffic\PYZus{}transform\PYZus{}module\PYZus{}file} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{traffic\PYZus{}transform.py}\PY{l+s+s1}{\PYZsq{}}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{34}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{o}{\PYZpc{}\PYZpc{}writefile} \PYZob{}\PYZus{}traffic\PYZus{}transform\PYZus{}module\PYZus{}file\PYZcb{}
+
+\PY{k+kn}{import} \PY{n+nn}{tensorflow} \PY{k}{as} \PY{n+nn}{tf}
+\PY{k+kn}{import} \PY{n+nn}{tensorflow\PYZus{}transform} \PY{k}{as} \PY{n+nn}{tft}
+
+\PY{k+kn}{import} \PY{n+nn}{traffic\PYZus{}constants}
+
+\PY{c+c1}{\PYZsh{} Unpack the contents of the constants module}
+\PY{n}{\PYZus{}DENSE\PYZus{}FLOAT\PYZus{}FEATURE\PYZus{}KEYS} \PY{o}{=} \PY{n}{traffic\PYZus{}constants}\PY{o}{.}\PY{n}{DENSE\PYZus{}FLOAT\PYZus{}FEATURE\PYZus{}KEYS}
+\PY{n}{\PYZus{}RANGE\PYZus{}FEATURE\PYZus{}KEYS} \PY{o}{=} \PY{n}{traffic\PYZus{}constants}\PY{o}{.}\PY{n}{RANGE\PYZus{}FEATURE\PYZus{}KEYS}
+\PY{n}{\PYZus{}VOCAB\PYZus{}FEATURE\PYZus{}KEYS} \PY{o}{=} \PY{n}{traffic\PYZus{}constants}\PY{o}{.}\PY{n}{VOCAB\PYZus{}FEATURE\PYZus{}KEYS}
+\PY{n}{\PYZus{}VOCAB\PYZus{}SIZE} \PY{o}{=} \PY{n}{traffic\PYZus{}constants}\PY{o}{.}\PY{n}{VOCAB\PYZus{}SIZE}
+\PY{n}{\PYZus{}OOV\PYZus{}SIZE} \PY{o}{=} \PY{n}{traffic\PYZus{}constants}\PY{o}{.}\PY{n}{OOV\PYZus{}SIZE}
+\PY{n}{\PYZus{}CATEGORICAL\PYZus{}FEATURE\PYZus{}KEYS} \PY{o}{=} \PY{n}{traffic\PYZus{}constants}\PY{o}{.}\PY{n}{CATEGORICAL\PYZus{}FEATURE\PYZus{}KEYS}
+\PY{n}{\PYZus{}BUCKET\PYZus{}FEATURE\PYZus{}KEYS} \PY{o}{=} \PY{n}{traffic\PYZus{}constants}\PY{o}{.}\PY{n}{BUCKET\PYZus{}FEATURE\PYZus{}KEYS}
+\PY{n}{\PYZus{}FEATURE\PYZus{}BUCKET\PYZus{}COUNT} \PY{o}{=} \PY{n}{traffic\PYZus{}constants}\PY{o}{.}\PY{n}{FEATURE\PYZus{}BUCKET\PYZus{}COUNT}
+\PY{n}{\PYZus{}VOLUME\PYZus{}KEY} \PY{o}{=} \PY{n}{traffic\PYZus{}constants}\PY{o}{.}\PY{n}{VOLUME\PYZus{}KEY}
+\PY{n}{\PYZus{}transformed\PYZus{}name} \PY{o}{=} \PY{n}{traffic\PYZus{}constants}\PY{o}{.}\PY{n}{transformed\PYZus{}name}
+
+
+\PY{k}{def} \PY{n+nf}{preprocessing\PYZus{}fn}\PY{p}{(}\PY{n}{inputs}\PY{p}{)}\PY{p}{:}
+    \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}tf.transform\PYZsq{}s callback function for preprocessing inputs.}
+\PY{l+s+sd}{    Args:}
+\PY{l+s+sd}{    inputs: map from feature keys to raw not\PYZhy{}yet\PYZhy{}transformed features.}
+\PY{l+s+sd}{    Returns:}
+\PY{l+s+sd}{    Map from string feature key to transformed feature operations.}
+\PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+    \PY{n}{outputs} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
+
+    \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} START CODE HERE}
+    
+    \PY{c+c1}{\PYZsh{} Scale these features to the z\PYZhy{}score.}
+    \PY{k}{for} \PY{n}{key} \PY{o+ow}{in} \PY{n}{\PYZus{}DENSE\PYZus{}FLOAT\PYZus{}FEATURE\PYZus{}KEYS}\PY{p}{:}
+        \PY{c+c1}{\PYZsh{} Scale these features to the z\PYZhy{}score.}
+        \PY{n}{outputs}\PY{p}{[}\PY{n}{\PYZus{}transformed\PYZus{}name}\PY{p}{(}\PY{n}{key}\PY{p}{)}\PY{p}{]} \PY{o}{=} \PY{n}{tft}\PY{o}{.}\PY{n}{scale\PYZus{}to\PYZus{}z\PYZus{}score}\PY{p}{(}\PY{n}{inputs}\PY{p}{[}\PY{n}{key}\PY{p}{]}\PY{p}{)}
+            
+
+    \PY{c+c1}{\PYZsh{} Scale these feature/s from 0 to 1}
+    \PY{k}{for} \PY{n}{key} \PY{o+ow}{in} \PY{n}{\PYZus{}RANGE\PYZus{}FEATURE\PYZus{}KEYS}\PY{p}{:}
+        \PY{n}{outputs}\PY{p}{[}\PY{n}{\PYZus{}transformed\PYZus{}name}\PY{p}{(}\PY{n}{key}\PY{p}{)}\PY{p}{]} \PY{o}{=} \PY{n}{tft}\PY{o}{.}\PY{n}{scale\PYZus{}to\PYZus{}0\PYZus{}1}\PY{p}{(}\PY{n}{inputs}\PY{p}{[}\PY{n}{key}\PY{p}{]}\PY{p}{)}
+            
+
+    \PY{c+c1}{\PYZsh{} Transform the strings into indices }
+    \PY{c+c1}{\PYZsh{} hint: use the VOCAB\PYZus{}SIZE and OOV\PYZus{}SIZE to define the top\PYZus{}k and num\PYZus{}oov parameters}
+    \PY{k}{for} \PY{n}{key} \PY{o+ow}{in} \PY{n}{\PYZus{}VOCAB\PYZus{}FEATURE\PYZus{}KEYS}\PY{p}{:}
+        \PY{n}{outputs}\PY{p}{[}\PY{n}{\PYZus{}transformed\PYZus{}name}\PY{p}{(}\PY{n}{key}\PY{p}{)}\PY{p}{]} \PY{o}{=} \PY{n}{tft}\PY{o}{.}\PY{n}{compute\PYZus{}and\PYZus{}apply\PYZus{}vocabulary}\PY{p}{(}\PY{n}{inputs}\PY{p}{[}\PY{n}{key}\PY{p}{]}\PY{p}{,}
+                                                                           \PY{n}{top\PYZus{}k}\PY{o}{=}\PY{n}{\PYZus{}VOCAB\PYZus{}SIZE}\PY{p}{)}
+            
+            
+            
+
+    \PY{c+c1}{\PYZsh{} Bucketize the feature}
+    \PY{k}{for} \PY{n}{key} \PY{o+ow}{in} \PY{n}{\PYZus{}BUCKET\PYZus{}FEATURE\PYZus{}KEYS}\PY{p}{:}
+        \PY{n}{outputs}\PY{p}{[}\PY{n}{\PYZus{}transformed\PYZus{}name}\PY{p}{(}\PY{n}{key}\PY{p}{)}\PY{p}{]} \PY{o}{=} \PY{n}{tft}\PY{o}{.}\PY{n}{bucketize}\PY{p}{(}\PY{n}{inputs}\PY{p}{[}\PY{n}{key}\PY{p}{]}\PY{p}{,}
+                                                       \PY{n}{\PYZus{}FEATURE\PYZus{}BUCKET\PYZus{}COUNT}\PY{p}{[}\PY{n}{key}\PY{p}{]}\PY{p}{)}
+            
+            
+
+    \PY{c+c1}{\PYZsh{} Keep as is. No tft function needed.}
+    \PY{k}{for} \PY{n}{key} \PY{o+ow}{in} \PY{n}{\PYZus{}CATEGORICAL\PYZus{}FEATURE\PYZus{}KEYS}\PY{p}{:}
+        \PY{n}{outputs}\PY{p}{[}\PY{n}{\PYZus{}transformed\PYZus{}name}\PY{p}{(}\PY{n}{key}\PY{p}{)}\PY{p}{]} \PY{o}{=} \PY{n}{tft}\PY{o}{.}\PY{n}{compute\PYZus{}and\PYZus{}apply\PYZus{}vocabulary}\PY{p}{(}\PY{n}{inputs}\PY{p}{[}\PY{n}{key}\PY{p}{]}\PY{p}{)}
+
+        
+    \PY{c+c1}{\PYZsh{} Use `tf.cast` to cast the label key to float32 and fill in the missing values.}
+    \PY{n}{traffic\PYZus{}volume} \PY{o}{=} \PY{n}{\PYZus{}fill\PYZus{}in\PYZus{}missing}\PY{p}{(}\PY{n}{tf}\PY{o}{.}\PY{n}{cast}\PY{p}{(}\PY{n}{inputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{traffic\PYZus{}volume}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{tf}\PY{o}{.}\PY{n}{float32}\PY{p}{)}\PY{p}{)}
+  
+    
+    \PY{c+c1}{\PYZsh{} Create a feature that shows if the traffic volume is greater than the mean and cast to an int}
+    \PY{n}{outputs}\PY{p}{[}\PY{n}{\PYZus{}transformed\PYZus{}name}\PY{p}{(}\PY{n}{\PYZus{}VOLUME\PYZus{}KEY}\PY{p}{)}\PY{p}{]} \PY{o}{=} \PY{n}{tf}\PY{o}{.}\PY{n}{cast}\PY{p}{(}  
+        
+        \PY{c+c1}{\PYZsh{} Use `tf.greater` to check if the traffic volume in a row is greater than the mean of the entire traffic volumn column}
+        \PY{n}{tf}\PY{o}{.}\PY{n}{greater}\PY{p}{(}\PY{n}{traffic\PYZus{}volume}\PY{p}{,} \PY{n}{tft}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{tf}\PY{o}{.}\PY{n}{cast}\PY{p}{(}\PY{n}{inputs}\PY{p}{[}\PY{n}{\PYZus{}VOLUME\PYZus{}KEY}\PY{p}{]}\PY{p}{,} \PY{n}{tf}\PY{o}{.}\PY{n}{float32}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+        
+        \PY{n}{tf}\PY{o}{.}\PY{n}{int64}\PY{p}{)}                                        
+
+    \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} END CODE HERE}
+    \PY{k}{return} \PY{n}{outputs}
+
+
+\PY{k}{def} \PY{n+nf}{\PYZus{}fill\PYZus{}in\PYZus{}missing}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{:}
+    \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}Replace missing values in a SparseTensor and convert to a dense tensor.}
+\PY{l+s+sd}{    Fills in missing values of `x` with \PYZsq{}\PYZsq{} or 0, and converts to a dense tensor.}
+\PY{l+s+sd}{    Args:}
+\PY{l+s+sd}{        x: A `SparseTensor` of rank 2.  Its dense shape should have size at most 1}
+\PY{l+s+sd}{          in the second dimension.}
+\PY{l+s+sd}{    Returns:}
+\PY{l+s+sd}{        A rank 1 tensor where missing values of `x` have been filled in.}
+\PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+    \PY{n}{default\PYZus{}value} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}} \PY{k}{if} \PY{n}{x}\PY{o}{.}\PY{n}{dtype} \PY{o}{==} \PY{n}{tf}\PY{o}{.}\PY{n}{string} \PY{k}{else} \PY{l+m+mi}{0}
+    
+    \PY{k}{return} \PY{n}{tf}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}
+      \PY{n}{tf}\PY{o}{.}\PY{n}{sparse}\PY{o}{.}\PY{n}{to\PYZus{}dense}\PY{p}{(}
+          \PY{n}{tf}\PY{o}{.}\PY{n}{SparseTensor}\PY{p}{(}\PY{n}{x}\PY{o}{.}\PY{n}{indices}\PY{p}{,} \PY{n}{x}\PY{o}{.}\PY{n}{values}\PY{p}{,} \PY{p}{[}\PY{n}{x}\PY{o}{.}\PY{n}{dense\PYZus{}shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{,}
+          \PY{n}{default\PYZus{}value}\PY{p}{)}\PY{p}{,}
+      \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Overwriting traffic\_transform.py
+    \end{Verbatim}
+
+    \#\#\#\# Exercise 7
+
+With the transform module defined, complete the code below to perform
+feature engineering on the raw data.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{35}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} ignore tf warning messages}
+\PY{n}{tf}\PY{o}{.}\PY{n}{get\PYZus{}logger}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{setLevel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ERROR}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+
+\PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} START CODE HERE}
+\PY{c+c1}{\PYZsh{} Instantiate the Transform component}
+\PY{n}{transform} \PY{o}{=} \PY{n}{Transform}\PY{p}{(}
+    \PY{n}{examples}\PY{o}{=}\PY{n}{example\PYZus{}gen}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{examples}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
+    \PY{n}{schema}\PY{o}{=}\PY{n}{schema\PYZus{}gen}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{schema}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
+    \PY{n}{module\PYZus{}file}\PY{o}{=}\PY{n}{os}\PY{o}{.}\PY{n}{path}\PY{o}{.}\PY{n}{abspath}\PY{p}{(} \PY{n}{\PYZus{}traffic\PYZus{}transform\PYZus{}module\PYZus{}file}\PY{p}{)}
+                      \PY{p}{)}
+    
+    
+    
+
+\PY{c+c1}{\PYZsh{} Run the component.}
+\PY{c+c1}{\PYZsh{} The `enable\PYZus{}cache` flag is disabled in case you need to update your transform module file.}
+\PY{n}{context}\PY{o}{.}\PY{n}{run}\PY{p}{(}\PY{n}{transform}\PY{p}{,} \PY{n}{enable\PYZus{}cache}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} END CODE HERE}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+WARNING:root:This output type hint will be ignored and not used for type-
+checking purposes. Typically, output type hints for a PTransform are single (or
+nested) types wrapped by a PCollection, PDone, or None. Got: Tuple[Dict[str,
+Union[NoneType, \_Dataset]], Union[Dict[str, Dict[str, PCollection]], NoneType]]
+instead.
+WARNING:root:This output type hint will be ignored and not used for type-
+checking purposes. Typically, output type hints for a PTransform are single (or
+nested) types wrapped by a PCollection, PDone, or None. Got: Tuple[Dict[str,
+Union[NoneType, \_Dataset]], Union[Dict[str, Dict[str, PCollection]], NoneType]]
+instead.
+WARNING:apache\_beam.typehints.typehints:Ignoring send\_type hint: <class
+'NoneType'>
+WARNING:apache\_beam.typehints.typehints:Ignoring return\_type hint: <class
+'NoneType'>
+WARNING:apache\_beam.typehints.typehints:Ignoring send\_type hint: <class
+'NoneType'>
+WARNING:apache\_beam.typehints.typehints:Ignoring return\_type hint: <class
+'NoneType'>
+WARNING:apache\_beam.typehints.typehints:Ignoring send\_type hint: <class
+'NoneType'>
+WARNING:apache\_beam.typehints.typehints:Ignoring return\_type hint: <class
+'NoneType'>
+WARNING:apache\_beam.typehints.typehints:Ignoring send\_type hint: <class
+'NoneType'>
+WARNING:apache\_beam.typehints.typehints:Ignoring return\_type hint: <class
+'NoneType'>
+WARNING:apache\_beam.typehints.typehints:Ignoring send\_type hint: <class
+'NoneType'>
+WARNING:apache\_beam.typehints.typehints:Ignoring return\_type hint: <class
+'NoneType'>
+WARNING:apache\_beam.typehints.typehints:Ignoring send\_type hint: <class
+'NoneType'>
+WARNING:apache\_beam.typehints.typehints:Ignoring return\_type hint: <class
+'NoneType'>
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{35}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+ExecutionResult(
+    component\_id: Transform
+    execution\_id: 20
+    outputs:
+        transform\_graph: Channel(
+            type\_name: TransformGraph
+            artifacts: [Artifact(artifact: id: 40
+        type\_id: 13
+        uri: "metro\_traffic\_pipeline/Transform/transform\_graph/20"
+        custom\_properties \{
+          key: "name"
+          value \{
+            string\_value: "transform\_graph"
+          \}
+        \}
+        custom\_properties \{
+          key: "producer\_component"
+          value \{
+            string\_value: "Transform"
+          \}
+        \}
+        custom\_properties \{
+          key: "state"
+          value \{
+            string\_value: "published"
+          \}
+        \}
+        , artifact\_type: id: 13
+        name: "TransformGraph"
+        )]
+        )
+        transformed\_examples: Channel(
+            type\_name: Examples
+            artifacts: [Artifact(artifact: id: 41
+        type\_id: 5
+        uri: "metro\_traffic\_pipeline/Transform/transformed\_examples/20"
+        properties \{
+          key: "split\_names"
+          value \{
+            string\_value: "[\textbackslash{}"train\textbackslash{}", \textbackslash{}"eval\textbackslash{}"]"
+          \}
+        \}
+        custom\_properties \{
+          key: "name"
+          value \{
+            string\_value: "transformed\_examples"
+          \}
+        \}
+        custom\_properties \{
+          key: "producer\_component"
+          value \{
+            string\_value: "Transform"
+          \}
+        \}
+        custom\_properties \{
+          key: "state"
+          value \{
+            string\_value: "published"
+          \}
+        \}
+        , artifact\_type: id: 5
+        name: "Examples"
+        properties \{
+          key: "span"
+          value: INT
+        \}
+        properties \{
+          key: "split\_names"
+          value: STRING
+        \}
+        properties \{
+          key: "version"
+          value: INT
+        \}
+        )]
+        )
+        updated\_analyzer\_cache: Channel(
+            type\_name: TransformCache
+            artifacts: [Artifact(artifact: id: 42
+        type\_id: 14
+        uri: "metro\_traffic\_pipeline/Transform/updated\_analyzer\_cache/20"
+        custom\_properties \{
+          key: "name"
+          value \{
+            string\_value: "updated\_analyzer\_cache"
+          \}
+        \}
+        custom\_properties \{
+          key: "producer\_component"
+          value \{
+            string\_value: "Transform"
+          \}
+        \}
+        custom\_properties \{
+          key: "state"
+          value \{
+            string\_value: "published"
+          \}
+        \}
+        , artifact\_type: id: 14
+        name: "TransformCache"
+        )]
+        ))
+\end{Verbatim}
+\end{tcolorbox}
+        
+    You should see the output cell by \texttt{InteractiveContext} above and
+see the three artifacts in \texttt{.component.outputs}:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{transform\_graph} is the graph that performs the preprocessing
+  operations. This will be included during training and serving to
+  ensure consistent transformations of incoming data.
+\item
+  \texttt{transformed\_examples} points to the preprocessed training and
+  evaluation data.
+\item
+  \texttt{updated\_analyzer\_cache} are stored calculations from
+  previous runs.
+\end{itemize}
+
+    The \texttt{transform\_graph} artifact URI should point to a directory
+containing:
+
+\begin{itemize}
+\tightlist
+\item
+  The \texttt{metadata} subdirectory containing the schema of the
+  original data.
+\item
+  The \texttt{transformed\_metadata} subdirectory containing the schema
+  of the preprocessed data.
+\item
+  The \texttt{transform\_fn} subdirectory containing the actual
+  preprocessing graph.
+\end{itemize}
+
+Again, for grading purposes, we inserted an \texttt{except} and
+\texttt{else} below to handle checking the output outside the notebook
+environment.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{36}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{try}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} Get the uri of the transform graph}
+    \PY{n}{transform\PYZus{}graph\PYZus{}uri} \PY{o}{=} \PY{n}{transform}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{transform\PYZus{}graph}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{uri}
+
+\PY{k}{except} \PY{n+ne}{IndexError}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{context.run() was no\PYZhy{}op}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{transform\PYZus{}path} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{./metro\PYZus{}traffic\PYZus{}pipeline/Transform/transformed\PYZus{}examples}\PY{l+s+s1}{\PYZsq{}}
+    \PY{n}{dir\PYZus{}id} \PY{o}{=} \PY{n}{os}\PY{o}{.}\PY{n}{listdir}\PY{p}{(}\PY{n}{transform\PYZus{}path}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+    \PY{n}{transform\PYZus{}graph\PYZus{}uri} \PY{o}{=} \PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{transform\PYZus{}path}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{/}\PY{l+s+si}{\PYZob{}}\PY{n}{dir\PYZus{}id}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}
+    
+\PY{k}{else}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} List the subdirectories under the uri}
+    \PY{n}{os}\PY{o}{.}\PY{n}{listdir}\PY{p}{(}\PY{n}{transform\PYZus{}graph\PYZus{}uri}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Lastly, you can also take a look at a few of the transformed examples.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{37}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{try}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} Get the URI of the output artifact representing the transformed examples}
+    \PY{n}{train\PYZus{}uri} \PY{o}{=} \PY{n}{os}\PY{o}{.}\PY{n}{path}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{transform}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{transformed\PYZus{}examples}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{uri}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{train}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    
+\PY{k}{except} \PY{n+ne}{IndexError}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{context.run() was no\PYZhy{}op}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{train\PYZus{}uri} \PY{o}{=} \PY{n}{os}\PY{o}{.}\PY{n}{path}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{transform\PYZus{}graph\PYZus{}uri}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{train}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{38}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Get the list of files in this directory (all compressed TFRecord files)}
+\PY{n}{tfrecord\PYZus{}filenames} \PY{o}{=} \PY{p}{[}\PY{n}{os}\PY{o}{.}\PY{n}{path}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{train\PYZus{}uri}\PY{p}{,} \PY{n}{name}\PY{p}{)}
+                      \PY{k}{for} \PY{n}{name} \PY{o+ow}{in} \PY{n}{os}\PY{o}{.}\PY{n}{listdir}\PY{p}{(}\PY{n}{train\PYZus{}uri}\PY{p}{)}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Create a `TFRecordDataset` to read these files}
+\PY{n}{transformed\PYZus{}dataset} \PY{o}{=} \PY{n}{tf}\PY{o}{.}\PY{n}{data}\PY{o}{.}\PY{n}{TFRecordDataset}\PY{p}{(}\PY{n}{tfrecord\PYZus{}filenames}\PY{p}{,} \PY{n}{compression\PYZus{}type}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{GZIP}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{39}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Get 3 records from the dataset}
+\PY{n}{sample\PYZus{}records\PYZus{}xf} \PY{o}{=} \PY{n}{get\PYZus{}records}\PY{p}{(}\PY{n}{transformed\PYZus{}dataset}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Print the output}
+\PY{n}{pp}\PY{o}{.}\PY{n}{pprint}\PY{p}{(}\PY{n}{sample\PYZus{}records\PYZus{}xf}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[\{'features': \{'feature': \{'clouds\_all\_xf': \{'floatList': \{'value':
+[0.39999998]\}\},
+                           'day\_of\_week\_xf': \{'int64List': \{'value': ['2']\}\},
+                           'day\_xf': \{'int64List': \{'value': ['26']\}\},
+                           'holiday\_xf': \{'int64List': \{'value': ['0']\}\},
+                           'hour\_xf': \{'int64List': \{'value': ['5']\}\},
+                           'month\_xf': \{'int64List': \{'value': ['11']\}\},
+                           'rain\_1h\_xf': \{'int64List': \{'value': ['2']\}\},
+                           'snow\_1h\_xf': \{'floatList': \{'value':
+[-0.027424417]\}\},
+                           'temp\_xf': \{'floatList': \{'value': [0.53368527]\}\},
+                           'traffic\_volume\_xf': \{'int64List': \{'value': ['1']\}\},
+                           'weather\_description\_xf': \{'int64List': \{'value':
+['4']\}\},
+                           'weather\_main\_xf': \{'int64List': \{'value':
+['0']\}\}\}\}\},
+ \{'features': \{'feature': \{'clouds\_all\_xf': \{'floatList': \{'value': [0.75]\}\},
+                           'day\_of\_week\_xf': \{'int64List': \{'value': ['2']\}\},
+                           'day\_xf': \{'int64List': \{'value': ['26']\}\},
+                           'holiday\_xf': \{'int64List': \{'value': ['0']\}\},
+                           'hour\_xf': \{'int64List': \{'value': ['1']\}\},
+                           'month\_xf': \{'int64List': \{'value': ['11']\}\},
+                           'rain\_1h\_xf': \{'int64List': \{'value': ['2']\}\},
+                           'snow\_1h\_xf': \{'floatList': \{'value':
+[-0.027424417]\}\},
+                           'temp\_xf': \{'floatList': \{'value': [0.6156978]\}\},
+                           'traffic\_volume\_xf': \{'int64List': \{'value': ['1']\}\},
+                           'weather\_description\_xf': \{'int64List': \{'value':
+['3']\}\},
+                           'weather\_main\_xf': \{'int64List': \{'value':
+['0']\}\}\}\}\},
+ \{'features': \{'feature': \{'clouds\_all\_xf': \{'floatList': \{'value': [0.9]\}\},
+                           'day\_of\_week\_xf': \{'int64List': \{'value': ['2']\}\},
+                           'day\_xf': \{'int64List': \{'value': ['26']\}\},
+                           'holiday\_xf': \{'int64List': \{'value': ['0']\}\},
+                           'hour\_xf': \{'int64List': \{'value': ['16']\}\},
+                           'month\_xf': \{'int64List': \{'value': ['11']\}\},
+                           'rain\_1h\_xf': \{'int64List': \{'value': ['2']\}\},
+                           'snow\_1h\_xf': \{'floatList': \{'value':
+[-0.027424417]\}\},
+                           'temp\_xf': \{'floatList': \{'value': [0.6324043]\}\},
+                           'traffic\_volume\_xf': \{'int64List': \{'value': ['1']\}\},
+                           'weather\_description\_xf': \{'int64List': \{'value':
+['2']\}\},
+                           'weather\_main\_xf': \{'int64List': \{'value':
+['0']\}\}\}\}\}]
+    \end{Verbatim}
+
+    \textbf{Congratulations on completing this week's assignment!} You've
+just demonstrated how to build a data pipeline and do feature
+engineering. You will build upon these concepts in the next weeks where
+you will deal with more complex datasets and also access the metadata
+store. Keep up the good work!
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
