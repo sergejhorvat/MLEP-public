@@ -1,0 +1,1291 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+    \usepackage{iftex}
+    \ifPDFTeX
+    	\usepackage[T1]{fontenc}
+    	\usepackage{mathpazo}
+    \else
+    	\usepackage{fontspec}
+    \fi
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{C2\_W3\_Lab\_2\_IterativeSchema}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{ungraded-lab-iterative-schema-with-tfx-and-ml-metadata}{%
+\section{Ungraded Lab: Iterative Schema with TFX and ML
+Metadata}\label{ungraded-lab-iterative-schema-with-tfx-and-ml-metadata}}
+
+In this notebook, you will get to review how to update an inferred
+schema and save the result to the metadata store used by TFX. As
+mentioned before, the TFX components get information from this database
+before running executions. Thus, if you will be curating a schema, you
+will need to save this as an artifact in the metadata store. You will
+get to see how that is done in the following exercise.
+
+Afterwards, you will also practice accessing the TFX metadata store and
+see how you can track the lineage of an artifact.
+
+    \hypertarget{setup}{%
+\subsection{Setup}\label{setup}}
+
+    \hypertarget{imports}{%
+\subsubsection{Imports}\label{imports}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{tensorflow} \PY{k}{as} \PY{n+nn}{tf}
+\PY{k+kn}{import} \PY{n+nn}{tensorflow\PYZus{}data\PYZus{}validation} \PY{k}{as} \PY{n+nn}{tfdv}
+
+\PY{k+kn}{from} \PY{n+nn}{tfx}\PY{n+nn}{.}\PY{n+nn}{components} \PY{k+kn}{import} \PY{n}{CsvExampleGen}
+\PY{k+kn}{from} \PY{n+nn}{tfx}\PY{n+nn}{.}\PY{n+nn}{components} \PY{k+kn}{import} \PY{n}{ExampleValidator}
+\PY{k+kn}{from} \PY{n+nn}{tfx}\PY{n+nn}{.}\PY{n+nn}{components} \PY{k+kn}{import} \PY{n}{SchemaGen}
+\PY{k+kn}{from} \PY{n+nn}{tfx}\PY{n+nn}{.}\PY{n+nn}{components} \PY{k+kn}{import} \PY{n}{StatisticsGen}
+\PY{k+kn}{from} \PY{n+nn}{tfx}\PY{n+nn}{.}\PY{n+nn}{components} \PY{k+kn}{import} \PY{n}{ImporterNode}
+\PY{k+kn}{from} \PY{n+nn}{tfx}\PY{n+nn}{.}\PY{n+nn}{types} \PY{k+kn}{import} \PY{n}{standard\PYZus{}artifacts}
+
+\PY{k+kn}{from} \PY{n+nn}{tfx}\PY{n+nn}{.}\PY{n+nn}{orchestration}\PY{n+nn}{.}\PY{n+nn}{experimental}\PY{n+nn}{.}\PY{n+nn}{interactive}\PY{n+nn}{.}\PY{n+nn}{interactive\PYZus{}context} \PY{k+kn}{import} \PY{n}{InteractiveContext}
+\PY{k+kn}{from} \PY{n+nn}{google}\PY{n+nn}{.}\PY{n+nn}{protobuf}\PY{n+nn}{.}\PY{n+nn}{json\PYZus{}format} \PY{k+kn}{import} \PY{n}{MessageToDict}
+\PY{k+kn}{from} \PY{n+nn}{tensorflow\PYZus{}metadata}\PY{n+nn}{.}\PY{n+nn}{proto}\PY{n+nn}{.}\PY{n+nn}{v0} \PY{k+kn}{import} \PY{n}{schema\PYZus{}pb2}
+
+\PY{k+kn}{import} \PY{n+nn}{os}
+\PY{k+kn}{import} \PY{n+nn}{pprint}
+\PY{n}{pp} \PY{o}{=} \PY{n}{pprint}\PY{o}{.}\PY{n}{PrettyPrinter}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{define-paths}{%
+\subsubsection{Define paths}\label{define-paths}}
+
+For familiarity, you will again be using the
+\href{https://archive.ics.uci.edu/ml/datasets/Adult}{Census Income
+dataset} from the previous weeks' ungraded labs. You will use the same
+paths to your raw data and pipeline files as shown below.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} location of the pipeline metadata store}
+\PY{n}{\PYZus{}pipeline\PYZus{}root} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{./pipeline/}\PY{l+s+s1}{\PYZsq{}}
+
+\PY{c+c1}{\PYZsh{} directory of the raw data files}
+\PY{n}{\PYZus{}data\PYZus{}root} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{./data/census\PYZus{}data}\PY{l+s+s1}{\PYZsq{}}
+
+\PY{c+c1}{\PYZsh{} path to the raw training data}
+\PY{n}{\PYZus{}data\PYZus{}filepath} \PY{o}{=} \PY{n}{os}\PY{o}{.}\PY{n}{path}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{\PYZus{}data\PYZus{}root}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{adult.data}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{data-pipeline}{%
+\subsection{Data Pipeline}\label{data-pipeline}}
+
+Each TFX component you use accepts and generates artifacts which are
+instances of the different artifact types TFX has configured in the
+metadata store. The properties of these instances are shown neatly in a
+table in the outputs of \texttt{context.run()}. TFX does all of these
+for you so you only need to inspect the output of each component to know
+which property of the artifact you can pass on to the next component
+(e.g.~the
+\texttt{outputs{[}\textquotesingle{}examples\textquotesingle{}{]}} of
+\texttt{ExampleGen} can be passed to \texttt{StatisticsGen}).
+
+Since you've already used this dataset before, we will just quickly go
+over \texttt{ExampleGen}, \texttt{StatisticsGen}, and
+\texttt{SchemaGen}. The new concepts will be discussed after the said
+components.
+
+    \hypertarget{create-the-interactive-context}{%
+\subsubsection{Create the Interactive
+Context}\label{create-the-interactive-context}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Initialize the InteractiveContext.}
+\PY{c+c1}{\PYZsh{} If you leave `\PYZus{}pipeline\PYZus{}root` blank, then the db will be created in a temporary directory.}
+\PY{n}{context} \PY{o}{=} \PY{n}{InteractiveContext}\PY{p}{(}\PY{n}{pipeline\PYZus{}root}\PY{o}{=}\PY{n}{\PYZus{}pipeline\PYZus{}root}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+WARNING:absl:InteractiveContext metadata\_connection\_config not provided: using
+SQLite ML Metadata database at ./pipeline/metadata.sqlite.
+    \end{Verbatim}
+
+    \hypertarget{examplegen}{%
+\subsubsection{ExampleGen}\label{examplegen}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Instantiate ExampleGen with the input CSV dataset}
+\PY{n}{example\PYZus{}gen} \PY{o}{=} \PY{n}{CsvExampleGen}\PY{p}{(}\PY{n}{input\PYZus{}base}\PY{o}{=}\PY{n}{\PYZus{}data\PYZus{}root}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Execute the component}
+\PY{n}{context}\PY{o}{.}\PY{n}{run}\PY{p}{(}\PY{n}{example\PYZus{}gen}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+ExecutionResult(
+    component\_id: CsvExampleGen
+    execution\_id: 1
+    outputs:
+        examples: Channel(
+            type\_name: Examples
+            artifacts: [Artifact(artifact: id: 1
+        type\_id: 5
+        uri: "./pipeline/CsvExampleGen/examples/1"
+        properties \{
+          key: "split\_names"
+          value \{
+            string\_value: "[\textbackslash{}"train\textbackslash{}", \textbackslash{}"eval\textbackslash{}"]"
+          \}
+        \}
+        custom\_properties \{
+          key: "input\_fingerprint"
+          value \{
+            string\_value: "split:single\_split,num\_files:1,total\_bytes:3974460,xo
+r\_checksum:1618242085,sum\_checksum:1618242085"
+          \}
+        \}
+        custom\_properties \{
+          key: "payload\_format"
+          value \{
+            string\_value: "FORMAT\_TF\_EXAMPLE"
+          \}
+        \}
+        custom\_properties \{
+          key: "span"
+          value \{
+            string\_value: "0"
+          \}
+        \}
+        custom\_properties \{
+          key: "state"
+          value \{
+            string\_value: "published"
+          \}
+        \}
+        , artifact\_type: id: 5
+        name: "Examples"
+        properties \{
+          key: "span"
+          value: INT
+        \}
+        properties \{
+          key: "split\_names"
+          value: STRING
+        \}
+        properties \{
+          key: "version"
+          value: INT
+        \}
+        )]
+        ))
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{statisticsgen}{%
+\subsubsection{StatisticsGen}\label{statisticsgen}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Instantiate StatisticsGen with the ExampleGen ingested dataset}
+\PY{n}{statistics\PYZus{}gen} \PY{o}{=} \PY{n}{StatisticsGen}\PY{p}{(}
+    \PY{n}{examples}\PY{o}{=}\PY{n}{example\PYZus{}gen}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{examples}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Execute the component}
+\PY{n}{context}\PY{o}{.}\PY{n}{run}\PY{p}{(}\PY{n}{statistics\PYZus{}gen}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+ExecutionResult(
+    component\_id: StatisticsGen
+    execution\_id: 2
+    outputs:
+        statistics: Channel(
+            type\_name: ExampleStatistics
+            artifacts: [Artifact(artifact: id: 2
+        type\_id: 7
+        uri: "./pipeline/StatisticsGen/statistics/2"
+        properties \{
+          key: "split\_names"
+          value \{
+            string\_value: "[\textbackslash{}"train\textbackslash{}", \textbackslash{}"eval\textbackslash{}"]"
+          \}
+        \}
+        custom\_properties \{
+          key: "name"
+          value \{
+            string\_value: "statistics"
+          \}
+        \}
+        custom\_properties \{
+          key: "producer\_component"
+          value \{
+            string\_value: "StatisticsGen"
+          \}
+        \}
+        custom\_properties \{
+          key: "state"
+          value \{
+            string\_value: "published"
+          \}
+        \}
+        , artifact\_type: id: 7
+        name: "ExampleStatistics"
+        properties \{
+          key: "span"
+          value: INT
+        \}
+        properties \{
+          key: "split\_names"
+          value: STRING
+        \}
+        )]
+        ))
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{schemagen}{%
+\subsubsection{SchemaGen}\label{schemagen}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Instantiate SchemaGen with the StatisticsGen ingested dataset}
+\PY{n}{schema\PYZus{}gen} \PY{o}{=} \PY{n}{SchemaGen}\PY{p}{(}
+    \PY{n}{statistics}\PY{o}{=}\PY{n}{statistics\PYZus{}gen}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{statistics}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
+    \PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Run the component}
+\PY{n}{context}\PY{o}{.}\PY{n}{run}\PY{p}{(}\PY{n}{schema\PYZus{}gen}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+WARNING:tensorflow:From /opt/conda/lib/python3.8/site-
+packages/tensorflow\_data\_validation/utils/stats\_util.py:229: tf\_record\_iterator
+(from tensorflow.python.lib.io.tf\_record) is deprecated and will be removed in a
+future version.
+Instructions for updating:
+Use eager execution and:
+`tf.data.TFRecordDataset(path)`
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+ExecutionResult(
+    component\_id: SchemaGen
+    execution\_id: 3
+    outputs:
+        schema: Channel(
+            type\_name: Schema
+            artifacts: [Artifact(artifact: id: 3
+        type\_id: 9
+        uri: "./pipeline/SchemaGen/schema/3"
+        custom\_properties \{
+          key: "name"
+          value \{
+            string\_value: "schema"
+          \}
+        \}
+        custom\_properties \{
+          key: "producer\_component"
+          value \{
+            string\_value: "SchemaGen"
+          \}
+        \}
+        custom\_properties \{
+          key: "state"
+          value \{
+            string\_value: "published"
+          \}
+        \}
+        , artifact\_type: id: 9
+        name: "Schema"
+        )]
+        ))
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Visualize the schema}
+\PY{n}{context}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{n}{schema\PYZus{}gen}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{schema}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+                    Type  Presence Valency            Domain
+Feature name                                                
+'age'                INT  required  single                 -
+'capital-gain'       INT  required  single                 -
+'capital-loss'       INT  required  single                 -
+'education'       STRING  required  single       'education'
+'education-num'      INT  required  single                 -
+'fnlwgt'             INT  required  single                 -
+'hours-per-week'     INT  required  single                 -
+'label'           STRING  required  single           'label'
+'marital-status'  STRING  required  single  'marital-status'
+'native-country'  STRING  required  single  'native-country'
+'occupation'      STRING  required  single      'occupation'
+'race'            STRING  required  single            'race'
+'relationship'    STRING  required  single    'relationship'
+'sex'             STRING  required  single             'sex'
+'workclass'       STRING  required  single       'workclass'
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           Values
+Domain                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+'education'       ' 10th', ' 11th', ' 12th', ' 1st-4th', ' 5th-6th', ' 7th-8th', ' 9th', ' Assoc-acdm', ' Assoc-voc', ' Bachelors', ' Doctorate', ' HS-grad', ' Masters', ' Preschool', ' Prof-school', ' Some-college'                                                                                                                                                                                                                                                                                                                                                          
+'label'           ' <=50K', ' >50K'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+'marital-status'  ' Divorced', ' Married-AF-spouse', ' Married-civ-spouse', ' Married-spouse-absent', ' Never-married', ' Separated', ' Widowed'                                                                                                                                                                                                                                                                                                                                                                                                                                 
+'native-country'  ' ?', ' Cambodia', ' Canada', ' China', ' Columbia', ' Cuba', ' Dominican-Republic', ' Ecuador', ' El-Salvador', ' England', ' France', ' Germany', ' Greece', ' Guatemala', ' Haiti', ' Honduras', ' Hong', ' Hungary', ' India', ' Iran', ' Ireland', ' Italy', ' Jamaica', ' Japan', ' Laos', ' Mexico', ' Nicaragua', ' Outlying-US(Guam-USVI-etc)', ' Peru', ' Philippines', ' Poland', ' Portugal', ' Puerto-Rico', ' Scotland', ' South', ' Taiwan', ' Thailand', ' Trinadad\&Tobago', ' United-States', ' Vietnam', ' Yugoslavia', ' Holand-Netherlands'
+'occupation'      ' ?', ' Adm-clerical', ' Armed-Forces', ' Craft-repair', ' Exec-managerial', ' Farming-fishing', ' Handlers-cleaners', ' Machine-op-inspct', ' Other-service', ' Priv-house-serv', ' Prof-specialty', ' Protective-serv', ' Sales', ' Tech-support', ' Transport-moving'                                                                                                                                                                                                                                                                                       
+'race'            ' Amer-Indian-Eskimo', ' Asian-Pac-Islander', ' Black', ' Other', ' White'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+'relationship'    ' Husband', ' Not-in-family', ' Other-relative', ' Own-child', ' Unmarried', ' Wife'                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+'sex'             ' Female', ' Male'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+'workclass'       ' ?', ' Federal-gov', ' Local-gov', ' Never-worked', ' Private', ' Self-emp-inc', ' Self-emp-not-inc', ' State-gov', ' Without-pay'                                                                                                                                                                                                                                                                                                                                                                                                                            
+    \end{Verbatim}
+
+    
+    \hypertarget{curating-the-schema}{%
+\subsubsection{Curating the Schema}\label{curating-the-schema}}
+
+    Now that you have the inferred schema, you can proceed to revising it to
+be more robust. For instance, you can restrict the age as you did in
+Week 1. First, you have to load the \texttt{Schema} protocol buffer from
+the metadata store. You can do this by getting the schema uri from the
+output of \texttt{SchemaGen} then use TFDV's
+\texttt{load\_schema\_text()} method.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Get the schema uri}
+\PY{n}{schema\PYZus{}uri} \PY{o}{=} \PY{n}{schema\PYZus{}gen}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{schema}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{\PYZus{}artifacts}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{uri}
+
+\PY{c+c1}{\PYZsh{} Get the schema pbtxt file from the SchemaGen output}
+\PY{n}{schema} \PY{o}{=} \PY{n}{tfdv}\PY{o}{.}\PY{n}{load\PYZus{}schema\PYZus{}text}\PY{p}{(}\PY{n}{os}\PY{o}{.}\PY{n}{path}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{schema\PYZus{}uri}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{schema.pbtxt}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    With that, you can now make changes to the schema as before. For the
+purpose of this exercise, you will only modify the age domain but feel
+free to add more if you want.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Restrict the range of the `age` feature}
+\PY{n}{tfdv}\PY{o}{.}\PY{n}{set\PYZus{}domain}\PY{p}{(}\PY{n}{schema}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{age}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{schema\PYZus{}pb2}\PY{o}{.}\PY{n}{IntDomain}\PY{p}{(}\PY{n}{name}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{age}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n+nb}{min}\PY{o}{=}\PY{l+m+mi}{17}\PY{p}{,} \PY{n+nb}{max}\PY{o}{=}\PY{l+m+mi}{90}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Display the modified schema. Notice the `Domain` column of `age`.}
+\PY{n}{tfdv}\PY{o}{.}\PY{n}{display\PYZus{}schema}\PY{p}{(}\PY{n}{schema}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+                    Type  Presence Valency            Domain
+Feature name                                                
+'age'             INT     required  single  [17,90]         
+'capital-gain'    INT     required  single  -               
+'capital-loss'    INT     required  single  -               
+'education'       STRING  required  single  'education'     
+'education-num'   INT     required  single  -               
+'fnlwgt'          INT     required  single  -               
+'hours-per-week'  INT     required  single  -               
+'label'           STRING  required  single  'label'         
+'marital-status'  STRING  required  single  'marital-status'
+'native-country'  STRING  required  single  'native-country'
+'occupation'      STRING  required  single  'occupation'    
+'race'            STRING  required  single  'race'          
+'relationship'    STRING  required  single  'relationship'  
+'sex'             STRING  required  single  'sex'           
+'workclass'       STRING  required  single  'workclass'     
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           Values
+Domain                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+'education'       ' 10th', ' 11th', ' 12th', ' 1st-4th', ' 5th-6th', ' 7th-8th', ' 9th', ' Assoc-acdm', ' Assoc-voc', ' Bachelors', ' Doctorate', ' HS-grad', ' Masters', ' Preschool', ' Prof-school', ' Some-college'                                                                                                                                                                                                                                                                                                                                                          
+'label'           ' <=50K', ' >50K'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+'marital-status'  ' Divorced', ' Married-AF-spouse', ' Married-civ-spouse', ' Married-spouse-absent', ' Never-married', ' Separated', ' Widowed'                                                                                                                                                                                                                                                                                                                                                                                                                                 
+'native-country'  ' ?', ' Cambodia', ' Canada', ' China', ' Columbia', ' Cuba', ' Dominican-Republic', ' Ecuador', ' El-Salvador', ' England', ' France', ' Germany', ' Greece', ' Guatemala', ' Haiti', ' Honduras', ' Hong', ' Hungary', ' India', ' Iran', ' Ireland', ' Italy', ' Jamaica', ' Japan', ' Laos', ' Mexico', ' Nicaragua', ' Outlying-US(Guam-USVI-etc)', ' Peru', ' Philippines', ' Poland', ' Portugal', ' Puerto-Rico', ' Scotland', ' South', ' Taiwan', ' Thailand', ' Trinadad\&Tobago', ' United-States', ' Vietnam', ' Yugoslavia', ' Holand-Netherlands'
+'occupation'      ' ?', ' Adm-clerical', ' Armed-Forces', ' Craft-repair', ' Exec-managerial', ' Farming-fishing', ' Handlers-cleaners', ' Machine-op-inspct', ' Other-service', ' Priv-house-serv', ' Prof-specialty', ' Protective-serv', ' Sales', ' Tech-support', ' Transport-moving'                                                                                                                                                                                                                                                                                       
+'race'            ' Amer-Indian-Eskimo', ' Asian-Pac-Islander', ' Black', ' Other', ' White'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+'relationship'    ' Husband', ' Not-in-family', ' Other-relative', ' Own-child', ' Unmarried', ' Wife'                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+'sex'             ' Female', ' Male'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+'workclass'       ' ?', ' Federal-gov', ' Local-gov', ' Never-worked', ' Private', ' Self-emp-inc', ' Self-emp-not-inc', ' State-gov', ' Without-pay'                                                                                                                                                                                                                                                                                                                                                                                                                            
+    \end{Verbatim}
+
+    
+    \hypertarget{schema-environments}{%
+\subsubsection{Schema Environments}\label{schema-environments}}
+
+By default, your schema will watch for all the features declared above
+including the label. However, when the model is served for inference, it
+will get datasets that will not have the label because that is the
+feature that the model will be trying to predict. You need to configure
+the pipeline to not raise an alarm when this kind of dataset is
+received.
+
+You can do that with
+\href{https://www.tensorflow.org/tfx/tutorials/data_validation/tfdv_basic\#schema_environments}{schema
+environments}. First, you will need to declare training and serving
+environments, then configure the serving schema to not watch for the
+presence of labels. See how it is implemented below.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Create schema environments for training and serving}
+\PY{n}{schema}\PY{o}{.}\PY{n}{default\PYZus{}environment}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{TRAINING}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{schema}\PY{o}{.}\PY{n}{default\PYZus{}environment}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{SERVING}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Omit label from the serving environment}
+\PY{n}{tfdv}\PY{o}{.}\PY{n}{get\PYZus{}feature}\PY{p}{(}\PY{n}{schema}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{label}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{not\PYZus{}in\PYZus{}environment}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{SERVING}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    You can now freeze the curated schema and save to a local directory.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Declare the path to the updated schema directory}
+\PY{n}{\PYZus{}updated\PYZus{}schema\PYZus{}dir} \PY{o}{=} \PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{\PYZus{}pipeline\PYZus{}root}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{/updated\PYZus{}schema}\PY{l+s+s1}{\PYZsq{}}
+
+\PY{c+c1}{\PYZsh{} Create the said directory}
+\PY{o}{!}mkdir \PYZhy{}p \PY{o}{\PYZob{}}\PYZus{}updated\PYZus{}schema\PYZus{}dir\PY{o}{\PYZcb{}}
+
+\PY{c+c1}{\PYZsh{} Declare the path to the schema file}
+\PY{n}{schema\PYZus{}file} \PY{o}{=} \PY{n}{os}\PY{o}{.}\PY{n}{path}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{\PYZus{}updated\PYZus{}schema\PYZus{}dir}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{schema.pbtxt}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Save the curated schema to the said file}
+\PY{n}{tfdv}\PY{o}{.}\PY{n}{write\PYZus{}schema\PYZus{}text}\PY{p}{(}\PY{n}{schema}\PY{p}{,} \PY{n}{schema\PYZus{}file}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{importernode}{%
+\subsubsection{ImporterNode}\label{importernode}}
+
+Now that the schema has been saved, you need to create an artifact in
+the metadata store that will point to it. TFX provides the
+\href{https://www.tensorflow.org/tfx/guide/statsgen\#using_the_statsgen_component_with_a_schema}{ImporterNode}
+component used to import external objects to ML Metadata. You will need
+to pass in the URI of the object and what type of artifact it is. See
+the syntax below.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Use an ImporterNode to put the curated schema to ML Metadata}
+\PY{n}{user\PYZus{}schema\PYZus{}importer} \PY{o}{=} \PY{n}{ImporterNode}\PY{p}{(}
+    \PY{n}{instance\PYZus{}name}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{import\PYZus{}user\PYZus{}schema}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{source\PYZus{}uri}\PY{o}{=}\PY{n}{\PYZus{}updated\PYZus{}schema\PYZus{}dir}\PY{p}{,}
+    \PY{n}{artifact\PYZus{}type}\PY{o}{=}\PY{n}{standard\PYZus{}artifacts}\PY{o}{.}\PY{n}{Schema}
+\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Run the component}
+\PY{n}{context}\PY{o}{.}\PY{n}{run}\PY{p}{(}\PY{n}{user\PYZus{}schema\PYZus{}importer}\PY{p}{,} \PY{n}{enable\PYZus{}cache}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+ExecutionResult(
+    component\_id: ImporterNode.import\_user\_schema
+    execution\_id: 4
+    outputs:
+        result: Channel(
+            type\_name: Schema
+            artifacts: [Artifact(artifact: id: 4
+        type\_id: 9
+        uri: "./pipeline//updated\_schema"
+        , artifact\_type: id: 9
+        name: "Schema"
+        )]
+        ))
+\end{Verbatim}
+\end{tcolorbox}
+        
+    If you pass in the component output to \texttt{context.show()}, then you
+should see the schema.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} See the result}
+\PY{n}{context}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{n}{user\PYZus{}schema\PYZus{}importer}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{result}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+                    Type  Presence Valency            Domain
+Feature name                                                
+'age'             INT     required  single  [17,90]         
+'capital-gain'    INT     required  single  -               
+'capital-loss'    INT     required  single  -               
+'education'       STRING  required  single  'education'     
+'education-num'   INT     required  single  -               
+'fnlwgt'          INT     required  single  -               
+'hours-per-week'  INT     required  single  -               
+'label'           STRING  required  single  'label'         
+'marital-status'  STRING  required  single  'marital-status'
+'native-country'  STRING  required  single  'native-country'
+'occupation'      STRING  required  single  'occupation'    
+'race'            STRING  required  single  'race'          
+'relationship'    STRING  required  single  'relationship'  
+'sex'             STRING  required  single  'sex'           
+'workclass'       STRING  required  single  'workclass'     
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           Values
+Domain                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+'education'       ' 10th', ' 11th', ' 12th', ' 1st-4th', ' 5th-6th', ' 7th-8th', ' 9th', ' Assoc-acdm', ' Assoc-voc', ' Bachelors', ' Doctorate', ' HS-grad', ' Masters', ' Preschool', ' Prof-school', ' Some-college'                                                                                                                                                                                                                                                                                                                                                          
+'label'           ' <=50K', ' >50K'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+'marital-status'  ' Divorced', ' Married-AF-spouse', ' Married-civ-spouse', ' Married-spouse-absent', ' Never-married', ' Separated', ' Widowed'                                                                                                                                                                                                                                                                                                                                                                                                                                 
+'native-country'  ' ?', ' Cambodia', ' Canada', ' China', ' Columbia', ' Cuba', ' Dominican-Republic', ' Ecuador', ' El-Salvador', ' England', ' France', ' Germany', ' Greece', ' Guatemala', ' Haiti', ' Honduras', ' Hong', ' Hungary', ' India', ' Iran', ' Ireland', ' Italy', ' Jamaica', ' Japan', ' Laos', ' Mexico', ' Nicaragua', ' Outlying-US(Guam-USVI-etc)', ' Peru', ' Philippines', ' Poland', ' Portugal', ' Puerto-Rico', ' Scotland', ' South', ' Taiwan', ' Thailand', ' Trinadad\&Tobago', ' United-States', ' Vietnam', ' Yugoslavia', ' Holand-Netherlands'
+'occupation'      ' ?', ' Adm-clerical', ' Armed-Forces', ' Craft-repair', ' Exec-managerial', ' Farming-fishing', ' Handlers-cleaners', ' Machine-op-inspct', ' Other-service', ' Priv-house-serv', ' Prof-specialty', ' Protective-serv', ' Sales', ' Tech-support', ' Transport-moving'                                                                                                                                                                                                                                                                                       
+'race'            ' Amer-Indian-Eskimo', ' Asian-Pac-Islander', ' Black', ' Other', ' White'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+'relationship'    ' Husband', ' Not-in-family', ' Other-relative', ' Own-child', ' Unmarried', ' Wife'                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+'sex'             ' Female', ' Male'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+'workclass'       ' ?', ' Federal-gov', ' Local-gov', ' Never-worked', ' Private', ' Self-emp-inc', ' Self-emp-not-inc', ' State-gov', ' Without-pay'                                                                                                                                                                                                                                                                                                                                                                                                                            
+    \end{Verbatim}
+
+    
+    \hypertarget{examplevalidator}{%
+\subsubsection{ExampleValidator}\label{examplevalidator}}
+
+You can then use this new artifact as input to the other components of
+the pipeline. See how it is used as the \texttt{schema} argument in
+\texttt{ExampleValidator} below.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Instantiate ExampleValidator with the StatisticsGen and SchemaGen ingested data}
+\PY{n}{example\PYZus{}validator} \PY{o}{=} \PY{n}{ExampleValidator}\PY{p}{(}
+    \PY{n}{statistics}\PY{o}{=}\PY{n}{statistics\PYZus{}gen}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{statistics}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
+    \PY{n}{schema}\PY{o}{=}\PY{n}{user\PYZus{}schema\PYZus{}importer}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{result}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Run the component.}
+\PY{n}{context}\PY{o}{.}\PY{n}{run}\PY{p}{(}\PY{n}{example\PYZus{}validator}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+ExecutionResult(
+    component\_id: ExampleValidator
+    execution\_id: 5
+    outputs:
+        anomalies: Channel(
+            type\_name: ExampleAnomalies
+            artifacts: [Artifact(artifact: id: 5
+        type\_id: 12
+        uri: "./pipeline/ExampleValidator/anomalies/5"
+        properties \{
+          key: "split\_names"
+          value \{
+            string\_value: "[\textbackslash{}"train\textbackslash{}", \textbackslash{}"eval\textbackslash{}"]"
+          \}
+        \}
+        custom\_properties \{
+          key: "name"
+          value \{
+            string\_value: "anomalies"
+          \}
+        \}
+        custom\_properties \{
+          key: "producer\_component"
+          value \{
+            string\_value: "ExampleValidator"
+          \}
+        \}
+        custom\_properties \{
+          key: "state"
+          value \{
+            string\_value: "published"
+          \}
+        \}
+        , artifact\_type: id: 12
+        name: "ExampleAnomalies"
+        properties \{
+          key: "span"
+          value: INT
+        \}
+        properties \{
+          key: "split\_names"
+          value: STRING
+        \}
+        )]
+        ))
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Visualize the results}
+\PY{n}{context}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{n}{example\PYZus{}validator}\PY{o}{.}\PY{n}{outputs}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{anomalies}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    \hypertarget{practice-with-ml-metadata}{%
+\subsubsection{Practice with ML
+Metadata}\label{practice-with-ml-metadata}}
+
+At this point, you should now take some time exploring the contents of
+the metadata store saved by your component runs. This will let you
+practice tracking artifacts and how they are related to each other. This
+involves looking at artifacts, executions, and events. This skill will
+let you recover related artifacts even without seeing the code of the
+training run. All you need is access to the metadata store.
+
+See how the input artifact IDs to an instance of
+\texttt{ExampleAnomalies} are tracked in the following cells. If you
+have this notebook, then you will already know that it uses the output
+of StatisticsGen for this run and also the curated schema you imported.
+However, if you already have hundreds of training runs and parameter
+iterations, you may find it hard to track which is which. That's where
+the metadata store will be useful. Since it records information about a
+specific pipeline run, you will be able to track the inputs and outputs
+of a particular artifact.
+
+You will start by setting the connection config to the metadata store.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Import mlmd and utilities}
+\PY{k+kn}{import} \PY{n+nn}{ml\PYZus{}metadata} \PY{k}{as} \PY{n+nn}{mlmd}
+\PY{k+kn}{from} \PY{n+nn}{ml\PYZus{}metadata}\PY{n+nn}{.}\PY{n+nn}{proto} \PY{k+kn}{import} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}
+
+\PY{c+c1}{\PYZsh{} Get the connection config to connect to the context\PYZsq{}s metadata store}
+\PY{n}{connection\PYZus{}config} \PY{o}{=} \PY{n}{context}\PY{o}{.}\PY{n}{metadata\PYZus{}connection\PYZus{}config}
+
+\PY{c+c1}{\PYZsh{} Instantiate a MetadataStore instance with the connection config}
+\PY{n}{store} \PY{o}{=} \PY{n}{mlmd}\PY{o}{.}\PY{n}{MetadataStore}\PY{p}{(}\PY{n}{connection\PYZus{}config}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Next, let's see what artifact types are available in the metadata store.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Get artifact types}
+\PY{n}{artifact\PYZus{}types} \PY{o}{=} \PY{n}{store}\PY{o}{.}\PY{n}{get\PYZus{}artifact\PYZus{}types}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Print the results}
+\PY{p}{[}\PY{n}{artifact\PYZus{}type}\PY{o}{.}\PY{n}{name} \PY{k}{for} \PY{n}{artifact\PYZus{}type} \PY{o+ow}{in} \PY{n}{artifact\PYZus{}types}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+['Examples', 'ExampleStatistics', 'Schema', 'ExampleAnomalies']
+\end{Verbatim}
+\end{tcolorbox}
+        
+    If you get the artifacts of type \texttt{Schema}, you will see that
+there are two entries. One is the inferred and the other is the one you
+imported. At the end of this exercise, you can verify that the curated
+schema is the one used for the \texttt{ExampleValidator} run we will be
+investigating.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Get artifact types}
+\PY{n}{schema\PYZus{}list} \PY{o}{=} \PY{n}{store}\PY{o}{.}\PY{n}{get\PYZus{}artifacts\PYZus{}by\PYZus{}type}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Schema}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{p}{[}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{schema uri: }\PY{l+s+si}{\PYZob{}}\PY{n}{schema}\PY{o}{.}\PY{n}{uri}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{schema id:}\PY{l+s+si}{\PYZob{}}\PY{n}{schema}\PY{o}{.}\PY{n}{id}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{for} \PY{n}{schema} \PY{o+ow}{in} \PY{n}{schema\PYZus{}list}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[('schema uri: ./pipeline/SchemaGen/schema/3', 'schema id:3'),
+ ('schema uri: ./pipeline//updated\_schema', 'schema id:4')]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Let's get the first instance of \texttt{ExampleAnomalies} to get the
+output of \texttt{ExampleValidator}.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Get 1st instance of ExampleAnomalies}
+\PY{n}{example\PYZus{}anomalies} \PY{o}{=} \PY{n}{store}\PY{o}{.}\PY{n}{get\PYZus{}artifacts\PYZus{}by\PYZus{}type}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ExampleAnomalies}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Print the artifact id}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Artifact id: }\PY{l+s+si}{\PYZob{}}\PY{n}{example\PYZus{}anomalies}\PY{o}{.}\PY{n}{id}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Artifact id: 5
+    \end{Verbatim}
+
+    You will use the artifact ID to get events related to it. Let's just get
+the first instance.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Get first event related to the ID}
+\PY{n}{anomalies\PYZus{}id\PYZus{}event} \PY{o}{=} \PY{n}{store}\PY{o}{.}\PY{n}{get\PYZus{}events\PYZus{}by\PYZus{}artifact\PYZus{}ids}\PY{p}{(}\PY{p}{[}\PY{n}{example\PYZus{}anomalies}\PY{o}{.}\PY{n}{id}\PY{p}{]}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Print results}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{anomalies\PYZus{}id\PYZus{}event}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+artifact\_id: 5
+execution\_id: 5
+path \{
+  steps \{
+    key: "anomalies"
+  \}
+  steps \{
+    index: 0
+  \}
+\}
+type: OUTPUT
+milliseconds\_since\_epoch: 1625830637413
+
+    \end{Verbatim}
+
+    As expected, the event type will be an \texttt{OUTPUT} because this is
+the output of the \texttt{ExampleValidator} component. Since we want to
+get the inputs, we can track it through the execution id.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Get execution ID}
+\PY{n}{anomalies\PYZus{}execution\PYZus{}id} \PY{o}{=} \PY{n}{anomalies\PYZus{}id\PYZus{}event}\PY{o}{.}\PY{n}{execution\PYZus{}id}
+
+\PY{c+c1}{\PYZsh{} Get events by the execution ID}
+\PY{n}{events\PYZus{}execution} \PY{o}{=} \PY{n}{store}\PY{o}{.}\PY{n}{get\PYZus{}events\PYZus{}by\PYZus{}execution\PYZus{}ids}\PY{p}{(}\PY{p}{[}\PY{n}{anomalies\PYZus{}execution\PYZus{}id}\PY{p}{]}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Print results}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{events\PYZus{}execution}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[artifact\_id: 2
+execution\_id: 5
+path \{
+  steps \{
+    key: "statistics"
+  \}
+  steps \{
+    index: 0
+  \}
+\}
+type: INPUT
+milliseconds\_since\_epoch: 1625830637021
+, artifact\_id: 4
+execution\_id: 5
+path \{
+  steps \{
+    key: "schema"
+  \}
+  steps \{
+    index: 0
+  \}
+\}
+type: INPUT
+milliseconds\_since\_epoch: 1625830637021
+, artifact\_id: 5
+execution\_id: 5
+path \{
+  steps \{
+    key: "anomalies"
+  \}
+  steps \{
+    index: 0
+  \}
+\}
+type: OUTPUT
+milliseconds\_since\_epoch: 1625830637413
+]
+    \end{Verbatim}
+
+    We see the artifacts which are marked as \texttt{INPUT} above
+representing the statistics and schema inputs. We can extract their IDs
+programmatically like this. You will see that you will get the artifact
+ID of the curated schema you printed out earlier.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Filter INPUT type events}
+\PY{n}{inputs\PYZus{}to\PYZus{}exval} \PY{o}{=} \PY{p}{[}\PY{n}{event}\PY{o}{.}\PY{n}{artifact\PYZus{}id} \PY{k}{for} \PY{n}{event} \PY{o+ow}{in} \PY{n}{events\PYZus{}execution} 
+                       \PY{k}{if} \PY{n}{event}\PY{o}{.}\PY{n}{type} \PY{o}{==} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{Event}\PY{o}{.}\PY{n}{INPUT}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Print results}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{inputs\PYZus{}to\PYZus{}exval}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[2, 4]
+    \end{Verbatim}
+
+    \textbf{Congratulations!} You have now completed this notebook on
+iterative schemas and saw how it can be used in a TFX pipeline. You were
+also able to track an artifact's lineage by looking at the artifacts,
+events, and executions in the metadata store. These will come in handy
+in this week's assignment!
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}

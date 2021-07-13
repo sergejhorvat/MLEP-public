@@ -1,0 +1,1310 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+    \usepackage{iftex}
+    \ifPDFTeX
+    	\usepackage[T1]{fontenc}
+    	\usepackage{mathpazo}
+    \else
+    	\usepackage{fontspec}
+    \fi
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{C2\_W3\_Lab\_1\_MLMetadata}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{ungraded-lab-walkthrough-of-ml-metadata}{%
+\section{Ungraded Lab: Walkthrough of ML
+Metadata}\label{ungraded-lab-walkthrough-of-ml-metadata}}
+
+Keeping records at each stage of the project is an important aspect of
+machine learning pipelines. Especially in production models which
+involve many iterations of datasets and re-training, having these
+records will help in maintaining or debugging the deployed system.
+\href{https://www.tensorflow.org/tfx/guide/mlmd}{ML Metadata} addresses
+this need by having an API suited specifically for keeping track of any
+progress made in ML projects.
+
+As mentioned in earlier labs, you have already used ML Metadata when you
+ran your TFX pipelines. Each component automatically records information
+to a metadata store as you go through each stage. It allowed you to
+retrieve information such as the name of the training splits or the
+location of an inferred schema.
+
+In this notebook, you will look more closely at how ML Metadata can be
+used directly for recording and retrieving metadata independent from a
+TFX pipeline (i.e.~without using TFX components). You will use TFDV to
+infer a schema and record all information about this process. These will
+show how the different components are related to each other so you can
+better interact with the database when you go back to using TFX in the
+next labs. Moreover, knowing the inner workings of the library will help
+you adapt it for other platforms if needed.
+
+Let's get to it!
+
+    \hypertarget{imports}{%
+\subsection{Imports}\label{imports}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{ml\PYZus{}metadata}\PY{n+nn}{.}\PY{n+nn}{metadata\PYZus{}store} \PY{k+kn}{import} \PY{n}{metadata\PYZus{}store}
+\PY{k+kn}{from} \PY{n+nn}{ml\PYZus{}metadata}\PY{n+nn}{.}\PY{n+nn}{proto} \PY{k+kn}{import} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}
+
+\PY{k+kn}{import} \PY{n+nn}{tensorflow} \PY{k}{as} \PY{n+nn}{tf}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{TF version: }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{tf}\PY{o}{.}\PY{n}{\PYZus{}\PYZus{}version\PYZus{}\PYZus{}}\PY{p}{)}\PY{p}{)}
+
+\PY{k+kn}{import} \PY{n+nn}{tensorflow\PYZus{}data\PYZus{}validation} \PY{k}{as} \PY{n+nn}{tfdv}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{TFDV version: }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{tfdv}\PY{o}{.}\PY{n}{version}\PY{o}{.}\PY{n}{\PYZus{}\PYZus{}version\PYZus{}\PYZus{}}\PY{p}{)}\PY{p}{)}
+
+\PY{k+kn}{import} \PY{n+nn}{urllib}
+\PY{k+kn}{import} \PY{n+nn}{zipfile}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+TF version: 2.3.1
+TFDV version: 0.24.1
+    \end{Verbatim}
+
+    \hypertarget{download-dataset}{%
+\subsection{Download dataset}\label{download-dataset}}
+
+You will be using the
+\href{https://data.cityofchicago.org/Transportation/Taxi-Trips/wrvz-psew}{Chicago
+Taxi} dataset for this lab. Let's download the CSVs into your workspace.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Download the zip file from GCP and unzip it}
+\PY{n}{url} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{https://storage.googleapis.com/artifacts.tfx\PYZhy{}oss\PYZhy{}public.appspot.com/datasets/chicago\PYZus{}data.zip}\PY{l+s+s1}{\PYZsq{}}
+\PY{n+nb}{zip}\PY{p}{,} \PY{n}{headers} \PY{o}{=} \PY{n}{urllib}\PY{o}{.}\PY{n}{request}\PY{o}{.}\PY{n}{urlretrieve}\PY{p}{(}\PY{n}{url}\PY{p}{)}
+\PY{n}{zipfile}\PY{o}{.}\PY{n}{ZipFile}\PY{p}{(}\PY{n+nb}{zip}\PY{p}{)}\PY{o}{.}\PY{n}{extractall}\PY{p}{(}\PY{p}{)}
+\PY{n}{zipfile}\PY{o}{.}\PY{n}{ZipFile}\PY{p}{(}\PY{n+nb}{zip}\PY{p}{)}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Here}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{s what we downloaded:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{o}{!}ls \PYZhy{}R data
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Here's what we downloaded:
+data:
+census\_data  eval  serving  train
+
+data/census\_data:
+adult.data
+
+data/eval:
+data.csv
+
+data/serving:
+data.csv
+
+data/train:
+data.csv
+    \end{Verbatim}
+
+    \hypertarget{process-outline}{%
+\subsection{Process Outline}\label{process-outline}}
+
+Here is the figure shown in class that describes the different
+components in an ML Metadata store:
+
+The green box in the middle shows the data model followed by ML
+Metadata. The
+\href{https://www.tensorflow.org/tfx/guide/mlmd\#data_model}{official
+documentation} describe each of these and we'll show it here as well for
+easy reference:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{ArtifactType} describes an artifact's type and its properties
+  that are stored in the metadata store. You can register these types
+  on-the-fly with the metadata store in code, or you can load them in
+  the store from a serialized format. Once you register a type, its
+  definition is available throughout the lifetime of the store.
+\item
+  An \texttt{Artifact} describes a specific instance of an ArtifactType,
+  and its properties that are written to the metadata store.
+\item
+  An \texttt{ExecutionType} describes a type of component or step in a
+  workflow, and its runtime parameters.
+\item
+  An \texttt{Execution} is a record of a component run or a step in an
+  ML workflow and the runtime parameters. An execution can be thought of
+  as an instance of an ExecutionType. Executions are recorded when you
+  run an ML pipeline or step.
+\item
+  An \texttt{Event} is a record of the relationship between artifacts
+  and executions. When an execution happens, events record every
+  artifact that was used by the execution, and every artifact that was
+  produced. These records allow for lineage tracking throughout a
+  workflow. By looking at all events, MLMD knows what executions
+  happened and what artifacts were created as a result. MLMD can then
+  recurse back from any artifact to all of its upstream inputs.
+\item
+  A \texttt{ContextType} describes a type of conceptual group of
+  artifacts and executions in a workflow, and its structural properties.
+  For example: projects, pipeline runs, experiments, owners etc.
+\item
+  A \texttt{Context} is an instance of a ContextType. It captures the
+  shared information within the group. For example: project name,
+  changelist commit id, experiment annotations etc. It has a
+  user-defined unique name within its ContextType.
+\item
+  An \texttt{Attribution} is a record of the relationship between
+  artifacts and contexts.
+\item
+  An \texttt{Association} is a record of the relationship between
+  executions and contexts.
+\end{itemize}
+
+As mentioned earlier, you will use TFDV to generate a schema and record
+this process in the ML Metadata store. You will be starting from scratch
+so you will be defining each component of the data model. The outline of
+steps involve:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Defining the ML Metadata's storage database
+\item
+  Setting up the necessary artifact types
+\item
+  Setting up the execution types
+\item
+  Generating an input artifact unit
+\item
+  Generating an execution unit
+\item
+  Registering an input event
+\item
+  Running the TFDV component
+\item
+  Generating an output artifact unit
+\item
+  Registering an output event
+\item
+  Updating the execution unit
+\item
+  Seting up and generating a context unit
+\item
+  Generating attributions and associations
+\end{enumerate}
+
+You can then retrieve information from the database to investigate
+aspects of your project. For example, you can find which dataset was
+used to generate a particular schema. You will also do that in this
+exercise.
+
+For each of these steps, you may want to have the
+\href{https://www.tensorflow.org/tfx/ml_metadata/api_docs/python/mlmd/MetadataStore}{MetadataStore
+API documentation} open so you can lookup any of the methods you will be
+using to interact with the metadata store. You can also look at the
+\texttt{metadata\_store} protocol buffer
+\href{https://github.com/google/ml-metadata/blob/r0.24.0/ml_metadata/proto/metadata_store.proto}{here}
+to see descriptions of each data type covered in this tutorial.
+
+    \hypertarget{define-ml-metadatas-storage-database}{%
+\subsection{Define ML Metadata's Storage
+Database}\label{define-ml-metadatas-storage-database}}
+
+The first step would be to instantiate your storage backend. As
+mentioned in class, there are several types supported such as fake
+(temporary) database, SQLite, MySQL, and even cloud-based storage. For
+this demo, you will just be using a fake database for quick
+experimentation.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Instantiate a connection config}
+\PY{n}{connection\PYZus{}config} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{ConnectionConfig}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Set an empty fake database proto}
+\PY{n}{connection\PYZus{}config}\PY{o}{.}\PY{n}{fake\PYZus{}database}\PY{o}{.}\PY{n}{SetInParent}\PY{p}{(}\PY{p}{)} 
+
+\PY{c+c1}{\PYZsh{} Setup the metadata store}
+\PY{n}{store} \PY{o}{=} \PY{n}{metadata\PYZus{}store}\PY{o}{.}\PY{n}{MetadataStore}\PY{p}{(}\PY{n}{connection\PYZus{}config}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{register-artifacttypes}{%
+\subsection{Register ArtifactTypes}\label{register-artifacttypes}}
+
+Next, you will create the artifact types needed and register them to the
+store. Since our simple exercise will just involve generating a schema
+using TFDV, you will only create two artifact types: one for the
+\textbf{input dataset} and another for the \textbf{output schema}. The
+main steps will be to:
+
+\begin{itemize}
+\tightlist
+\item
+  Declare an \texttt{ArtifactType()}
+\item
+  Define the name of the artifact type
+\item
+  Define the necessary properties within these artifact types. For
+  example, it is important to know the data split name so you may want
+  to have a \texttt{split} property for the artifact type that holds
+  datasets.
+\item
+  Use \texttt{put\_artifact\_type()} to register them to the metadata
+  store. This generates an \texttt{id} that you can use later to refer
+  to a particular artifact type.
+\end{itemize}
+
+\emph{Bonus: For practice, you can also extend the code below to create
+an artifact type for the statistics.}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Create ArtifactType for the input dataset}
+\PY{n}{data\PYZus{}artifact\PYZus{}type} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{ArtifactType}\PY{p}{(}\PY{p}{)}
+\PY{n}{data\PYZus{}artifact\PYZus{}type}\PY{o}{.}\PY{n}{name} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{DataSet}\PY{l+s+s1}{\PYZsq{}}
+\PY{n}{data\PYZus{}artifact\PYZus{}type}\PY{o}{.}\PY{n}{properties}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{name}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{STRING}
+\PY{n}{data\PYZus{}artifact\PYZus{}type}\PY{o}{.}\PY{n}{properties}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{split}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{STRING}
+\PY{n}{data\PYZus{}artifact\PYZus{}type}\PY{o}{.}\PY{n}{properties}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{version}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{INT}
+
+\PY{c+c1}{\PYZsh{} Register artifact type to the Metadata Store}
+\PY{n}{data\PYZus{}artifact\PYZus{}type\PYZus{}id} \PY{o}{=} \PY{n}{store}\PY{o}{.}\PY{n}{put\PYZus{}artifact\PYZus{}type}\PY{p}{(}\PY{n}{data\PYZus{}artifact\PYZus{}type}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Create ArtifactType for Schema}
+\PY{n}{schema\PYZus{}artifact\PYZus{}type} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{ArtifactType}\PY{p}{(}\PY{p}{)}
+\PY{n}{schema\PYZus{}artifact\PYZus{}type}\PY{o}{.}\PY{n}{name} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Schema}\PY{l+s+s1}{\PYZsq{}}
+\PY{n}{schema\PYZus{}artifact\PYZus{}type}\PY{o}{.}\PY{n}{properties}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{name}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{STRING}
+\PY{n}{schema\PYZus{}artifact\PYZus{}type}\PY{o}{.}\PY{n}{properties}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{version}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{INT}
+
+\PY{c+c1}{\PYZsh{} Register artifact type to the Metadata Store}
+\PY{n}{schema\PYZus{}artifact\PYZus{}type\PYZus{}id} \PY{o}{=} \PY{n}{store}\PY{o}{.}\PY{n}{put\PYZus{}artifact\PYZus{}type}\PY{p}{(}\PY{n}{schema\PYZus{}artifact\PYZus{}type}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Data artifact type:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{data\PYZus{}artifact\PYZus{}type}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Schema artifact type:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{schema\PYZus{}artifact\PYZus{}type}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Data artifact type ID:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{data\PYZus{}artifact\PYZus{}type\PYZus{}id}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Schema artifact type ID:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{schema\PYZus{}artifact\PYZus{}type\PYZus{}id}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Data artifact type:
+ name: "DataSet"
+properties \{
+  key: "name"
+  value: STRING
+\}
+properties \{
+  key: "split"
+  value: STRING
+\}
+properties \{
+  key: "version"
+  value: INT
+\}
+
+Schema artifact type:
+ name: "Schema"
+properties \{
+  key: "name"
+  value: STRING
+\}
+properties \{
+  key: "version"
+  value: INT
+\}
+
+Data artifact type ID: 1
+Schema artifact type ID: 2
+    \end{Verbatim}
+
+    \hypertarget{register-executiontype}{%
+\subsection{Register ExecutionType}\label{register-executiontype}}
+
+You will then create the execution types needed. For the simple setup,
+you will just declare one for the data validation component with a
+\texttt{state} property so you can record if the process is running or
+already completed.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Create ExecutionType for Data Validation component}
+\PY{n}{dv\PYZus{}execution\PYZus{}type} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{ExecutionType}\PY{p}{(}\PY{p}{)}
+\PY{n}{dv\PYZus{}execution\PYZus{}type}\PY{o}{.}\PY{n}{name} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Data Validation}\PY{l+s+s1}{\PYZsq{}}
+\PY{n}{dv\PYZus{}execution\PYZus{}type}\PY{o}{.}\PY{n}{properties}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{state}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{STRING}
+
+\PY{c+c1}{\PYZsh{} Register execution type to the Metadata Store}
+\PY{n}{dv\PYZus{}execution\PYZus{}type\PYZus{}id} \PY{o}{=} \PY{n}{store}\PY{o}{.}\PY{n}{put\PYZus{}execution\PYZus{}type}\PY{p}{(}\PY{n}{dv\PYZus{}execution\PYZus{}type}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Data validation execution type:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{dv\PYZus{}execution\PYZus{}type}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Data validation execution type ID:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{dv\PYZus{}execution\PYZus{}type\PYZus{}id}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Data validation execution type:
+ name: "Data Validation"
+properties \{
+  key: "state"
+  value: STRING
+\}
+
+Data validation execution type ID: 3
+    \end{Verbatim}
+
+    \hypertarget{generate-input-artifact-unit}{%
+\subsection{Generate input artifact
+unit}\label{generate-input-artifact-unit}}
+
+With the artifact types created, you can now create instances of those
+types. The cell below creates the artifact for the input dataset. This
+artifact is recorded in the metadata store through the
+\texttt{put\_artifacts()} function. Again, it generates an \texttt{id}
+that can be used for reference.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Declare input artifact of type DataSet}
+\PY{n}{data\PYZus{}artifact} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{Artifact}\PY{p}{(}\PY{p}{)}
+\PY{n}{data\PYZus{}artifact}\PY{o}{.}\PY{n}{uri} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{./data/train/data.csv}\PY{l+s+s1}{\PYZsq{}}
+\PY{n}{data\PYZus{}artifact}\PY{o}{.}\PY{n}{type\PYZus{}id} \PY{o}{=} \PY{n}{data\PYZus{}artifact\PYZus{}type\PYZus{}id}
+\PY{n}{data\PYZus{}artifact}\PY{o}{.}\PY{n}{properties}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{name}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{string\PYZus{}value} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Chicago Taxi dataset}\PY{l+s+s1}{\PYZsq{}}
+\PY{n}{data\PYZus{}artifact}\PY{o}{.}\PY{n}{properties}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{split}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{string\PYZus{}value} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{train}\PY{l+s+s1}{\PYZsq{}}
+\PY{n}{data\PYZus{}artifact}\PY{o}{.}\PY{n}{properties}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{version}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{int\PYZus{}value} \PY{o}{=} \PY{l+m+mi}{1}
+
+\PY{c+c1}{\PYZsh{} Submit input artifact to the Metadata Store}
+\PY{n}{data\PYZus{}artifact\PYZus{}id} \PY{o}{=} \PY{n}{store}\PY{o}{.}\PY{n}{put\PYZus{}artifacts}\PY{p}{(}\PY{p}{[}\PY{n}{data\PYZus{}artifact}\PY{p}{]}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Data artifact:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{data\PYZus{}artifact}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Data artifact ID:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{data\PYZus{}artifact\PYZus{}id}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Data artifact:
+ type\_id: 1
+uri: "./data/train/data.csv"
+properties \{
+  key: "name"
+  value \{
+    string\_value: "Chicago Taxi dataset"
+  \}
+\}
+properties \{
+  key: "split"
+  value \{
+    string\_value: "train"
+  \}
+\}
+properties \{
+  key: "version"
+  value \{
+    int\_value: 1
+  \}
+\}
+
+Data artifact ID: 1
+    \end{Verbatim}
+
+    \hypertarget{generate-execution-unit}{%
+\subsection{Generate execution unit}\label{generate-execution-unit}}
+
+Next, you will create an instance of the \texttt{Data\ Validation}
+execution type you registered earlier. You will set the state to
+\texttt{RUNNING} to signify that you are about to run the TFDV function.
+This is recorded with the \texttt{put\_executions()} function.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Register the Execution of a Data Validation run}
+\PY{n}{dv\PYZus{}execution} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{Execution}\PY{p}{(}\PY{p}{)}
+\PY{n}{dv\PYZus{}execution}\PY{o}{.}\PY{n}{type\PYZus{}id} \PY{o}{=} \PY{n}{dv\PYZus{}execution\PYZus{}type\PYZus{}id}
+\PY{n}{dv\PYZus{}execution}\PY{o}{.}\PY{n}{properties}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{state}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{string\PYZus{}value} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{RUNNING}\PY{l+s+s1}{\PYZsq{}}
+
+\PY{c+c1}{\PYZsh{} Submit execution unit to the Metadata Store}
+\PY{n}{dv\PYZus{}execution\PYZus{}id} \PY{o}{=} \PY{n}{store}\PY{o}{.}\PY{n}{put\PYZus{}executions}\PY{p}{(}\PY{p}{[}\PY{n}{dv\PYZus{}execution}\PY{p}{]}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Data validation execution:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{dv\PYZus{}execution}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Data validation execution ID:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{dv\PYZus{}execution\PYZus{}id}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Data validation execution:
+ type\_id: 3
+properties \{
+  key: "state"
+  value \{
+    string\_value: "RUNNING"
+  \}
+\}
+
+Data validation execution ID: 3
+    \end{Verbatim}
+
+    \hypertarget{register-input-event}{%
+\subsection{Register input event}\label{register-input-event}}
+
+An event defines a relationship between artifacts and executions. You
+will generate the input event relationship for dataset artifact and data
+validation execution units. The list of event types are shown
+\href{https://github.com/google/ml-metadata/blob/master/ml_metadata/proto/metadata_store.proto\#L187}{here}
+and the event is recorded with the \texttt{put\_events()} function.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Declare the input event}
+\PY{n}{input\PYZus{}event} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{Event}\PY{p}{(}\PY{p}{)}
+\PY{n}{input\PYZus{}event}\PY{o}{.}\PY{n}{artifact\PYZus{}id} \PY{o}{=} \PY{n}{data\PYZus{}artifact\PYZus{}id}
+\PY{n}{input\PYZus{}event}\PY{o}{.}\PY{n}{execution\PYZus{}id} \PY{o}{=} \PY{n}{dv\PYZus{}execution\PYZus{}id}
+\PY{n}{input\PYZus{}event}\PY{o}{.}\PY{n}{type} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{Event}\PY{o}{.}\PY{n}{DECLARED\PYZus{}INPUT}
+
+\PY{c+c1}{\PYZsh{} Submit input event to the Metadata Store}
+\PY{n}{store}\PY{o}{.}\PY{n}{put\PYZus{}events}\PY{p}{(}\PY{p}{[}\PY{n}{input\PYZus{}event}\PY{p}{]}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Input event:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{input\PYZus{}event}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Input event:
+ artifact\_id: 1
+execution\_id: 3
+type: DECLARED\_INPUT
+
+    \end{Verbatim}
+
+    \hypertarget{run-the-tfdv-component}{%
+\subsection{Run the TFDV component}\label{run-the-tfdv-component}}
+
+You will now run the TFDV component to generate the schema of dataset.
+This should look familiar since you've done this already in Week 1.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Infer a schema by passing statistics to `infer\PYZus{}schema()`}
+\PY{n}{train\PYZus{}data} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{./data/train/data.csv}\PY{l+s+s1}{\PYZsq{}}
+\PY{n}{train\PYZus{}stats} \PY{o}{=} \PY{n}{tfdv}\PY{o}{.}\PY{n}{generate\PYZus{}statistics\PYZus{}from\PYZus{}csv}\PY{p}{(}\PY{n}{data\PYZus{}location}\PY{o}{=}\PY{n}{train\PYZus{}data}\PY{p}{)}
+\PY{n}{schema} \PY{o}{=} \PY{n}{tfdv}\PY{o}{.}\PY{n}{infer\PYZus{}schema}\PY{p}{(}\PY{n}{statistics}\PY{o}{=}\PY{n}{train\PYZus{}stats}\PY{p}{)}
+
+\PY{n}{schema\PYZus{}file} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{./schema.pbtxt}\PY{l+s+s1}{\PYZsq{}}
+\PY{n}{tfdv}\PY{o}{.}\PY{n}{write\PYZus{}schema\PYZus{}text}\PY{p}{(}\PY{n}{schema}\PY{p}{,} \PY{n}{schema\PYZus{}file}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Dataset}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{s Schema has been generated at:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{schema\PYZus{}file}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+WARNING:tensorflow:From /opt/conda/lib/python3.8/site-
+packages/tensorflow\_data\_validation/utils/stats\_util.py:229: tf\_record\_iterator
+(from tensorflow.python.lib.io.tf\_record) is deprecated and will be removed in a
+future version.
+Instructions for updating:
+Use eager execution and:
+`tf.data.TFRecordDataset(path)`
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+WARNING:tensorflow:From /opt/conda/lib/python3.8/site-
+packages/tensorflow\_data\_validation/utils/stats\_util.py:229: tf\_record\_iterator
+(from tensorflow.python.lib.io.tf\_record) is deprecated and will be removed in a
+future version.
+Instructions for updating:
+Use eager execution and:
+`tf.data.TFRecordDataset(path)`
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Dataset's Schema has been generated at: ./schema.pbtxt
+    \end{Verbatim}
+
+    \hypertarget{generate-output-artifact-unit}{%
+\subsection{Generate output artifact
+unit}\label{generate-output-artifact-unit}}
+
+Now that the TFDV component has finished running and schema has been
+generated, you can create the artifact for the generated schema.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Declare output artifact of type Schema\PYZus{}artifact}
+\PY{n}{schema\PYZus{}artifact} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{Artifact}\PY{p}{(}\PY{p}{)}
+\PY{n}{schema\PYZus{}artifact}\PY{o}{.}\PY{n}{uri} \PY{o}{=} \PY{n}{schema\PYZus{}file}
+\PY{n}{schema\PYZus{}artifact}\PY{o}{.}\PY{n}{type\PYZus{}id} \PY{o}{=} \PY{n}{schema\PYZus{}artifact\PYZus{}type\PYZus{}id}
+\PY{n}{schema\PYZus{}artifact}\PY{o}{.}\PY{n}{properties}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{version}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{int\PYZus{}value} \PY{o}{=} \PY{l+m+mi}{1}
+\PY{n}{schema\PYZus{}artifact}\PY{o}{.}\PY{n}{properties}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{name}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{string\PYZus{}value} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Chicago Taxi Schema}\PY{l+s+s1}{\PYZsq{}}
+
+\PY{c+c1}{\PYZsh{} Submit output artifact to the Metadata Store}
+\PY{n}{schema\PYZus{}artifact\PYZus{}id} \PY{o}{=} \PY{n}{store}\PY{o}{.}\PY{n}{put\PYZus{}artifacts}\PY{p}{(}\PY{p}{[}\PY{n}{schema\PYZus{}artifact}\PY{p}{]}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Schema artifact:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{schema\PYZus{}artifact}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Schema artifact ID:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{schema\PYZus{}artifact\PYZus{}id}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Schema artifact:
+ type\_id: 2
+uri: "./schema.pbtxt"
+properties \{
+  key: "name"
+  value \{
+    string\_value: "Chicago Taxi Schema"
+  \}
+\}
+properties \{
+  key: "version"
+  value \{
+    int\_value: 1
+  \}
+\}
+
+Schema artifact ID: 2
+    \end{Verbatim}
+
+    \hypertarget{register-output-event}{%
+\subsection{Register output event}\label{register-output-event}}
+
+Analogous to the input event earlier, you also want to define an output
+event to record the ouput artifact of a particular execution unit.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Declare the output event}
+\PY{n}{output\PYZus{}event} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{Event}\PY{p}{(}\PY{p}{)}
+\PY{n}{output\PYZus{}event}\PY{o}{.}\PY{n}{artifact\PYZus{}id} \PY{o}{=} \PY{n}{schema\PYZus{}artifact\PYZus{}id}
+\PY{n}{output\PYZus{}event}\PY{o}{.}\PY{n}{execution\PYZus{}id} \PY{o}{=} \PY{n}{dv\PYZus{}execution\PYZus{}id}
+\PY{n}{output\PYZus{}event}\PY{o}{.}\PY{n}{type} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{Event}\PY{o}{.}\PY{n}{DECLARED\PYZus{}OUTPUT}
+
+\PY{c+c1}{\PYZsh{} Submit output event to the Metadata Store}
+\PY{n}{store}\PY{o}{.}\PY{n}{put\PYZus{}events}\PY{p}{(}\PY{p}{[}\PY{n}{output\PYZus{}event}\PY{p}{]}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Output event:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{output\PYZus{}event}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Output event:
+ artifact\_id: 2
+execution\_id: 3
+type: DECLARED\_OUTPUT
+
+    \end{Verbatim}
+
+    \hypertarget{update-the-execution-unit}{%
+\subsection{Update the execution unit}\label{update-the-execution-unit}}
+
+As the TFDV component has finished running successfully, you need to
+update the \texttt{state} of the execution unit and record it again to
+the store.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Mark the `state` as `COMPLETED`}
+\PY{n}{dv\PYZus{}execution}\PY{o}{.}\PY{n}{id} \PY{o}{=} \PY{n}{dv\PYZus{}execution\PYZus{}id}
+\PY{n}{dv\PYZus{}execution}\PY{o}{.}\PY{n}{properties}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{state}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{string\PYZus{}value} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{COMPLETED}\PY{l+s+s1}{\PYZsq{}}
+
+\PY{c+c1}{\PYZsh{} Update execution unit in the Metadata Store}
+\PY{n}{store}\PY{o}{.}\PY{n}{put\PYZus{}executions}\PY{p}{(}\PY{p}{[}\PY{n}{dv\PYZus{}execution}\PY{p}{]}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Data validation execution:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{dv\PYZus{}execution}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Data validation execution:
+ id: 3
+type\_id: 3
+properties \{
+  key: "state"
+  value \{
+    string\_value: "COMPLETED"
+  \}
+\}
+
+    \end{Verbatim}
+
+    \hypertarget{setting-up-context-types-and-generating-a-context-unit}{%
+\subsection{Setting up Context Types and Generating a Context
+Unit}\label{setting-up-context-types-and-generating-a-context-unit}}
+
+You can group the artifacts and execution units into a \texttt{Context}.
+First, you need to define a \texttt{ContextType} which defines the
+required context. It follows a similar format as artifact and event
+types. You can register this with the \texttt{put\_context\_type()}
+function.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Create a ContextType}
+\PY{n}{expt\PYZus{}context\PYZus{}type} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{ContextType}\PY{p}{(}\PY{p}{)}
+\PY{n}{expt\PYZus{}context\PYZus{}type}\PY{o}{.}\PY{n}{name} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Experiment}\PY{l+s+s1}{\PYZsq{}}
+\PY{n}{expt\PYZus{}context\PYZus{}type}\PY{o}{.}\PY{n}{properties}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{note}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{STRING}
+
+\PY{c+c1}{\PYZsh{} Register context type to the Metadata Store}
+\PY{n}{expt\PYZus{}context\PYZus{}type\PYZus{}id} \PY{o}{=} \PY{n}{store}\PY{o}{.}\PY{n}{put\PYZus{}context\PYZus{}type}\PY{p}{(}\PY{n}{expt\PYZus{}context\PYZus{}type}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Similarly, you can create an instance of this context type and use the
+\texttt{put\_contexts()} method to register to the store.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Generate the context}
+\PY{n}{expt\PYZus{}context} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{Context}\PY{p}{(}\PY{p}{)}
+\PY{n}{expt\PYZus{}context}\PY{o}{.}\PY{n}{type\PYZus{}id} \PY{o}{=} \PY{n}{expt\PYZus{}context\PYZus{}type\PYZus{}id}
+\PY{c+c1}{\PYZsh{} Give the experiment a name}
+\PY{n}{expt\PYZus{}context}\PY{o}{.}\PY{n}{name} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Demo}\PY{l+s+s1}{\PYZsq{}}
+\PY{n}{expt\PYZus{}context}\PY{o}{.}\PY{n}{properties}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{note}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{string\PYZus{}value} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Walkthrough of metadata}\PY{l+s+s1}{\PYZsq{}}
+
+\PY{c+c1}{\PYZsh{} Submit context to the Metadata Store}
+\PY{n}{expt\PYZus{}context\PYZus{}id} \PY{o}{=} \PY{n}{store}\PY{o}{.}\PY{n}{put\PYZus{}contexts}\PY{p}{(}\PY{p}{[}\PY{n}{expt\PYZus{}context}\PY{p}{]}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Experiment Context type:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{expt\PYZus{}context\PYZus{}type}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Experiment Context type ID: }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{expt\PYZus{}context\PYZus{}type\PYZus{}id}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Experiment Context:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{expt\PYZus{}context}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Experiment Context ID: }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{expt\PYZus{}context\PYZus{}id}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Experiment Context type:
+ name: "Experiment"
+properties \{
+  key: "note"
+  value: STRING
+\}
+
+Experiment Context type ID:  4
+Experiment Context:
+ type\_id: 4
+name: "Demo"
+properties \{
+  key: "note"
+  value \{
+    string\_value: "Walkthrough of metadata"
+  \}
+\}
+
+Experiment Context ID:  1
+    \end{Verbatim}
+
+    \hypertarget{generate-attribution-and-association-relationships}{%
+\subsection{Generate attribution and association
+relationships}\label{generate-attribution-and-association-relationships}}
+
+With the \texttt{Context} defined, you can now create its relationship
+with the artifact and executions you previously used. You will create
+the relationship between schema artifact unit and experiment context
+unit to form an \texttt{Attribution}. Similarly, you will create the
+relationship between data validation execution unit and experiment
+context unit to form an \texttt{Association}. These are registered with
+the \texttt{put\_attributions\_and\_associations()} method.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Generate the attribution}
+\PY{n}{expt\PYZus{}attribution} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{Attribution}\PY{p}{(}\PY{p}{)}
+\PY{n}{expt\PYZus{}attribution}\PY{o}{.}\PY{n}{artifact\PYZus{}id} \PY{o}{=} \PY{n}{schema\PYZus{}artifact\PYZus{}id}
+\PY{n}{expt\PYZus{}attribution}\PY{o}{.}\PY{n}{context\PYZus{}id} \PY{o}{=} \PY{n}{expt\PYZus{}context\PYZus{}id}
+
+\PY{c+c1}{\PYZsh{} Generate the association}
+\PY{n}{expt\PYZus{}association} \PY{o}{=} \PY{n}{metadata\PYZus{}store\PYZus{}pb2}\PY{o}{.}\PY{n}{Association}\PY{p}{(}\PY{p}{)}
+\PY{n}{expt\PYZus{}association}\PY{o}{.}\PY{n}{execution\PYZus{}id} \PY{o}{=} \PY{n}{dv\PYZus{}execution\PYZus{}id}
+\PY{n}{expt\PYZus{}association}\PY{o}{.}\PY{n}{context\PYZus{}id} \PY{o}{=} \PY{n}{expt\PYZus{}context\PYZus{}id}
+
+\PY{c+c1}{\PYZsh{} Submit attribution and association to the Metadata Store}
+\PY{n}{store}\PY{o}{.}\PY{n}{put\PYZus{}attributions\PYZus{}and\PYZus{}associations}\PY{p}{(}\PY{p}{[}\PY{n}{expt\PYZus{}attribution}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{n}{expt\PYZus{}association}\PY{p}{]}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Experiment Attribution:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{expt\PYZus{}attribution}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Experiment Association:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{expt\PYZus{}association}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Experiment Attribution:
+ artifact\_id: 2
+context\_id: 1
+
+Experiment Association:
+ execution\_id: 3
+context\_id: 1
+
+    \end{Verbatim}
+
+    \hypertarget{retrieving-information-from-the-metadata-store}{%
+\subsection{Retrieving Information from the Metadata
+Store}\label{retrieving-information-from-the-metadata-store}}
+
+You've now recorded the needed information to the metadata store. If we
+did this in a persistent database, you can track which artifacts and
+events are related to each other even without seeing the code used to
+generate it. See a sample run below where you investigate what dataset
+is used to generate the schema. (**It would be obvious which dataset is
+used in our simple demo because we only have two artifacts registered.
+Thus, assume that you have thousands of entries in the metadata store.*)
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Get artifact types}
+\PY{n}{store}\PY{o}{.}\PY{n}{get\PYZus{}artifact\PYZus{}types}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[id: 1
+ name: "DataSet"
+ properties \{
+   key: "name"
+   value: STRING
+ \}
+ properties \{
+   key: "split"
+   value: STRING
+ \}
+ properties \{
+   key: "version"
+   value: INT
+ \},
+ id: 2
+ name: "Schema"
+ properties \{
+   key: "name"
+   value: STRING
+ \}
+ properties \{
+   key: "version"
+   value: INT
+ \}]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Get 1st element in the list of `Schema` artifacts.}
+\PY{c+c1}{\PYZsh{} You will investigate which dataset was used to generate it.}
+\PY{n}{schema\PYZus{}to\PYZus{}inv} \PY{o}{=} \PY{n}{store}\PY{o}{.}\PY{n}{get\PYZus{}artifacts\PYZus{}by\PYZus{}type}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Schema}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} print output}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{schema\PYZus{}to\PYZus{}inv}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+id: 2
+type\_id: 2
+uri: "./schema.pbtxt"
+properties \{
+  key: "name"
+  value \{
+    string\_value: "Chicago Taxi Schema"
+  \}
+\}
+properties \{
+  key: "version"
+  value \{
+    int\_value: 1
+  \}
+\}
+create\_time\_since\_epoch: 1625780622469
+last\_update\_time\_since\_epoch: 1625780622469
+
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Get events related to the schema id}
+\PY{n}{schema\PYZus{}events} \PY{o}{=} \PY{n}{store}\PY{o}{.}\PY{n}{get\PYZus{}events\PYZus{}by\PYZus{}artifact\PYZus{}ids}\PY{p}{(}\PY{p}{[}\PY{n}{schema\PYZus{}to\PYZus{}inv}\PY{o}{.}\PY{n}{id}\PY{p}{]}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{schema\PYZus{}events}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[artifact\_id: 2
+execution\_id: 3
+type: DECLARED\_OUTPUT
+milliseconds\_since\_epoch: 1625780632186
+]
+    \end{Verbatim}
+
+    You see that it is an output of an execution so you can look up the
+execution id to see related artifacts.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Get events related to the output above}
+\PY{n}{execution\PYZus{}events} \PY{o}{=} \PY{n}{store}\PY{o}{.}\PY{n}{get\PYZus{}events\PYZus{}by\PYZus{}execution\PYZus{}ids}\PY{p}{(}\PY{p}{[}\PY{n}{schema\PYZus{}events}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{execution\PYZus{}id}\PY{p}{]}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{execution\PYZus{}events}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[artifact\_id: 1
+execution\_id: 3
+type: DECLARED\_INPUT
+milliseconds\_since\_epoch: 1625780564115
+, artifact\_id: 2
+execution\_id: 3
+type: DECLARED\_OUTPUT
+milliseconds\_since\_epoch: 1625780632186
+]
+    \end{Verbatim}
+
+    You see the declared input of this execution so you can select that from
+the list and lookup the details of the artifact.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Look up the artifact that is a declared input}
+\PY{n}{artifact\PYZus{}input} \PY{o}{=} \PY{n}{execution\PYZus{}events}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+
+\PY{n}{store}\PY{o}{.}\PY{n}{get\PYZus{}artifacts\PYZus{}by\PYZus{}id}\PY{p}{(}\PY{p}{[}\PY{n}{artifact\PYZus{}input}\PY{o}{.}\PY{n}{artifact\PYZus{}id}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[id: 1
+ type\_id: 1
+ uri: "./data/train/data.csv"
+ properties \{
+   key: "name"
+   value \{
+     string\_value: "Chicago Taxi dataset"
+   \}
+ \}
+ properties \{
+   key: "split"
+   value \{
+     string\_value: "train"
+   \}
+ \}
+ properties \{
+   key: "version"
+   value \{
+     int\_value: 1
+   \}
+ \}
+ create\_time\_since\_epoch: 1625780386950
+ last\_update\_time\_since\_epoch: 1625780386950]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Great! Now you've fetched the dataset artifact that was used to generate
+the schema. You can approach this differently and we urge you to
+practice using the different methods of the
+\href{https://www.tensorflow.org/tfx/ml_metadata/api_docs/python/mlmd/MetadataStore}{MetadataStore
+API} to get more familiar with interacting with the database.
+
+    \hypertarget{wrap-up}{%
+\subsubsection{Wrap Up}\label{wrap-up}}
+
+In this notebook, you got to practice using ML Metadata outside of TFX.
+This should help you understand its inner workings so you will know
+better how to query ML Metadata stores or even set it up for your own
+use cases. TFX leverages this library to keep records of pipeline runs
+and you will get to see more of that in the next labs. Next up, you will
+review how to work with schemas and in the next notebook, you will see
+how it can be implemented in a TFX pipeline.
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
