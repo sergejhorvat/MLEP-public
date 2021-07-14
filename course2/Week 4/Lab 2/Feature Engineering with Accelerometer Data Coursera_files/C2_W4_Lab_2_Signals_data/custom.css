@@ -1,0 +1,8 @@
+#ipython_notebook {
+    height: 40px !important;
+}
+
+/* Format for custom error modal message */
+.running-notebooks {
+    padding-top: 2em;
+}
