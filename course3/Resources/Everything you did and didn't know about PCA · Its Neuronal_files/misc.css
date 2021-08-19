@@ -1,0 +1,67 @@
+.btn-social {
+	font-size: 25px;
+	color:#000;
+    transition: all .3s ease-in-out;
+    margin-left:18px;
+}
+
+.btn-twitter:hover,
+.btn-twitter:focus,
+.btn-twitter:active,
+.btn-twitter.active {
+    color: #268bd2;
+    text-decoration: none;
+}
+
+.btn-google:hover,
+.btn-google:focus,
+.btn-google:active,
+.btn-google.active {
+    color: rgb(200,0,0);
+    text-decoration: none;
+}
+
+.btn-facebook:hover,
+.btn-facebook:focus,
+.btn-facebook:active,
+.btn-facebook.active {
+    color: rgb(59,89,192);
+    text-decoration: none;
+}
+
+.btn-reddit:hover,
+.btn-reddit:focus,
+.btn-reddit:active,
+.btn-reddit.active {
+    color: crimson;
+    text-decoration: none;
+}
+
+.btn-rss:hover,
+.btn-rss:focus,
+.btn-rss:active,
+.btn-rss.active {
+    color: green;
+    text-decoration: none;
+}
+
+
+.footnotes {
+  font-size: 15px;
+}
+
+.share-page {
+    text-align: center;
+    background: lightgoldenrodyellow;
+    padding: 8px 15px;
+    border-radius: 5px;
+    margin: 1.5 * $spacing-unit 0;
+    font-size: 22px;
+}
+
+.topbar {
+    font-size: 17px;
+    margin-bottom: 3rem;
+    font-weight: bold;
+    font-style: italic;
+}
