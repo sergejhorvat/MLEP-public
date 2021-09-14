@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html xml:lang="" lang=""><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Interpretable Machine Learning</title>
+  <meta name="description" content="Machine learning algorithms usually operate as black boxes and it is unclear how they derived a certain decision. This book is a guide for practitioners to make machine learning decisions interpretable.">
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Interpretable Machine Learning">
+  <meta property="og:type" content="book">
+  
+  
+  <meta property="og:description" content="Machine learning algorithms usually operate as black boxes and it is unclear how they derived a certain decision. This book is a guide for practitioners to make machine learning decisions interpretable.">
+  <meta name="github-repo" content="christophM/interpretable-ml-book">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Interpretable Machine Learning">
+  
+  <meta name="twitter:description" content="Machine learning algorithms usually operate as black boxes and it is unclear how they derived a certain decision. This book is a guide for practitioners to make machine learning decisions interpretable.">
+  
+
+<meta name="author" content="Christoph Molnar">
+
+
+<meta name="date" content="2021-09-14">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+
+<link rel="next" href="https://christophm.github.io/interpretable-ml-book/preface-by-the-author.html">
+<script async="" src="Interpretable%20Machine%20Learning_files/analytics.js"></script><script src="Interpretable%20Machine%20Learning_files/jquery-3.js"></script>
+<script src="Interpretable%20Machine%20Learning_files/fuse.js"></script>
+<link href="Interpretable%20Machine%20Learning_files/style.css" rel="stylesheet">
+<link href="Interpretable%20Machine%20Learning_files/plugin-table.css" rel="stylesheet">
+<link href="Interpretable%20Machine%20Learning_files/plugin-bookdown.css" rel="stylesheet">
+<link href="Interpretable%20Machine%20Learning_files/plugin-highlight.css" rel="stylesheet">
+<link href="Interpretable%20Machine%20Learning_files/plugin-search.css" rel="stylesheet">
+<link href="Interpretable%20Machine%20Learning_files/plugin-fontsettings.css" rel="stylesheet">
+<link href="Interpretable%20Machine%20Learning_files/plugin-clipboard.css" rel="stylesheet">
+
+
+
+
+
+
+
+
+<script src="Interpretable%20Machine%20Learning_files/empty-anchor.js"></script>
+<link href="Interpretable%20Machine%20Learning_files/anchor-sections.css" rel="stylesheet">
+<script src="Interpretable%20Machine%20Learning_files/anchor-sections.js"></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-110543840-1', 'https://christophm.github.io/interpretable-ml-book/', {
+  'anonymizeIp': true
+  , 'storage': 'none'
+  , 'clientId': window.localStorage.getItem('ga_clientId')
+});
+ga(function(tracker) {
+  window.localStorage.setItem('ga_clientId', tracker.get('clientId'));
+});
+ga('send', 'pageview');
+</script>
+
+<link rel="stylesheet" type="text/css" href="Interpretable%20Machine%20Learning_files/cookieconsent.css">
+<script src="Interpretable%20Machine%20Learning_files/cookieconsent.js"></script>
+<script>
+window.addEventListener("load", function(){
+window.cookieconsent.initialise({
+  "palette": {
+    "popup": {
+      "background": "#000"
+    },
+    "button": {
+      "background": "#f1d600"
+    }
+  },
+  "position": "bottom-right",
+  "content": {
+    "message": "This website uses cookies for Google Analytics so that I know how many people are reading the book and which chapters are the most popular. The book website doesn't collect any personal data."
+  }
+})});
+</script>
+
+
+
+
+<link rel="stylesheet" href="Interpretable%20Machine%20Learning_files/style_002.css" type="text/css">
+<script type="text/javascript" src="Interpretable%20Machine%20Learning_files/MathJax.js"></script><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1px; bottom: 2px; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style></style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head>
+
+<body><div id="MathJax_Message" style="display: none;"></div><div role="dialog" aria-live="polite" aria-label="cookieconsent" aria-describedby="cookieconsent:desc" class="cc-window cc-floating cc-type-info cc-theme-block cc-bottom cc-right cc-color-override-688238583  cc-invisible" style="display: none;"><!--googleoff: all--><span id="cookieconsent:desc" class="cc-message">This
+ website uses cookies for Google Analytics so that I know how many 
+people are reading the book and which chapters are the most popular. The
+ book website doesn't collect any personal data. <a aria-label="learn more about cookies" role="button" tabindex="0" class="cc-link" href="http://cookiesandyou.com/" target="_blank">Learn more</a></span><div class="cc-compliance"><a aria-label="dismiss cookie message" role="button" tabindex="0" class="cc-btn cc-dismiss">Got it!</a></div><!--googleon: all--></div>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary"><div class="book-search" role="search"><label for="search-box" aria-hidden="false" hidden="hidden">Type to search</label><input id="search-box" type="search" class="form-control" placeholder="Type to search (Enter for navigation)" title="Use Enter or the &lt;Down&gt; key to navigate to the next match, or the &lt;Up&gt; key to the previous match"></div>
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="https://christophm.github.io/interpretable-ml-book/">Interpretable machine learning</a></li>
+
+<li class="divider"></li>
+<li class="chapter active" data-level="" data-path="index.html"><a href="https://christophm.github.io/interpretable-ml-book/index.html"><i class="fa fa-check"></i>Summary</a></li>
+<li class="chapter" data-level="" data-path="preface-by-the-author.html"><a href="https://christophm.github.io/interpretable-ml-book/preface-by-the-author.html"><i class="fa fa-check"></i>Preface by the Author</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="https://christophm.github.io/interpretable-ml-book/intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="storytime.html"><a href="https://christophm.github.io/interpretable-ml-book/storytime.html"><i class="fa fa-check"></i><b>1.1</b> Story Time</a><ul style="display: none;">
+<li class="chapter" data-level="" data-path="storytime.html"><a href="https://christophm.github.io/interpretable-ml-book/storytime.html#lightning-never-strikes-twice"><i class="fa fa-check"></i>Lightning Never Strikes Twice</a></li>
+<li class="chapter" data-level="" data-path="storytime.html"><a href="https://christophm.github.io/interpretable-ml-book/storytime.html#trust-fall"><i class="fa fa-check"></i>Trust Fall</a></li>
+<li class="chapter" data-level="" data-path="storytime.html"><a href="https://christophm.github.io/interpretable-ml-book/storytime.html#fermis-paperclips"><i class="fa fa-check"></i>Fermi’s Paperclips</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="what-is-machine-learning.html"><a href="https://christophm.github.io/interpretable-ml-book/what-is-machine-learning.html"><i class="fa fa-check"></i><b>1.2</b> What Is Machine Learning?</a></li>
+<li class="chapter" data-level="1.3" data-path="terminology.html"><a href="https://christophm.github.io/interpretable-ml-book/terminology.html"><i class="fa fa-check"></i><b>1.3</b> Terminology</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="interpretability.html"><a href="https://christophm.github.io/interpretable-ml-book/interpretability.html"><i class="fa fa-check"></i><b>2</b> Interpretability</a><ul>
+<li class="chapter" data-level="2.1" data-path="interpretability-importance.html"><a href="https://christophm.github.io/interpretable-ml-book/interpretability-importance.html"><i class="fa fa-check"></i><b>2.1</b> Importance of Interpretability</a></li>
+<li class="chapter" data-level="2.2" data-path="taxonomy-of-interpretability-methods.html"><a href="https://christophm.github.io/interpretable-ml-book/taxonomy-of-interpretability-methods.html" title="2.2 Taxonomy of Interpretability Methods"><i class="fa fa-check"></i><b>2.2</b> Taxonomy of Interpretability Methods</a></li>
+<li class="chapter" data-level="2.3" data-path="scope-of-interpretability.html"><a href="https://christophm.github.io/interpretable-ml-book/scope-of-interpretability.html"><i class="fa fa-check"></i><b>2.3</b> Scope of Interpretability</a><ul style="display: none;">
+<li class="chapter" data-level="2.3.1" data-path="scope-of-interpretability.html"><a href="https://christophm.github.io/interpretable-ml-book/scope-of-interpretability.html#algorithm-transparency"><i class="fa fa-check"></i><b>2.3.1</b> Algorithm Transparency</a></li>
+<li class="chapter" data-level="2.3.2" data-path="scope-of-interpretability.html"><a href="https://christophm.github.io/interpretable-ml-book/scope-of-interpretability.html#global-holistic-model-interpretability"><i class="fa fa-check"></i><b>2.3.2</b> Global, Holistic Model Interpretability</a></li>
+<li class="chapter" data-level="2.3.3" data-path="scope-of-interpretability.html"><a href="https://christophm.github.io/interpretable-ml-book/scope-of-interpretability.html#global-model-interpretability-on-a-modular-level"><i class="fa fa-check"></i><b>2.3.3</b> Global Model Interpretability on a Modular Level</a></li>
+<li class="chapter" data-level="2.3.4" data-path="scope-of-interpretability.html"><a href="https://christophm.github.io/interpretable-ml-book/scope-of-interpretability.html#local-interpretability-for-a-single-prediction"><i class="fa fa-check"></i><b>2.3.4</b> Local Interpretability for a Single Prediction</a></li>
+<li class="chapter" data-level="2.3.5" data-path="scope-of-interpretability.html"><a href="https://christophm.github.io/interpretable-ml-book/scope-of-interpretability.html#local-interpretability-for-a-group-of-predictions"><i class="fa fa-check"></i><b>2.3.5</b> Local Interpretability for a Group of Predictions</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="evaluation-of-interpretability.html"><a href="https://christophm.github.io/interpretable-ml-book/evaluation-of-interpretability.html"><i class="fa fa-check"></i><b>2.4</b> Evaluation of Interpretability</a></li>
+<li class="chapter" data-level="2.5" data-path="properties.html"><a href="https://christophm.github.io/interpretable-ml-book/properties.html"><i class="fa fa-check"></i><b>2.5</b> Properties of Explanations</a></li>
+<li class="chapter" data-level="2.6" data-path="explanation.html"><a href="https://christophm.github.io/interpretable-ml-book/explanation.html"><i class="fa fa-check"></i><b>2.6</b> Human-friendly Explanations</a><ul style="display: none;">
+<li class="chapter" data-level="2.6.1" data-path="explanation.html"><a href="https://christophm.github.io/interpretable-ml-book/explanation.html#what-is-an-explanation"><i class="fa fa-check"></i><b>2.6.1</b> What Is an Explanation?</a></li>
+<li class="chapter" data-level="2.6.2" data-path="explanation.html"><a href="https://christophm.github.io/interpretable-ml-book/explanation.html#good-explanation"><i class="fa fa-check"></i><b>2.6.2</b> What Is a Good Explanation?</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="data.html"><a href="https://christophm.github.io/interpretable-ml-book/data.html"><i class="fa fa-check"></i><b>3</b> Datasets</a><ul>
+<li class="chapter" data-level="3.1" data-path="bike-data.html"><a href="https://christophm.github.io/interpretable-ml-book/bike-data.html"><i class="fa fa-check"></i><b>3.1</b> Bike Rentals (Regression)</a></li>
+<li class="chapter" data-level="3.2" data-path="spam-data.html"><a href="https://christophm.github.io/interpretable-ml-book/spam-data.html" title="3.2 YouTube Spam Comments (Text Classification)"><i class="fa fa-check"></i><b>3.2</b> YouTube Spam Comments (Text Classification)</a></li>
+<li class="chapter" data-level="3.3" data-path="cervical.html"><a href="https://christophm.github.io/interpretable-ml-book/cervical.html" title="3.3 Risk Factors for Cervical Cancer (Classification)"><i class="fa fa-check"></i><b>3.3</b> Risk Factors for Cervical Cancer (Classification)</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="simple.html"><a href="https://christophm.github.io/interpretable-ml-book/simple.html"><i class="fa fa-check"></i><b>4</b> Interpretable Models</a><ul>
+<li class="chapter" data-level="4.1" data-path="limo.html"><a href="https://christophm.github.io/interpretable-ml-book/limo.html"><i class="fa fa-check"></i><b>4.1</b> Linear Regression</a><ul style="display: none;">
+<li class="chapter" data-level="4.1.1" data-path="limo.html"><a href="https://christophm.github.io/interpretable-ml-book/limo.html#interpretation"><i class="fa fa-check"></i><b>4.1.1</b> Interpretation</a></li>
+<li class="chapter" data-level="4.1.2" data-path="limo.html"><a href="https://christophm.github.io/interpretable-ml-book/limo.html#example"><i class="fa fa-check"></i><b>4.1.2</b> Example</a></li>
+<li class="chapter" data-level="4.1.3" data-path="limo.html"><a href="https://christophm.github.io/interpretable-ml-book/limo.html#visual-interpretation"><i class="fa fa-check"></i><b>4.1.3</b> Visual Interpretation</a></li>
+<li class="chapter" data-level="4.1.4" data-path="limo.html"><a href="https://christophm.github.io/interpretable-ml-book/limo.html#explain-individual-predictions"><i class="fa fa-check"></i><b>4.1.4</b> Explain Individual Predictions</a></li>
+<li class="chapter" data-level="4.1.5" data-path="limo.html"><a href="https://christophm.github.io/interpretable-ml-book/limo.html#cat-code"><i class="fa fa-check"></i><b>4.1.5</b> Encoding of Categorical Features</a></li>
+<li class="chapter" data-level="4.1.6" data-path="limo.html"><a href="https://christophm.github.io/interpretable-ml-book/limo.html#do-linear-models-create-good-explanations"><i class="fa fa-check"></i><b>4.1.6</b> Do Linear Models Create Good Explanations?</a></li>
+<li class="chapter" data-level="4.1.7" data-path="limo.html"><a href="https://christophm.github.io/interpretable-ml-book/limo.html#sparse-linear"><i class="fa fa-check"></i><b>4.1.7</b> Sparse Linear Models</a></li>
+<li class="chapter" data-level="4.1.8" data-path="limo.html"><a href="https://christophm.github.io/interpretable-ml-book/limo.html#advantages"><i class="fa fa-check"></i><b>4.1.8</b> Advantages</a></li>
+<li class="chapter" data-level="4.1.9" data-path="limo.html"><a href="https://christophm.github.io/interpretable-ml-book/limo.html#disadvantages"><i class="fa fa-check"></i><b>4.1.9</b> Disadvantages</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="logistic.html"><a href="https://christophm.github.io/interpretable-ml-book/logistic.html"><i class="fa fa-check"></i><b>4.2</b> Logistic Regression</a><ul style="display: none;">
+<li class="chapter" data-level="4.2.1" data-path="logistic.html"><a href="https://christophm.github.io/interpretable-ml-book/logistic.html#what-is-wrong-with-linear-regression-for-classification"><i class="fa fa-check"></i><b>4.2.1</b> What is Wrong with Linear Regression for Classification?</a></li>
+<li class="chapter" data-level="4.2.2" data-path="logistic.html"><a href="https://christophm.github.io/interpretable-ml-book/logistic.html#theory"><i class="fa fa-check"></i><b>4.2.2</b> Theory</a></li>
+<li class="chapter" data-level="4.2.3" data-path="logistic.html"><a href="https://christophm.github.io/interpretable-ml-book/logistic.html#interpretation-1"><i class="fa fa-check"></i><b>4.2.3</b> Interpretation</a></li>
+<li class="chapter" data-level="4.2.4" data-path="logistic.html"><a href="https://christophm.github.io/interpretable-ml-book/logistic.html#example-1"><i class="fa fa-check"></i><b>4.2.4</b> Example</a></li>
+<li class="chapter" data-level="4.2.5" data-path="logistic.html"><a href="https://christophm.github.io/interpretable-ml-book/logistic.html#advantages-and-disadvantages"><i class="fa fa-check"></i><b>4.2.5</b> Advantages and Disadvantages</a></li>
+<li class="chapter" data-level="4.2.6" data-path="logistic.html"><a href="https://christophm.github.io/interpretable-ml-book/logistic.html#software"><i class="fa fa-check"></i><b>4.2.6</b> Software</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="extend-lm.html"><a href="https://christophm.github.io/interpretable-ml-book/extend-lm.html"><i class="fa fa-check"></i><b>4.3</b> GLM, GAM and more</a><ul style="display: none;">
+<li class="chapter" data-level="4.3.1" data-path="extend-lm.html"><a href="https://christophm.github.io/interpretable-ml-book/extend-lm.html#glm"><i class="fa fa-check"></i><b>4.3.1</b> Non-Gaussian Outcomes - GLMs</a></li>
+<li class="chapter" data-level="4.3.2" data-path="extend-lm.html"><a href="https://christophm.github.io/interpretable-ml-book/extend-lm.html#lm-interact"><i class="fa fa-check"></i><b>4.3.2</b> Interactions</a></li>
+<li class="chapter" data-level="4.3.3" data-path="extend-lm.html"><a href="https://christophm.github.io/interpretable-ml-book/extend-lm.html#gam"><i class="fa fa-check"></i><b>4.3.3</b> Nonlinear Effects - GAMs</a></li>
+<li class="chapter" data-level="4.3.4" data-path="extend-lm.html"><a href="https://christophm.github.io/interpretable-ml-book/extend-lm.html#advantages-1"><i class="fa fa-check"></i><b>4.3.4</b> Advantages</a></li>
+<li class="chapter" data-level="4.3.5" data-path="extend-lm.html"><a href="https://christophm.github.io/interpretable-ml-book/extend-lm.html#disadvantages-1"><i class="fa fa-check"></i><b>4.3.5</b> Disadvantages</a></li>
+<li class="chapter" data-level="4.3.6" data-path="extend-lm.html"><a href="https://christophm.github.io/interpretable-ml-book/extend-lm.html#software-1"><i class="fa fa-check"></i><b>4.3.6</b> Software</a></li>
+<li class="chapter" data-level="4.3.7" data-path="extend-lm.html"><a href="https://christophm.github.io/interpretable-ml-book/extend-lm.html#more-lm-extension"><i class="fa fa-check"></i><b>4.3.7</b> Further Extensions</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="tree.html"><a href="https://christophm.github.io/interpretable-ml-book/tree.html"><i class="fa fa-check"></i><b>4.4</b> Decision Tree</a><ul style="display: none;">
+<li class="chapter" data-level="4.4.1" data-path="tree.html"><a href="https://christophm.github.io/interpretable-ml-book/tree.html#interpretation-2"><i class="fa fa-check"></i><b>4.4.1</b> Interpretation</a></li>
+<li class="chapter" data-level="4.4.2" data-path="tree.html"><a href="https://christophm.github.io/interpretable-ml-book/tree.html#example-2"><i class="fa fa-check"></i><b>4.4.2</b> Example</a></li>
+<li class="chapter" data-level="4.4.3" data-path="tree.html"><a href="https://christophm.github.io/interpretable-ml-book/tree.html#advantages-2"><i class="fa fa-check"></i><b>4.4.3</b> Advantages</a></li>
+<li class="chapter" data-level="4.4.4" data-path="tree.html"><a href="https://christophm.github.io/interpretable-ml-book/tree.html#disadvantages-2"><i class="fa fa-check"></i><b>4.4.4</b> Disadvantages</a></li>
+<li class="chapter" data-level="4.4.5" data-path="tree.html"><a href="https://christophm.github.io/interpretable-ml-book/tree.html#software-2"><i class="fa fa-check"></i><b>4.4.5</b> Software</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="rules.html"><a href="https://christophm.github.io/interpretable-ml-book/rules.html"><i class="fa fa-check"></i><b>4.5</b> Decision Rules</a><ul style="display: none;">
+<li class="chapter" data-level="4.5.1" data-path="rules.html"><a href="https://christophm.github.io/interpretable-ml-book/rules.html#learn-rules-from-a-single-feature-oner"><i class="fa fa-check"></i><b>4.5.1</b> Learn Rules from a Single Feature (OneR)</a></li>
+<li class="chapter" data-level="4.5.2" data-path="rules.html"><a href="https://christophm.github.io/interpretable-ml-book/rules.html#sequential-covering"><i class="fa fa-check"></i><b>4.5.2</b> Sequential Covering</a></li>
+<li class="chapter" data-level="4.5.3" data-path="rules.html"><a href="https://christophm.github.io/interpretable-ml-book/rules.html#bayesian-rule-lists"><i class="fa fa-check"></i><b>4.5.3</b> Bayesian Rule Lists</a></li>
+<li class="chapter" data-level="4.5.4" data-path="rules.html"><a href="https://christophm.github.io/interpretable-ml-book/rules.html#advantages-3"><i class="fa fa-check"></i><b>4.5.4</b> Advantages</a></li>
+<li class="chapter" data-level="4.5.5" data-path="rules.html"><a href="https://christophm.github.io/interpretable-ml-book/rules.html#disadvantages-3"><i class="fa fa-check"></i><b>4.5.5</b> Disadvantages</a></li>
+<li class="chapter" data-level="4.5.6" data-path="rules.html"><a href="https://christophm.github.io/interpretable-ml-book/rules.html#software-and-alternatives"><i class="fa fa-check"></i><b>4.5.6</b> Software and Alternatives</a></li>
+</ul></li>
+<li class="chapter" data-level="4.6" data-path="rulefit.html"><a href="https://christophm.github.io/interpretable-ml-book/rulefit.html"><i class="fa fa-check"></i><b>4.6</b> RuleFit</a><ul style="display: none;">
+<li class="chapter" data-level="4.6.1" data-path="rulefit.html"><a href="https://christophm.github.io/interpretable-ml-book/rulefit.html#interpretation-and-example"><i class="fa fa-check"></i><b>4.6.1</b> Interpretation and Example</a></li>
+<li class="chapter" data-level="4.6.2" data-path="rulefit.html"><a href="https://christophm.github.io/interpretable-ml-book/rulefit.html#theory-1"><i class="fa fa-check"></i><b>4.6.2</b> Theory</a></li>
+<li class="chapter" data-level="4.6.3" data-path="rulefit.html"><a href="https://christophm.github.io/interpretable-ml-book/rulefit.html#advantages-4"><i class="fa fa-check"></i><b>4.6.3</b> Advantages</a></li>
+<li class="chapter" data-level="4.6.4" data-path="rulefit.html"><a href="https://christophm.github.io/interpretable-ml-book/rulefit.html#disadvantages-4"><i class="fa fa-check"></i><b>4.6.4</b> Disadvantages</a></li>
+<li class="chapter" data-level="4.6.5" data-path="rulefit.html"><a href="https://christophm.github.io/interpretable-ml-book/rulefit.html#software-and-alternative"><i class="fa fa-check"></i><b>4.6.5</b> Software and Alternative</a></li>
+</ul></li>
+<li class="chapter" data-level="4.7" data-path="other-interpretable.html"><a href="https://christophm.github.io/interpretable-ml-book/other-interpretable.html"><i class="fa fa-check"></i><b>4.7</b> Other Interpretable Models</a><ul style="display: none;">
+<li class="chapter" data-level="4.7.1" data-path="other-interpretable.html"><a href="https://christophm.github.io/interpretable-ml-book/other-interpretable.html#naive-bayes-classifier"><i class="fa fa-check"></i><b>4.7.1</b> Naive Bayes Classifier</a></li>
+<li class="chapter" data-level="4.7.2" data-path="other-interpretable.html"><a href="https://christophm.github.io/interpretable-ml-book/other-interpretable.html#k-nearest-neighbors"><i class="fa fa-check"></i><b>4.7.2</b> K-Nearest Neighbors</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="agnostic.html"><a href="https://christophm.github.io/interpretable-ml-book/agnostic.html"><i class="fa fa-check"></i><b>5</b> Model-Agnostic Methods</a></li>
+<li class="chapter" data-level="6" data-path="example-based.html"><a href="https://christophm.github.io/interpretable-ml-book/example-based.html"><i class="fa fa-check"></i><b>6</b> Example-Based Explanations</a></li>
+<li class="chapter" data-level="7" data-path="global-methods.html"><a href="https://christophm.github.io/interpretable-ml-book/global-methods.html"><i class="fa fa-check"></i><b>7</b> Global Model-Agnostic Methods</a><ul>
+<li class="chapter" data-level="7.1" data-path="pdp.html"><a href="https://christophm.github.io/interpretable-ml-book/pdp.html"><i class="fa fa-check"></i><b>7.1</b> Partial Dependence Plot (PDP)</a><ul style="display: none;">
+<li class="chapter" data-level="7.1.1" data-path="pdp.html"><a href="https://christophm.github.io/interpretable-ml-book/pdp.html#pdp-based-feature-importance"><i class="fa fa-check"></i><b>7.1.1</b> PDP-based Feature Importance</a></li>
+<li class="chapter" data-level="7.1.2" data-path="pdp.html"><a href="https://christophm.github.io/interpretable-ml-book/pdp.html#examples"><i class="fa fa-check"></i><b>7.1.2</b> Examples</a></li>
+<li class="chapter" data-level="7.1.3" data-path="pdp.html"><a href="https://christophm.github.io/interpretable-ml-book/pdp.html#advantages-5"><i class="fa fa-check"></i><b>7.1.3</b> Advantages</a></li>
+<li class="chapter" data-level="7.1.4" data-path="pdp.html"><a href="https://christophm.github.io/interpretable-ml-book/pdp.html#disadvantages-5"><i class="fa fa-check"></i><b>7.1.4</b> Disadvantages</a></li>
+<li class="chapter" data-level="7.1.5" data-path="pdp.html"><a href="https://christophm.github.io/interpretable-ml-book/pdp.html#software-and-alternatives-1"><i class="fa fa-check"></i><b>7.1.5</b> Software and Alternatives</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="ale.html"><a href="https://christophm.github.io/interpretable-ml-book/ale.html" title="7.2 Accumulated Local Effects (ALE) Plot"><i class="fa fa-check"></i><b>7.2</b> Accumulated Local Effects (ALE) Plot</a><ul style="display: none;">
+<li class="chapter" data-level="7.2.1" data-path="ale.html"><a href="https://christophm.github.io/interpretable-ml-book/ale.html#motivation-and-intuition"><i class="fa fa-check"></i><b>7.2.1</b> Motivation and Intuition</a></li>
+<li class="chapter" data-level="7.2.2" data-path="ale.html"><a href="https://christophm.github.io/interpretable-ml-book/ale.html#theory-2"><i class="fa fa-check"></i><b>7.2.2</b> Theory</a></li>
+<li class="chapter" data-level="7.2.3" data-path="ale.html"><a href="https://christophm.github.io/interpretable-ml-book/ale.html#estimation"><i class="fa fa-check"></i><b>7.2.3</b> Estimation</a></li>
+<li class="chapter" data-level="7.2.4" data-path="ale.html"><a href="https://christophm.github.io/interpretable-ml-book/ale.html#examples-1"><i class="fa fa-check"></i><b>7.2.4</b> Examples</a></li>
+<li class="chapter" data-level="7.2.5" data-path="ale.html"><a href="https://christophm.github.io/interpretable-ml-book/ale.html#advantages-6"><i class="fa fa-check"></i><b>7.2.5</b> Advantages</a></li>
+<li class="chapter" data-level="7.2.6" data-path="ale.html"><a href="https://christophm.github.io/interpretable-ml-book/ale.html#disadvantages-6"><i class="fa fa-check"></i><b>7.2.6</b> Disadvantages</a></li>
+<li class="chapter" data-level="7.2.7" data-path="ale.html"><a href="https://christophm.github.io/interpretable-ml-book/ale.html#implementation-and-alternatives"><i class="fa fa-check"></i><b>7.2.7</b> Implementation and Alternatives</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="interaction.html"><a href="https://christophm.github.io/interpretable-ml-book/interaction.html"><i class="fa fa-check"></i><b>7.3</b> Feature Interaction</a><ul style="display: none;">
+<li class="chapter" data-level="7.3.1" data-path="interaction.html"><a href="https://christophm.github.io/interpretable-ml-book/interaction.html#feature-interaction"><i class="fa fa-check"></i><b>7.3.1</b> Feature Interaction?</a></li>
+<li class="chapter" data-level="7.3.2" data-path="interaction.html"><a href="https://christophm.github.io/interpretable-ml-book/interaction.html#theory-friedmans-h-statistic"><i class="fa fa-check"></i><b>7.3.2</b> Theory: Friedman’s H-statistic</a></li>
+<li class="chapter" data-level="7.3.3" data-path="interaction.html"><a href="https://christophm.github.io/interpretable-ml-book/interaction.html#examples-2"><i class="fa fa-check"></i><b>7.3.3</b> Examples</a></li>
+<li class="chapter" data-level="7.3.4" data-path="interaction.html"><a href="https://christophm.github.io/interpretable-ml-book/interaction.html#advantages-7"><i class="fa fa-check"></i><b>7.3.4</b> Advantages</a></li>
+<li class="chapter" data-level="7.3.5" data-path="interaction.html"><a href="https://christophm.github.io/interpretable-ml-book/interaction.html#disadvantages-7"><i class="fa fa-check"></i><b>7.3.5</b> Disadvantages</a></li>
+<li class="chapter" data-level="7.3.6" data-path="interaction.html"><a href="https://christophm.github.io/interpretable-ml-book/interaction.html#implementations"><i class="fa fa-check"></i><b>7.3.6</b> Implementations</a></li>
+<li class="chapter" data-level="7.3.7" data-path="interaction.html"><a href="https://christophm.github.io/interpretable-ml-book/interaction.html#alternatives"><i class="fa fa-check"></i><b>7.3.7</b> Alternatives</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="decomposition.html"><a href="https://christophm.github.io/interpretable-ml-book/decomposition.html"><i class="fa fa-check"></i><b>7.4</b> Functional Decompositon</a><ul style="display: none;">
+<li class="chapter" data-level="7.4.1" data-path="decomposition.html"><a href="https://christophm.github.io/interpretable-ml-book/decomposition.html#how-not-to-compute-the-components-i"><i class="fa fa-check"></i><b>7.4.1</b> How not to Compute the Components I</a></li>
+<li class="chapter" data-level="7.4.2" data-path="decomposition.html"><a href="https://christophm.github.io/interpretable-ml-book/decomposition.html#functional-decomposition"><i class="fa fa-check"></i><b>7.4.2</b> Functional Decomposition</a></li>
+<li class="chapter" data-level="7.4.3" data-path="decomposition.html"><a href="https://christophm.github.io/interpretable-ml-book/decomposition.html#how-not-to-compute-the-components-ii"><i class="fa fa-check"></i><b>7.4.3</b> How not to Compute the Components II</a></li>
+<li class="chapter" data-level="7.4.4" data-path="decomposition.html"><a href="https://christophm.github.io/interpretable-ml-book/decomposition.html#functional-anova"><i class="fa fa-check"></i><b>7.4.4</b> Functional ANOVA</a></li>
+<li class="chapter" data-level="7.4.5" data-path="decomposition.html"><a href="https://christophm.github.io/interpretable-ml-book/decomposition.html#generalized-functional-anova-for-dependent-features"><i class="fa fa-check"></i><b>7.4.5</b> Generalized Functional ANOVA for Dependent Features</a></li>
+<li class="chapter" data-level="7.4.6" data-path="decomposition.html"><a href="https://christophm.github.io/interpretable-ml-book/decomposition.html#accumulated-local-effect-plots"><i class="fa fa-check"></i><b>7.4.6</b> Accumulated Local Effect Plots</a></li>
+<li class="chapter" data-level="7.4.7" data-path="decomposition.html"><a href="https://christophm.github.io/interpretable-ml-book/decomposition.html#statistical-regression-models"><i class="fa fa-check"></i><b>7.4.7</b> Statistical Regression Models</a></li>
+<li class="chapter" data-level="7.4.8" data-path="decomposition.html"><a href="https://christophm.github.io/interpretable-ml-book/decomposition.html#bonus-partial-dependence-plot"><i class="fa fa-check"></i><b>7.4.8</b> Bonus: Partial Dependence Plot</a></li>
+<li class="chapter" data-level="7.4.9" data-path="decomposition.html"><a href="https://christophm.github.io/interpretable-ml-book/decomposition.html#advantages-8"><i class="fa fa-check"></i><b>7.4.9</b> Advantages</a></li>
+<li class="chapter" data-level="7.4.10" data-path="decomposition.html"><a href="https://christophm.github.io/interpretable-ml-book/decomposition.html#disadvantages-8"><i class="fa fa-check"></i><b>7.4.10</b> Disadvantages</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="feature-importance.html"><a href="https://christophm.github.io/interpretable-ml-book/feature-importance.html"><i class="fa fa-check"></i><b>7.5</b> Permutation Feature Importance</a><ul style="display: none;">
+<li class="chapter" data-level="7.5.1" data-path="feature-importance.html"><a href="https://christophm.github.io/interpretable-ml-book/feature-importance.html#theory-3"><i class="fa fa-check"></i><b>7.5.1</b> Theory</a></li>
+<li class="chapter" data-level="7.5.2" data-path="feature-importance.html"><a href="https://christophm.github.io/interpretable-ml-book/feature-importance.html#feature-importance-data"><i class="fa fa-check"></i><b>7.5.2</b> Should I Compute Importance on Training or Test Data?</a></li>
+<li class="chapter" data-level="7.5.3" data-path="feature-importance.html"><a href="https://christophm.github.io/interpretable-ml-book/feature-importance.html#example-and-interpretation"><i class="fa fa-check"></i><b>7.5.3</b> Example and Interpretation</a></li>
+<li class="chapter" data-level="7.5.4" data-path="feature-importance.html"><a href="https://christophm.github.io/interpretable-ml-book/feature-importance.html#advantages-9"><i class="fa fa-check"></i><b>7.5.4</b> Advantages</a></li>
+<li class="chapter" data-level="7.5.5" data-path="feature-importance.html"><a href="https://christophm.github.io/interpretable-ml-book/feature-importance.html#disadvantages-9"><i class="fa fa-check"></i><b>7.5.5</b> Disadvantages</a></li>
+<li class="chapter" data-level="7.5.6" data-path="feature-importance.html"><a href="https://christophm.github.io/interpretable-ml-book/feature-importance.html#software-and-alternatives-2"><i class="fa fa-check"></i><b>7.5.6</b> Software and Alternatives</a></li>
+</ul></li>
+<li class="chapter" data-level="7.6" data-path="global.html"><a href="https://christophm.github.io/interpretable-ml-book/global.html"><i class="fa fa-check"></i><b>7.6</b> Global Surrogate</a><ul style="display: none;">
+<li class="chapter" data-level="7.6.1" data-path="global.html"><a href="https://christophm.github.io/interpretable-ml-book/global.html#theory-4"><i class="fa fa-check"></i><b>7.6.1</b> Theory</a></li>
+<li class="chapter" data-level="7.6.2" data-path="global.html"><a href="https://christophm.github.io/interpretable-ml-book/global.html#example-3"><i class="fa fa-check"></i><b>7.6.2</b> Example</a></li>
+<li class="chapter" data-level="7.6.3" data-path="global.html"><a href="https://christophm.github.io/interpretable-ml-book/global.html#advantages-10"><i class="fa fa-check"></i><b>7.6.3</b> Advantages</a></li>
+<li class="chapter" data-level="7.6.4" data-path="global.html"><a href="https://christophm.github.io/interpretable-ml-book/global.html#disadvantages-10"><i class="fa fa-check"></i><b>7.6.4</b> Disadvantages</a></li>
+<li class="chapter" data-level="7.6.5" data-path="global.html"><a href="https://christophm.github.io/interpretable-ml-book/global.html#software-3"><i class="fa fa-check"></i><b>7.6.5</b> Software</a></li>
+</ul></li>
+<li class="chapter" data-level="7.7" data-path="proto.html"><a href="https://christophm.github.io/interpretable-ml-book/proto.html"><i class="fa fa-check"></i><b>7.7</b> Prototypes and Criticisms</a><ul style="display: none;">
+<li class="chapter" data-level="7.7.1" data-path="proto.html"><a href="https://christophm.github.io/interpretable-ml-book/proto.html#theory-5"><i class="fa fa-check"></i><b>7.7.1</b> Theory</a></li>
+<li class="chapter" data-level="7.7.2" data-path="proto.html"><a href="https://christophm.github.io/interpretable-ml-book/proto.html#examples-3"><i class="fa fa-check"></i><b>7.7.2</b> Examples</a></li>
+<li class="chapter" data-level="7.7.3" data-path="proto.html"><a href="https://christophm.github.io/interpretable-ml-book/proto.html#advantages-11"><i class="fa fa-check"></i><b>7.7.3</b> Advantages</a></li>
+<li class="chapter" data-level="7.7.4" data-path="proto.html"><a href="https://christophm.github.io/interpretable-ml-book/proto.html#disadvantages-11"><i class="fa fa-check"></i><b>7.7.4</b> Disadvantages</a></li>
+<li class="chapter" data-level="7.7.5" data-path="proto.html"><a href="https://christophm.github.io/interpretable-ml-book/proto.html#code-and-alternatives"><i class="fa fa-check"></i><b>7.7.5</b> Code and Alternatives</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="local-methods.html"><a href="https://christophm.github.io/interpretable-ml-book/local-methods.html"><i class="fa fa-check"></i><b>8</b> Local Model-Agnostic Methods</a><ul>
+<li class="chapter" data-level="8.1" data-path="ice.html"><a href="https://christophm.github.io/interpretable-ml-book/ice.html" title="8.1 Individual Conditional Expectation (ICE)"><i class="fa fa-check"></i><b>8.1</b> Individual Conditional Expectation (ICE)</a><ul style="display: none;">
+<li class="chapter" data-level="8.1.1" data-path="ice.html"><a href="https://christophm.github.io/interpretable-ml-book/ice.html#examples-4"><i class="fa fa-check"></i><b>8.1.1</b> Examples</a></li>
+<li class="chapter" data-level="8.1.2" data-path="ice.html"><a href="https://christophm.github.io/interpretable-ml-book/ice.html#advantages-12"><i class="fa fa-check"></i><b>8.1.2</b> Advantages</a></li>
+<li class="chapter" data-level="8.1.3" data-path="ice.html"><a href="https://christophm.github.io/interpretable-ml-book/ice.html#disadvantages-12"><i class="fa fa-check"></i><b>8.1.3</b> Disadvantages</a></li>
+<li class="chapter" data-level="8.1.4" data-path="ice.html"><a href="https://christophm.github.io/interpretable-ml-book/ice.html#software-and-alternatives-3"><i class="fa fa-check"></i><b>8.1.4</b> Software and Alternatives</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="lime.html"><a href="https://christophm.github.io/interpretable-ml-book/lime.html"><i class="fa fa-check"></i><b>8.2</b> Local Surrogate (LIME)</a><ul style="display: none;">
+<li class="chapter" data-level="8.2.1" data-path="lime.html"><a href="https://christophm.github.io/interpretable-ml-book/lime.html#lime-for-tabular-data"><i class="fa fa-check"></i><b>8.2.1</b> LIME for Tabular Data</a></li>
+<li class="chapter" data-level="8.2.2" data-path="lime.html"><a href="https://christophm.github.io/interpretable-ml-book/lime.html#lime-for-text"><i class="fa fa-check"></i><b>8.2.2</b> LIME for Text</a></li>
+<li class="chapter" data-level="8.2.3" data-path="lime.html"><a href="https://christophm.github.io/interpretable-ml-book/lime.html#images-lime"><i class="fa fa-check"></i><b>8.2.3</b> LIME for Images</a></li>
+<li class="chapter" data-level="8.2.4" data-path="lime.html"><a href="https://christophm.github.io/interpretable-ml-book/lime.html#advantages-13"><i class="fa fa-check"></i><b>8.2.4</b> Advantages</a></li>
+<li class="chapter" data-level="8.2.5" data-path="lime.html"><a href="https://christophm.github.io/interpretable-ml-book/lime.html#disadvantages-13"><i class="fa fa-check"></i><b>8.2.5</b> Disadvantages</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="counterfactual.html"><a href="https://christophm.github.io/interpretable-ml-book/counterfactual.html"><i class="fa fa-check"></i><b>8.3</b> Counterfactual Explanations</a><ul style="display: none;">
+<li class="chapter" data-level="8.3.1" data-path="counterfactual.html"><a href="https://christophm.github.io/interpretable-ml-book/counterfactual.html#generating-counterfactual-explanations"><i class="fa fa-check"></i><b>8.3.1</b> Generating Counterfactual Explanations</a></li>
+<li class="chapter" data-level="8.3.2" data-path="counterfactual.html"><a href="https://christophm.github.io/interpretable-ml-book/counterfactual.html#example-8"><i class="fa fa-check"></i><b>8.3.2</b> Example</a></li>
+<li class="chapter" data-level="8.3.3" data-path="counterfactual.html"><a href="https://christophm.github.io/interpretable-ml-book/counterfactual.html#advantages-14"><i class="fa fa-check"></i><b>8.3.3</b> Advantages</a></li>
+<li class="chapter" data-level="8.3.4" data-path="counterfactual.html"><a href="https://christophm.github.io/interpretable-ml-book/counterfactual.html#disadvantages-14"><i class="fa fa-check"></i><b>8.3.4</b> Disadvantages</a></li>
+<li class="chapter" data-level="8.3.5" data-path="counterfactual.html"><a href="https://christophm.github.io/interpretable-ml-book/counterfactual.html#example-software"><i class="fa fa-check"></i><b>8.3.5</b> Software and Alternatives</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="anchors.html"><a href="https://christophm.github.io/interpretable-ml-book/anchors.html"><i class="fa fa-check"></i><b>8.4</b> Scoped Rules (Anchors)</a><ul style="display: none;">
+<li class="chapter" data-level="8.4.1" data-path="anchors.html"><a href="https://christophm.github.io/interpretable-ml-book/anchors.html#finding-anchors"><i class="fa fa-check"></i><b>8.4.1</b> Finding Anchors</a></li>
+<li class="chapter" data-level="8.4.2" data-path="anchors.html"><a href="https://christophm.github.io/interpretable-ml-book/anchors.html#complexity-and-runtime"><i class="fa fa-check"></i><b>8.4.2</b> Complexity and Runtime</a></li>
+<li class="chapter" data-level="8.4.3" data-path="anchors.html"><a href="https://christophm.github.io/interpretable-ml-book/anchors.html#tabular-data-example"><i class="fa fa-check"></i><b>8.4.3</b> Tabular Data Example</a></li>
+<li class="chapter" data-level="8.4.4" data-path="anchors.html"><a href="https://christophm.github.io/interpretable-ml-book/anchors.html#advantages-15"><i class="fa fa-check"></i><b>8.4.4</b> Advantages</a></li>
+<li class="chapter" data-level="8.4.5" data-path="anchors.html"><a href="https://christophm.github.io/interpretable-ml-book/anchors.html#disadvantages-15"><i class="fa fa-check"></i><b>8.4.5</b> Disadvantages</a></li>
+<li class="chapter" data-level="8.4.6" data-path="anchors.html"><a href="https://christophm.github.io/interpretable-ml-book/anchors.html#software-and-alternatives-4"><i class="fa fa-check"></i><b>8.4.6</b> Software and Alternatives</a></li>
+</ul></li>
+<li class="chapter" data-level="8.5" data-path="shapley.html"><a href="https://christophm.github.io/interpretable-ml-book/shapley.html"><i class="fa fa-check"></i><b>8.5</b> Shapley Values</a><ul style="display: none;">
+<li class="chapter" data-level="8.5.1" data-path="shapley.html"><a href="https://christophm.github.io/interpretable-ml-book/shapley.html#general-idea"><i class="fa fa-check"></i><b>8.5.1</b> General Idea</a></li>
+<li class="chapter" data-level="8.5.2" data-path="shapley.html"><a href="https://christophm.github.io/interpretable-ml-book/shapley.html#examples-and-interpretation"><i class="fa fa-check"></i><b>8.5.2</b> Examples and Interpretation</a></li>
+<li class="chapter" data-level="8.5.3" data-path="shapley.html"><a href="https://christophm.github.io/interpretable-ml-book/shapley.html#the-shapley-value-in-detail"><i class="fa fa-check"></i><b>8.5.3</b> The Shapley Value in Detail</a></li>
+<li class="chapter" data-level="8.5.4" data-path="shapley.html"><a href="https://christophm.github.io/interpretable-ml-book/shapley.html#advantages-16"><i class="fa fa-check"></i><b>8.5.4</b> Advantages</a></li>
+<li class="chapter" data-level="8.5.5" data-path="shapley.html"><a href="https://christophm.github.io/interpretable-ml-book/shapley.html#disadvantages-16"><i class="fa fa-check"></i><b>8.5.5</b> Disadvantages</a></li>
+<li class="chapter" data-level="8.5.6" data-path="shapley.html"><a href="https://christophm.github.io/interpretable-ml-book/shapley.html#software-and-alternatives-5"><i class="fa fa-check"></i><b>8.5.6</b> Software and Alternatives</a></li>
+</ul></li>
+<li class="chapter" data-level="8.6" data-path="shap.html"><a href="https://christophm.github.io/interpretable-ml-book/shap.html" title="8.6 SHAP (SHapley Additive exPlanations)"><i class="fa fa-check"></i><b>8.6</b> SHAP (SHapley Additive exPlanations)</a><ul style="display: none;">
+<li class="chapter" data-level="8.6.1" data-path="shap.html"><a href="https://christophm.github.io/interpretable-ml-book/shap.html#definition"><i class="fa fa-check"></i><b>8.6.1</b> Definition</a></li>
+<li class="chapter" data-level="8.6.2" data-path="shap.html"><a href="https://christophm.github.io/interpretable-ml-book/shap.html#kernelshap"><i class="fa fa-check"></i><b>8.6.2</b> KernelSHAP</a></li>
+<li class="chapter" data-level="8.6.3" data-path="shap.html"><a href="https://christophm.github.io/interpretable-ml-book/shap.html#treeshap"><i class="fa fa-check"></i><b>8.6.3</b> TreeSHAP</a></li>
+<li class="chapter" data-level="8.6.4" data-path="shap.html"><a href="https://christophm.github.io/interpretable-ml-book/shap.html#examples-5"><i class="fa fa-check"></i><b>8.6.4</b> Examples</a></li>
+<li class="chapter" data-level="8.6.5" data-path="shap.html"><a href="https://christophm.github.io/interpretable-ml-book/shap.html#shap-feature-importance"><i class="fa fa-check"></i><b>8.6.5</b> SHAP Feature Importance</a></li>
+<li class="chapter" data-level="8.6.6" data-path="shap.html"><a href="https://christophm.github.io/interpretable-ml-book/shap.html#shap-summary-plot"><i class="fa fa-check"></i><b>8.6.6</b> SHAP Summary Plot</a></li>
+<li class="chapter" data-level="8.6.7" data-path="shap.html"><a href="https://christophm.github.io/interpretable-ml-book/shap.html#shap-dependence-plot"><i class="fa fa-check"></i><b>8.6.7</b> SHAP Dependence Plot</a></li>
+<li class="chapter" data-level="8.6.8" data-path="shap.html"><a href="https://christophm.github.io/interpretable-ml-book/shap.html#shap-interaction-values"><i class="fa fa-check"></i><b>8.6.8</b> SHAP Interaction Values</a></li>
+<li class="chapter" data-level="8.6.9" data-path="shap.html"><a href="https://christophm.github.io/interpretable-ml-book/shap.html#clustering-shap-values"><i class="fa fa-check"></i><b>8.6.9</b> Clustering SHAP values</a></li>
+<li class="chapter" data-level="8.6.10" data-path="shap.html"><a href="https://christophm.github.io/interpretable-ml-book/shap.html#advantages-17"><i class="fa fa-check"></i><b>8.6.10</b> Advantages</a></li>
+<li class="chapter" data-level="8.6.11" data-path="shap.html"><a href="https://christophm.github.io/interpretable-ml-book/shap.html#disadvantages-17"><i class="fa fa-check"></i><b>8.6.11</b> Disadvantages</a></li>
+<li class="chapter" data-level="8.6.12" data-path="shap.html"><a href="https://christophm.github.io/interpretable-ml-book/shap.html#software-4"><i class="fa fa-check"></i><b>8.6.12</b> Software</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="neural-networks.html"><a href="https://christophm.github.io/interpretable-ml-book/neural-networks.html"><i class="fa fa-check"></i><b>9</b> Neural Network Interpretation</a><ul>
+<li class="chapter" data-level="9.1" data-path="cnn-features.html"><a href="https://christophm.github.io/interpretable-ml-book/cnn-features.html"><i class="fa fa-check"></i><b>9.1</b> Learned Features</a><ul style="display: none;">
+<li class="chapter" data-level="9.1.1" data-path="cnn-features.html"><a href="https://christophm.github.io/interpretable-ml-book/cnn-features.html#feature-visualization"><i class="fa fa-check"></i><b>9.1.1</b> Feature Visualization</a></li>
+<li class="chapter" data-level="9.1.2" data-path="cnn-features.html"><a href="https://christophm.github.io/interpretable-ml-book/cnn-features.html#network-dissection"><i class="fa fa-check"></i><b>9.1.2</b> Network Dissection</a></li>
+<li class="chapter" data-level="9.1.3" data-path="cnn-features.html"><a href="https://christophm.github.io/interpretable-ml-book/cnn-features.html#advantages-18"><i class="fa fa-check"></i><b>9.1.3</b> Advantages</a></li>
+<li class="chapter" data-level="9.1.4" data-path="cnn-features.html"><a href="https://christophm.github.io/interpretable-ml-book/cnn-features.html#disadvantages-18"><i class="fa fa-check"></i><b>9.1.4</b> Disadvantages</a></li>
+<li class="chapter" data-level="9.1.5" data-path="cnn-features.html"><a href="https://christophm.github.io/interpretable-ml-book/cnn-features.html#software-and-further-material"><i class="fa fa-check"></i><b>9.1.5</b> Software and Further Material</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="pixel-attribution.html"><a href="https://christophm.github.io/interpretable-ml-book/pixel-attribution.html"><i class="fa fa-check"></i><b>9.2</b> Pixel Attribution (Saliency Maps)</a><ul style="display: none;">
+<li class="chapter" data-level="9.2.1" data-path="pixel-attribution.html"><a href="https://christophm.github.io/interpretable-ml-book/pixel-attribution.html#vanilla-gradient-saliency-maps"><i class="fa fa-check"></i><b>9.2.1</b> Vanilla Gradient (Saliency Maps)</a></li>
+<li class="chapter" data-level="9.2.2" data-path="pixel-attribution.html"><a href="https://christophm.github.io/interpretable-ml-book/pixel-attribution.html#deconvnet"><i class="fa fa-check"></i><b>9.2.2</b> DeconvNet</a></li>
+<li class="chapter" data-level="9.2.3" data-path="pixel-attribution.html"><a href="https://christophm.github.io/interpretable-ml-book/pixel-attribution.html#grad-cam"><i class="fa fa-check"></i><b>9.2.3</b> Grad-CAM</a></li>
+<li class="chapter" data-level="9.2.4" data-path="pixel-attribution.html"><a href="https://christophm.github.io/interpretable-ml-book/pixel-attribution.html#guided-grad-cam"><i class="fa fa-check"></i><b>9.2.4</b> Guided Grad-CAM</a></li>
+<li class="chapter" data-level="9.2.5" data-path="pixel-attribution.html"><a href="https://christophm.github.io/interpretable-ml-book/pixel-attribution.html#smoothgrad"><i class="fa fa-check"></i><b>9.2.5</b> SmoothGrad</a></li>
+<li class="chapter" data-level="9.2.6" data-path="pixel-attribution.html"><a href="https://christophm.github.io/interpretable-ml-book/pixel-attribution.html#examples-6"><i class="fa fa-check"></i><b>9.2.6</b> Examples</a></li>
+<li class="chapter" data-level="9.2.7" data-path="pixel-attribution.html"><a href="https://christophm.github.io/interpretable-ml-book/pixel-attribution.html#advantages-19"><i class="fa fa-check"></i><b>9.2.7</b> Advantages</a></li>
+<li class="chapter" data-level="9.2.8" data-path="pixel-attribution.html"><a href="https://christophm.github.io/interpretable-ml-book/pixel-attribution.html#disadvantages-19"><i class="fa fa-check"></i><b>9.2.8</b> Disadvantages</a></li>
+<li class="chapter" data-level="9.2.9" data-path="pixel-attribution.html"><a href="https://christophm.github.io/interpretable-ml-book/pixel-attribution.html#software-5"><i class="fa fa-check"></i><b>9.2.9</b> Software</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="detecting-concepts.html"><a href="https://christophm.github.io/interpretable-ml-book/detecting-concepts.html"><i class="fa fa-check"></i><b>9.3</b> Detecting Concepts</a><ul style="display: none;">
+<li class="chapter" data-level="9.3.1" data-path="detecting-concepts.html"><a href="https://christophm.github.io/interpretable-ml-book/detecting-concepts.html#tcav-testing-with-concept-activation-vectors"><i class="fa fa-check"></i><b>9.3.1</b> TCAV: Testing with Concept Activation Vectors</a></li>
+<li class="chapter" data-level="9.3.2" data-path="detecting-concepts.html"><a href="https://christophm.github.io/interpretable-ml-book/detecting-concepts.html#example-9"><i class="fa fa-check"></i><b>9.3.2</b> Example</a></li>
+<li class="chapter" data-level="9.3.3" data-path="detecting-concepts.html"><a href="https://christophm.github.io/interpretable-ml-book/detecting-concepts.html#advantages-20"><i class="fa fa-check"></i><b>9.3.3</b> Advantages</a></li>
+<li class="chapter" data-level="9.3.4" data-path="detecting-concepts.html"><a href="https://christophm.github.io/interpretable-ml-book/detecting-concepts.html#disadvantages-20"><i class="fa fa-check"></i><b>9.3.4</b> Disadvantages</a></li>
+<li class="chapter" data-level="9.3.5" data-path="detecting-concepts.html"><a href="https://christophm.github.io/interpretable-ml-book/detecting-concepts.html#bonus-other-concept-based-approaches"><i class="fa fa-check"></i><b>9.3.5</b> Bonus: Other Concept-based Approaches</a></li>
+<li class="chapter" data-level="9.3.6" data-path="detecting-concepts.html"><a href="https://christophm.github.io/interpretable-ml-book/detecting-concepts.html#software-6"><i class="fa fa-check"></i><b>9.3.6</b> Software</a></li>
+</ul></li>
+<li class="chapter" data-level="9.4" data-path="adversarial.html"><a href="https://christophm.github.io/interpretable-ml-book/adversarial.html"><i class="fa fa-check"></i><b>9.4</b> Adversarial Examples</a><ul style="display: none;">
+<li class="chapter" data-level="9.4.1" data-path="adversarial.html"><a href="https://christophm.github.io/interpretable-ml-book/adversarial.html#methods-and-examples"><i class="fa fa-check"></i><b>9.4.1</b> Methods and Examples</a></li>
+<li class="chapter" data-level="9.4.2" data-path="adversarial.html"><a href="https://christophm.github.io/interpretable-ml-book/adversarial.html#the-cybersecurity-perspective"><i class="fa fa-check"></i><b>9.4.2</b> The Cybersecurity Perspective</a></li>
+</ul></li>
+<li class="chapter" data-level="9.5" data-path="influential.html"><a href="https://christophm.github.io/interpretable-ml-book/influential.html"><i class="fa fa-check"></i><b>9.5</b> Influential Instances</a><ul style="display: none;">
+<li class="chapter" data-level="9.5.1" data-path="influential.html"><a href="https://christophm.github.io/interpretable-ml-book/influential.html#deletion-diagnostics"><i class="fa fa-check"></i><b>9.5.1</b> Deletion Diagnostics</a></li>
+<li class="chapter" data-level="9.5.2" data-path="influential.html"><a href="https://christophm.github.io/interpretable-ml-book/influential.html#influence-functions"><i class="fa fa-check"></i><b>9.5.2</b> Influence Functions</a></li>
+<li class="chapter" data-level="9.5.3" data-path="influential.html"><a href="https://christophm.github.io/interpretable-ml-book/influential.html#advantages-of-identifying-influential-instances"><i class="fa fa-check"></i><b>9.5.3</b> Advantages of Identifying Influential Instances</a></li>
+<li class="chapter" data-level="9.5.4" data-path="influential.html"><a href="https://christophm.github.io/interpretable-ml-book/influential.html#disadvantages-of-identifying-influential-instances"><i class="fa fa-check"></i><b>9.5.4</b> Disadvantages of Identifying Influential Instances</a></li>
+<li class="chapter" data-level="9.5.5" data-path="influential.html"><a href="https://christophm.github.io/interpretable-ml-book/influential.html#software-and-alternatives-6"><i class="fa fa-check"></i><b>9.5.5</b> Software and Alternatives</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="future.html"><a href="https://christophm.github.io/interpretable-ml-book/future.html"><i class="fa fa-check"></i><b>10</b> A Look into the Crystal Ball</a><ul>
+<li class="chapter" data-level="10.1" data-path="the-future-of-machine-learning.html"><a href="https://christophm.github.io/interpretable-ml-book/the-future-of-machine-learning.html"><i class="fa fa-check"></i><b>10.1</b> The Future of Machine Learning</a></li>
+<li class="chapter" data-level="10.2" data-path="the-future-of-interpretability.html"><a href="https://christophm.github.io/interpretable-ml-book/the-future-of-interpretability.html"><i class="fa fa-check"></i><b>10.2</b> The Future of Interpretability</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="contribute.html"><a href="https://christophm.github.io/interpretable-ml-book/contribute.html"><i class="fa fa-check"></i><b>11</b> Contribute to the Book</a></li>
+<li class="chapter" data-level="12" data-path="cite.html"><a href="https://christophm.github.io/interpretable-ml-book/cite.html"><i class="fa fa-check"></i><b>12</b> Citing this Book</a></li>
+<li class="chapter" data-level="13" data-path="translations.html"><a href="https://christophm.github.io/interpretable-ml-book/translations.html"><i class="fa fa-check"></i><b>13</b> Translations</a></li>
+<li class="chapter" data-level="14" data-path="acknowledgements.html"><a href="https://christophm.github.io/interpretable-ml-book/acknowledgements.html"><i class="fa fa-check"></i><b>14</b> Acknowledgements</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="https://christophm.github.io/interpretable-ml-book/references.html"><i class="fa fa-check"></i>References</a><ul>
+<li class="chapter" data-level="" data-path="r-packages-used.html"><a href="https://christophm.github.io/interpretable-ml-book/r-packages-used.html"><i class="fa fa-check"></i>R Packages Used</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org/" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body fixed">
+      <div class="body-inner">
+        <div class="book-header fixed" role="navigation" style="background-color: rgb(255, 255, 255);">
+          <a class="btn pull-left js-toolbar-action" aria-label="Toggle Sidebar" title="Toggle Sidebar" href="#"><i class="fa fa-align-justify"></i></a><a class="btn pull-left js-toolbar-action" aria-label="Search" title="Search" href="#"><i class="fa fa-search"></i></a><div class="dropdown pull-right js-toolbar-action"><a class="btn toggle-dropdown" aria-label="Share" title="Share" href="#"><i class="fa fa-share-alt"></i></a><div class="dropdown-menu dropdown-left"><div class="dropdown-caret"><span class="caret-outer"></span><span class="caret-inner"></span></div><div class="buttons"><button class="button size-5 ">Facebook</button><button class="button size-5 ">Twitter</button><button class="button size-5 ">LinkedIn</button><button class="button size-5 ">Weibo</button><button class="button size-5 ">Instapaper</button></div></div></div><a class="btn pull-right js-toolbar-action" aria-label="Github" title="Github" href="#"><i class="fa fa-github"></i></a><a class="btn pull-right js-toolbar-action" aria-label="Facebook" title="Facebook" href="#"><i class="fa fa-facebook"></i></a><a class="btn pull-right js-toolbar-action" aria-label="Twitter" title="Twitter" href="#"><i class="fa fa-twitter"></i></a><div class="dropdown pull-left font-settings js-toolbar-action"><a class="btn toggle-dropdown" aria-label="Font Settings" title="Font Settings" href="#"><i class="fa fa-font"></i></a><div class="dropdown-menu dropdown-right"><div class="dropdown-caret"><span class="caret-outer"></span><span class="caret-inner"></span></div><div class="buttons"><button class="button size-2 font-reduce">A</button><button class="button size-2 font-enlarge">A</button></div><div class="buttons"><button class="button size-2 ">Serif</button><button class="button size-2 ">Sans</button></div><div class="buttons"><button class="button size-3 ">White</button><button class="button size-3 ">Sepia</button><button class="button size-3 ">Night</button></div></div></div><a class="btn pull-left js-toolbar-action" aria-label="Edit" title="Edit" href="#"><i class="fa fa-edit"></i></a><a class="btn pull-left js-toolbar-action" aria-label="Information about the toolbar" title="Information about the toolbar" href="#"><i class="fa fa-info"></i></a><h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="https://christophm.github.io/interpretable-ml-book/">Interpretable Machine Learning</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Interpretable Machine Learning</h1>
+<h2 class="subtitle"><em>A Guide for Making Black Box Models Explainable.</em></h2>
+<p class="author"><em>Christoph Molnar</em></p>
+<p class="date"><em>2021-09-14</em></p>
+</div>
+<div id="summary" class="section level1 unnumbered">
+<h1 class="hasAnchor">Summary<a href="#summary" class="anchor-section"></a></h1>
+<p><img src="Interpretable%20Machine%20Learning_files/title_page.jpg" style="display: block; margin: auto;" width="500"></p>
+<p>Machine learning has great potential for improving products, processes and research.
+But <strong>computers usually do not explain their predictions</strong> which is a barrier to the adoption of machine learning.
+This book is about making machine learning models and their decisions interpretable.</p>
+<p>After exploring the concepts of interpretability, you will learn about simple, <strong>interpretable models</strong> such as decision trees, decision rules and linear regression.
+The focus of the book is on model-agnostic methods for <strong>interpreting black box models</strong> such as feature importance and accumulated local effects, and explaining individual predictions with Shapley values and LIME.
+In addition, the book presents methods specific to deep neural networks.</p>
+<p>All interpretation methods are explained in depth and discussed 
+critically.
+How do they work under the hood?
+What are their strengths and weaknesses?
+How can their outputs be interpreted?
+This book will enable you to select and correctly apply the 
+interpretation method that is most suitable for your machine learning 
+project.
+Reading the book is recommended for machine learning practitioners, data
+ scientists, statisticians, and anyone else interested in making machine
+ learning models interpretable.</p>
+<p>You can buy the PDF and e-book version (epub, mobi) <a href="https://leanpub.com/interpretable-machine-learning">on leanpub.com</a>.</p>
+<p>You can buy the print version <a href="http://www.lulu.com/shop/christoph-molnar/interpretable-machine-learning/paperback/product-24036234.html">on lulu.com</a>.</p>
+<p><strong>About me:</strong> My name is Christoph Molnar, I’m a statistician and a machine learner.
+My goal is to make machine learning interpretable.</p>
+<p>Mail: <a href="mailto:christoph.molnar.ai@gmail.com" class="email">christoph.molnar.ai@gmail.com</a></p>
+<p>Website: <a href="https://christophm.github.io/">https://christophm.github.io/</a></p>
+<p>Follow me on Twitter! <a href="https://twitter.com/ChristophMolnar">@ChristophMolnar</a></p>
+<p>Cover by <a href="https://twitter.com/YvonneDoinel">@YvonneDoinel</a></p>
+<div class="figure">
+<img src="Interpretable%20Machine%20Learning_files/by-nc-sa.png" alt="">
+<p class="caption">Creative Commons License</p>
+</div>
+<p>This book is licensed under the <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</p>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+<a href="https://christophm.github.io/interpretable-ml-book/preface-by-the-author.html" class="navigation navigation-next navigation-unique" aria-label="Next page" style="margin-right: 0px;"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="Interpretable%20Machine%20Learning_files/app.js"></script>
+<script src="Interpretable%20Machine%20Learning_files/clipboard.js"></script>
+<script src="Interpretable%20Machine%20Learning_files/plugin-search.js"></script>
+<script src="Interpretable%20Machine%20Learning_files/plugin-sharing.js"></script>
+<script src="Interpretable%20Machine%20Learning_files/plugin-fontsettings.js"></script>
+<script src="Interpretable%20Machine%20Learning_files/plugin-bookdown.js"></script>
+<script src="Interpretable%20Machine%20Learning_files/jquery.js"></script>
+<script src="Interpretable%20Machine%20Learning_files/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/christophM/interpretable-ml-book/edit/master/manuscript/index.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+
+
+</body></html>
