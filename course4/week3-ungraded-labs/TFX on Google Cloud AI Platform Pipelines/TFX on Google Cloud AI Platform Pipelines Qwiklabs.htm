@@ -1,0 +1,673 @@
+
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<title>TFX on Google Cloud AI Platform Pipelines | Qwiklabs</title>
+<script>
+//<![CDATA[
+window.gon={};gon.current_user={"firstname":"Sergej","lastname":"Horvat","fullname":"Sergej Horvat","company":"Coursera","email":"shorvat@mojemjesto.net","origin":"googlecoursera-run, lti-deeplearning-ai","subscriptions":0,"id":"21e2035ba3c6dcfbe84c873dcab611f9","qlCreatedAt":"2021-08-04 17:16:32 UTC","optIn":null,"current_organization_id":null,"current_organization_role":null};gon.segment="j4Im8pqIko0Lxq4wVVZWMPMM0EroHUvb";gon.deployment="googlecoursera-run";gon.content={"type":"Lab","id":3632,"name":"TFX on Google Cloud AI Platform Pipelines"};
+//]]>
+</script>
+<script>
+  dataLayer = [
+    {user: gon.current_user},
+    {content: gon.content}
+  ];
+</script>
+<script>
+  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer',"GTM-TQR88QK");
+</script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/polyfills/webcomponents-loader-60a166e60df2787cca5915e2ced8c317457f421a20f02601b937a72275ac441a.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/vendor-2beee108ba05276bc429223ee82ed81449d233c93d45af5da84add895e101218.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/application-1c615f291e4ecaca4e79354919f72321998be0e02c720e7149648628dce66956.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/hallofmirrors-fa95343d415d5595d6b6daa0fb9b63dba0f16cae8a72e4d7f4c626d2b920fc1b.js"></script>
+<!--[if lt IE 9]>
+<script src='http://html5shim.googlecode.com/svn/trunk/html5.js' type='text/javascript'></script>
+<![endif]-->
+<!--[endif]>  <![endif]-->
+<script type='application/ld+json'>
+{
+  "@context": "http://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.qwiklabs.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.qwiklabs.com/catalog?keywords={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<script id='ze-snippet' src='https://static.zdassets.com/ekr/snippet.js?key=511e4158-0aec-4e3c-b2e6-4daa1769f51e'></script>
+
+
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="yXgayB4y4ww9LFmZGG7rZ/oVCpJaf8H/+8RkN270njaqxTOrak03BLlZIpEU/flaWEXYzRB55d+U+T5qNU/k2w==" />
+<meta content='width=device-width, initial-scale=1.0, user-scalable=yes' name='viewport'>
+<meta content='1rRsY0INj8RvwB5EF5pwdxt2A2P9aDgAlsICaJ0d5w0' name='google-site-verification'>
+<meta content='#3681E4' property='msapplication-TileColor'>
+<meta content='/favicon-144.png' property='msapplication-TileImage'>
+<meta content='[{&quot;id&quot;:&quot;recaptcha_experiment&quot;,&quot;optimize_id&quot;:&quot;dpViOcLkT3qS4TvL2mRojA&quot;,&quot;title&quot;:&quot;No Recaptcha shown for trusted users&quot;,&quot;variant_index&quot;:0,&quot;variant&quot;:&quot;original&quot;}]' name='active-experiments'>
+<meta content='{&quot;userId&quot;:5338830}' name='help-api-product-data'>
+<meta content='In this lab you will develop, deploy, and run a TFX pipeline on Google Cloud AI Platform Pipelines. It uses a managed Kubeflow instance on Cloud AI Platform Pipelines for orchestration, Cloud Dataflow for data processing, Cloud AI Platform Training for model training, Cloud AI Platform Vizier for hyperparameter tuning, and Cloud AI Platform Prediction for model serving.' name='description'>
+<meta content='Qwiklabs' name='author'>
+<meta content='TFX on Google Cloud AI Platform Pipelines | Qwiklabs' property='og:title'>
+<meta content='website' property='og:type'>
+<meta content='/favicon-144.png' property='og:image'>
+<meta content='Qwiklabs' property='og:site_name'>
+<meta content='In this lab you will develop, deploy, and run a TFX pipeline on Google Cloud AI Platform Pipelines. It uses a managed Kubeflow instance on Cloud AI Platform Pipelines for orchestration, Cloud Dataflow for data processing, Cloud AI Platform Training for model training, Cloud AI Platform Vizier for hyperparameter tuning, and Cloud AI Platform Prediction for model serving.' property='og:description'>
+<meta content='/qwiklabs_logo_900x887.png' property='og:logo' size='900x887'>
+<meta content='/qwiklabs_logo_994x187.png' property='og:logo' size='994x187'>
+
+
+<link href='/favicon-32.png' rel='shortcut icon'>
+<link color='#3681E4' href='/favicon-svg.svg' rel='mask-icon'>
+<link href='/favicon-180.png' rel='apple-touch-icon-precomposed'>
+
+
+
+<link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css?family=Oswald:400|Roboto+Mono:400,700|Roboto:300,400,500,700|Google+Sans:300,400,500,700|Google+Sans+Display:400|Material+Icons|Google+Material+Icons" />
+
+
+<link rel="stylesheet" media="all" href="https://cdn.qwiklabs.com/assets/application-a3eb2886ab557ef47ec966e87a0bf822c1e641baa1721c93eccd14b59dd70ca0.css" />
+
+<style>
+  :root {
+    --primary-text-on-surface-color: #1a73e8;
+    --primary-text-on-surface-color-dark: #1568d6;
+    --primary-text-on-surface-color-darker: #135ec1;
+    --primary-text-on-surface-color-darkest: #1154ac;
+    --primary-surface-color: #1a73e8;
+    --primary-surface-color-rgb: 26,115,232;
+    --primary-surface-color-light: #d1e3fa;
+    --primary-surface-color-lightest: #e8f1fd;
+    --text-on-primary-color: #ffffff;
+    --accent-text-on-surface-color: #f29900;
+    --accent-surface-color: #f9ab00;
+    --accent-surface-color-rgb: 249,171,0;
+    --accent-surface-color-light: #ffefcc;
+    --text-on-accent-color: #202124;
+  }
+</style>
+
+
+
+</head>
+<body class='lab-show l-full no-nav application-new focuses focuses-show lab-show l-full no-nav '>
+<noscript>
+<iframe height='0' src='https://www.googletagmanager.com/ns.html?id=GTM-TQR88QK' style='display:none;visibility:hidden;' width='0'></iframe>
+</noscript>
+<div class='header-container'>
+<div class='header'>
+<ql-icon-button class='js-nav-toggle header__nav-panel-button l-mrm'>menu</ql-icon-button>
+<div class='header__title'>
+<ql-icon-button label="Back" href="https://www.coursera.org/" id="9702a3ddc890fbc4" target="_self" tip="Back">arrow_back</ql-icon-button>
+
+<h1 class='headline-5'>
+TFX on Google Cloud AI Platform Pipelines
+</h1>
+</div>
+<div class='header__actions'>
+<ql-icon-button class='header__button--search js-header-search-bar-button'>search</ql-icon-button>
+<ql-icon-button id='control-panel-target' style='display: none;'>
+dashboard
+</ql-icon-button>
+<ql-menu for='control-panel-target' id='control-panel-menu'></ql-menu>
+
+<ql-icon-button icon='help_outline' id='help-menu-button' label='Open help menu' tip='Help'></ql-icon-button>
+<ql-menu for='help-menu-button' id='help-menu'>
+<ql-menu-item data-analytics-action='opened_help' data-analytics-label='lab' label='Help Center' onclick='hallofmirrors.helpService.startHelp({&quot;productData&quot;:{&quot;userId&quot;:5338830},&quot;context&quot;:&quot;lab&quot;})'></ql-menu-item>
+<ql-menu-item href='https://support.google.com/qwiklabs/contact/contact_us' label='Email support' target='_blank'></ql-menu-item>
+<ql-menu-item label='Chat support' onClick='ql.chat.open()'></ql-menu-item>
+</ql-menu>
+
+<ql-icon-button icon='language' id='language' label='Select your language preference' tip='Language'></ql-icon-button>
+<ql-menu for='language'>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ar' href='/focuses/18013906?locale=ar&amp;parent=lti_session' label='العربية‬‎' lang='ar'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='de' href='/focuses/18013906?locale=de&amp;parent=lti_session' label='Deutsch' lang='de'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='en' href='/focuses/18013906?locale=en&amp;parent=lti_session' label='English' lang='en'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='es' href='/focuses/18013906?locale=es&amp;parent=lti_session' label='español (Latinoamérica)' lang='es'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr' href='/focuses/18013906?locale=fr&amp;parent=lti_session' label='français' lang='fr'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr_CA' href='/focuses/18013906?locale=fr_CA&amp;parent=lti_session' label='français (Canada)' lang='fr-CA'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='he' href='/focuses/18013906?locale=he&amp;parent=lti_session' label='עברית' lang='he'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='id' href='/focuses/18013906?locale=id&amp;parent=lti_session' label='bahasa Indonesia' lang='id'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='it' href='/focuses/18013906?locale=it&amp;parent=lti_session' label='Italiano' lang='it'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ja' href='/focuses/18013906?locale=ja&amp;parent=lti_session' label='日本語' lang='ja'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ko' href='/focuses/18013906?locale=ko&amp;parent=lti_session' label='한국어' lang='ko'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pl' href='/focuses/18013906?locale=pl&amp;parent=lti_session' label='Polski' lang='pl'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_BR' href='/focuses/18013906?locale=pt_BR&amp;parent=lti_session' label='português (Brasil)' lang='pt-BR'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_PT' href='/focuses/18013906?locale=pt_PT&amp;parent=lti_session' label='português (Portugal)' lang='pt-PT'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ru' href='/focuses/18013906?locale=ru&amp;parent=lti_session' label='русский' lang='ru'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='tr' href='/focuses/18013906?locale=tr&amp;parent=lti_session' label='Türkçe' lang='tr'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh' href='/focuses/18013906?locale=zh&amp;parent=lti_session' label='简体中文' lang='zh'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh_TW' href='/focuses/18013906?locale=zh_TW&amp;parent=lti_session' label='繁體中文' lang='zh-TW'></ql-menu-item>
+</ql-menu>
+
+<ql-icon-button id='my_account' label='My account' tip='My account'>
+<ql-avatar></ql-avatar>
+</ql-icon-button>
+<ql-menu for='my_account' id='my_account_menu' style='max-height: 640px'>
+<div class='my-account-menu'>
+<ql-avatar class='l-mtl l-mbl' size='120'></ql-avatar>
+<div class='my-account-menu__user-info l-mbl'>
+<h4 class='ql-subhead-1'>Sergej Horvat</h4>
+<p class='ql-body-2 text--light'>shorvat@mojemjesto.net</p>
+<p class='ql-body-2 text--light'>
+</p>
+<a class="text--green ql-subhead-2" href="/my_account/payments"><ql-chip positive>
+0 Credits
+</ql-chip>
+</a></div>
+<div class='buttons l-mbl'>
+<a class="button button--hairline" id="settings" href="/my_account/profile">Settings</a>
+</div>
+<hr>
+<ql-button data-analytics-action='clicked_sign_out' href='/users/sign_out' method='delete'>
+Sign Out
+</ql-button>
+<div class='privacy l-mtl'>
+<a class="ql-caption text--light" href="/privacy_policy">Privacy</a>
+<span class='ql-caption text--light l-mls l-mrs'>&middot;</span>
+<a class="ql-caption text--light" href="/terms_of_service">Terms</a>
+</div>
+</div>
+</ql-menu>
+
+</div>
+</div>
+<div class='header__search-bar js-header-search-bar'>
+<form class="js-search-form-mobile" onsubmit="ql.searchFilter(); return false;" action="/searches/elasticsearch" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="authenticity_token" value="zoAkgO3PO6Trzz60Cyyg1TZUbn3GiQW49vVlGoj/kwitPQ3jmbDvrG+6RbwHv7LolAS8IoyPIZiZyD9H00Tp5Q==" />
+<input type="text" name="keywords" id="search" placeholder="Search for learning activities." maxlength="255" aria-label="catalog search bar" />
+</form>
+
+<ql-icon-button class='js-close-search-bar'>close</ql-icon-button>
+</div>
+</div>
+
+<nav class='nav-panel js-nav-panel'>
+<div class='nav-panel__logo'>
+<div class="custom-logo" aria-label="Qwiklabs">Qwiklabs</div>
+</div>
+<nav class='ql-sidenav'>
+<ql-sidenav-item href='/' icon='home' label='Home'></ql-sidenav-item>
+
+<ql-sidenav-item href='/catalog' icon='school' label='Catalog'></ql-sidenav-item>
+
+<ql-sidenav-item href='/profile' icon='event_note' label='Profile'></ql-sidenav-item>
+
+</nav>
+<div class='nav-panel__small-links'>
+<a href="/privacy_policy">Privacy</a>
+<a href="/terms_of_service">Terms</a>
+</div>
+
+</nav>
+<div class='nav-panel__overlay js-nav-toggle'></div>
+
+<main class='js-main'>
+<div class='l-main-wrapper' id='main-wrapper'>
+
+
+
+
+
+<div class='lab-assessment__tab js-open-lab-assessment-panel'>
+<button class='js-lab-assessment-total-score'>
+—/100
+</button>
+</div>
+<div aria-labelledby='lab-assessment-checkpoint' class='lab-assessment__panel js-lab-assessment-panel' role='dialog'>
+<div class='lab-assessment__panel__header'>
+<h4 id='lab-assessment-checkpoint'>Checkpoints</h4>
+<ql-icon-button class='js-close-lab-assessment-panel' icon='arrow_forward' label='Close dialog'></ql-icon-button>
+</div>
+<div class='lab-assessment__step'>
+<p class='lab-assessment__step__title'>
+Creating an instance of AI Platform Pipelines
+</p>
+<div class='lab-assessment__step__action'>
+<ql-button class='js-show-run-step-button' step_no='1'>
+Check my progress
+</ql-button>
+<p class='lab-assessment__step__score'>
+<span class='js-assessment-step-score-1'>
+</span>
+/ 20
+</p>
+</div>
+</div>
+
+<div class='lab-assessment__step'>
+<p class='lab-assessment__step__title'>
+Complile the tfx pipeline
+</p>
+<div class='lab-assessment__step__action'>
+<ql-button class='js-show-run-step-button' step_no='2'>
+Check my progress
+</ql-button>
+<p class='lab-assessment__step__score'>
+<span class='js-assessment-step-score-2'>
+</span>
+/ 20
+</p>
+</div>
+</div>
+
+<div class='lab-assessment__step'>
+<p class='lab-assessment__step__title'>
+Deploy the pipeline container to AI Platform Pipelines
+</p>
+<div class='lab-assessment__step__action'>
+<ql-button class='js-show-run-step-button' step_no='3'>
+Check my progress
+</ql-button>
+<p class='lab-assessment__step__score'>
+<span class='js-assessment-step-score-3'>
+</span>
+/ 20
+</p>
+</div>
+</div>
+
+<div class='lab-assessment__step'>
+<p class='lab-assessment__step__title'>
+Create pipeline run using TFX CLI
+</p>
+<div class='lab-assessment__step__action'>
+<ql-button class='js-show-run-step-button' step_no='4'>
+Check my progress
+</ql-button>
+<p class='lab-assessment__step__score'>
+<span class='js-assessment-step-score-4'>
+</span>
+/ 40
+</p>
+</div>
+</div>
+
+</div>
+<ql-drawer-container class='js-lab-state' data-analytics-payload='{&quot;label&quot;:&quot;TFX on Google Cloud AI Platform Pipelines&quot;,&quot;lab_name&quot;:&quot;TFX on Google Cloud AI Platform Pipelines&quot;,&quot;classroom_name&quot;:null,&quot;deployment&quot;:&quot;googlecoursera-run&quot;}' data-focus-id='18013906' data-lab-billing-limit='0.0' data-lab-duration='5400' data-parent='lti_session' data-recaptcha-enabled id='lab-container'>
+<ql-drawer id='terminal-drawer' slot='drawer' style='width: calc(100% - 480px)'>
+<iframe allow='clipboard-read' class='terminal' id='embedded-resource'></iframe>
+</ql-drawer>
+<ql-drawer-content class='js-lab-wrapper' id='lab-content' slot='drawer-content'>
+<ql-drawer-container id='lab-content-container'>
+<ql-drawer id='control-panel-drawer' open slot='drawer' width='320'>
+<ql-lab-control-panel class='ql-lab-control-panel__max-height control-panel js-lab-control-panel' connectionFiles='[]' labControlButton='{&quot;disabled&quot;:false,&quot;pending&quot;:false,&quot;running&quot;:false}' labDetails='[]' labTimer='{&quot;ticking&quot;:false,&quot;secondsRemaining&quot;:5400}' studentResources='[]'>
+<script src="https://www.recaptcha.net/recaptcha/api.js?render=6LeVI8IUAAAAAJNdox5eTkYrw9SbvhZ1TFyv3iHr"   ></script>
+        <script>
+          // Define function so that we can call it again later if we need to reset it
+          // This executes reCAPTCHA and then calls our callback.
+          function executeRecaptchaForStartLab() {
+            grecaptcha.ready(function() {
+              grecaptcha.execute('6LeVI8IUAAAAAJNdox5eTkYrw9SbvhZ1TFyv3iHr', {action: 'start_lab'}).then(function(token) {
+                setInputWithRecaptchaResponseTokenForStartLab('g-recaptcha-response-data-start-lab', token)
+              });
+            });
+          };
+          // Invoke immediately
+          executeRecaptchaForStartLab()
+
+          // Async variant so you can await this function from another async function (no need for
+          // an explicit callback function then!)
+          // Returns a Promise that resolves with the response token.
+          async function executeRecaptchaForStartLabAsync() {
+            return new Promise((resolve, reject) => {
+              grecaptcha.ready(async function() {
+                resolve(await grecaptcha.execute('6LeVI8IUAAAAAJNdox5eTkYrw9SbvhZ1TFyv3iHr', {action: 'start_lab'}))
+              });
+            })
+          };
+
+                    var setInputWithRecaptchaResponseTokenForStartLab = function(id, token) {
+            var element = document.getElementById(id);
+            element.value = token;
+          }
+
+        </script>
+<input type="hidden" name="g-recaptcha-response-data[start_lab]" id="g-recaptcha-response-data-start-lab" data-sitekey="6LeVI8IUAAAAAJNdox5eTkYrw9SbvhZ1TFyv3iHr" class="g-recaptcha g-recaptcha-response "/>
+
+<div class='hidden' id='recaptcha-v2-start-lab' slot='recaptcha'>
+<script src="https://www.recaptcha.net/recaptcha/api.js" async defer ></script>
+<div data-sitekey="6LeOI8IUAAAAAPkHlMAE9NReCD_1WD81iYlBlCnV" data-callback="recaptchaComplete" data-expired-callback="expireV2Token" class="g-recaptcha "></div>
+          <noscript>
+            <div>
+              <div style="width: 302px; height: 422px; position: relative;">
+                <div style="width: 302px; height: 422px; position: absolute;">
+                  <iframe
+                    src="https://www.recaptcha.net/recaptcha/api/fallback?k=6LeOI8IUAAAAAPkHlMAE9NReCD_1WD81iYlBlCnV"
+                    name="ReCAPTCHA"
+                    style="width: 302px; height: 422px; border-style: none; border: 0; overflow: hidden;">
+                  </iframe>
+                </div>
+              </div>
+              <div style="width: 300px; height: 60px; border-style: none;
+                bottom: 12px; left: 25px; margin: 0px; padding: 0px; right: 25px;
+                background: #f9f9f9; border: 1px solid #c1c1c1; border-radius: 3px;">
+                <textarea id="g-recaptcha-response" name="g-recaptcha-response"
+                  class="g-recaptcha-response"
+                  style="width: 250px; height: 40px; border: 1px solid #c1c1c1;
+                  margin: 10px 25px; padding: 0px; resize: none;">
+                </textarea>
+              </div>
+            </div>
+          </noscript>
+
+</div>
+</ql-lab-control-panel>
+</ql-drawer>
+<ql-drawer-content id='lab-instructions' slot='drawer-content'>
+<ql-snackbar id='alert-snackbar'></ql-snackbar>
+<div class='alert alert--fake js-alert'>
+<p class='alert__message js-alert-message' role='alert'></p>
+<ql-icon-button class='alert__close js-alert-close' icon='clear'></ql-icon-button>
+<iframe class='l-ie-iframe-fix'></iframe>
+</div>
+<div class='lab-content__renderable-instructions js-lab-content'>
+<div class='lab-preamble'>
+<h1 class='lab-preamble__title'>
+TFX on Google Cloud AI Platform Pipelines
+</h1>
+<div class='lab-preamble__details subtitle-headline-1'>
+<span>1 hour 30 minutes</span>
+<span>Free</span>
+<div class='lab__rating'>
+<a aria-label="Lab Reviews" href="/focuses/18013906/reviews?parent=lti_session"><div class='rateit' data-rateit-readonly='true' data-rateit-value='4.0459'></div>
+
+</a></div>
+</div>
+</div>
+<div class='lab-outline-place-holder'></div>
+
+<div class='markdown-lab-instructions js-markdown-instructions' id='markdown-lab-instructions'>
+
+<h2 id="step1">GSP821</h2>
+<p><img alt="Google Cloud Self-Paced Labs" src="https://cdn.qwiklabs.com/GMOHykaqmlTHiqEeQXTySaMXYPHeIvaqa2qHEzw6Occ%3D"></p>
+<h2 id="step2">Overview</h2>
+<p>Tensorflow Extended (<a href="https://www.tensorflow.org/tfx" target="_blank">TFX</a>) is Google's end-to-end platform for training and deploying TensorFlow models into production. TFX pipelines orchestrate ordered runs of a sequence of components for scalable, high-performance machine learning tasks in a directed graph. It includes pre-built and customizable components for data ingestion and validation, model training and evaluation, as well as model validation and deployment. TFX is the best solution for taking TensorFlow models from prototyping to production with support on-prem environments and in the cloud such as on Google Cloud's AI Platform Pipelines.</p>
+<p>In this lab you will learn how to use the following tools and services to deploy and run a TFX pipeline on Google Cloud that automates the development and deployment of a TensorFlow 2.3 WideDeep Classifer to predict forest cover from cartographic data:</p>
+<li>The TFX CLI utility to build and deploy a TFX pipeline.</li>
+<li>A hosted AI Platform Pipeline instance (Kubeflow Pipelines) for TFX pipeline orchestration.</li>
+<li>Dataflow jobs for scalable, distributed data processing for TFX components.</li>
+<li>An AI Platform Training job for model training and flock management for parallel tuning trials.</li>
+<li>AI Platform Prediction as a model server destination for blessed pipeline model versions.</li>
+<li>CloudTuner and AI Platform Vizier for advanced model hyperparameter tuning using the Vizier algorithm.</li>
+<li>You will then create and monitor pipeline runs using the TFX CLI as well as the KFP UI.</li>
+<h2 id="step3">Objectives</h2>
+<ul>
+<li>Use the TFX CLI to build a TFX pipeline.</li>
+<li>Deploy a TFX pipeline version to a hosted AI Platform Pipelines instance.</li>
+<li>Create and monitor a TFX pipeline run using the TFX CLI.
+</li>
+</ul>
+<h2 id="step4">Setup</h2>
+<h4>Before you click the Start Lab button</h4>
+<p>Read these instructions. Labs are timed and you cannot pause them. The timer, which starts when you click <strong>Start Lab</strong>, shows how long Google Cloud resources will be made available to you.</p>
+<p>This Qwiklabs hands-on lab lets you do the lab activities yourself in a real cloud environment, not in a simulation or demo environment. It does so by giving you new, temporary credentials that you use to sign in and access Google Cloud for the duration of the lab.</p>
+<h4>What you need</h4>
+<p>To complete this lab, you need:</p>
+<ul>
+<li>Access to a standard internet browser (Chrome browser recommended).</li>
+<li>Time to complete the lab.</li>
+</ul>
+<p><strong>Note:</strong> If you already have your own personal Google Cloud account or project, do not use it for this lab.</p>
+<p><strong>Note:</strong> If you are using a Chrome OS device, open an Incognito window to run this lab.</p>
+<h3>Activate Cloud Shell</h3>
+<p>Cloud Shell is a virtual machine that is loaded with development tools. It offers a persistent 5GB home directory and runs on the Google Cloud. Cloud Shell provides command-line access to your Google Cloud resources.</p>
+<p>In the Cloud Console, in the top right toolbar, click the <strong>Activate Cloud Shell</strong> button.</p>
+<p><img alt="Cloud Shell icon" src="https://cdn.qwiklabs.com/vdY5e%2Fan9ZGXw5a%2FZMb1agpXhRGozsOadHURcR8thAQ%3D"></p>
+<p>Click <strong>Continue</strong>.</p>
+<p><img alt="cloudshell_continue.png" src="https://cdn.qwiklabs.com/lr3PBRjWIrJ%2BMQnE8kCkOnRQQVgJnWSg4UWk16f0s%2FA%3D"></p>
+<p>It takes a few moments to provision and connect to the environment. When you are connected, you are already authenticated, and the project is set to your <em>PROJECT_ID</em>. For example:</p>
+<p><img alt="Cloud Shell Terminal" src="https://cdn.qwiklabs.com/hmMK0W41Txk%2B20bQyuDP9g60vCdBajIS%2B52iI2f4bYk%3D"></p>
+<p><code>gcloud</code> is the command-line tool for Google Cloud. It comes pre-installed on Cloud Shell and supports tab-completion.</p>
+<p>You can list the active account name with this command:</p>
+<ql-code-block language="plaintext">
+gcloud auth list
+</ql-code-block>
+<p>(Output)</p>
+<ql-code-block language="plaintext" output="">
+Credentialed accounts:
+ - &lt;myaccount&gt;@&lt;mydomain&gt;.com (active)
+</ql-code-block>
+<p>(Example output)</p>
+<ql-code-block language="plaintext" output="">
+Credentialed accounts:
+ - google1623327_student@qwiklabs.net
+</ql-code-block>
+<p>You can list the project ID with this command:</p>
+<ql-code-block language="plaintext">
+gcloud config list project
+</ql-code-block>
+<p>(Output)</p>
+<ql-code-block language="plaintext" output="">
+[core]
+project = &lt;project_ID&gt;
+</ql-code-block>
+<p>(Example output)</p>
+<ql-code-block language="plaintext" output="">
+[core]
+project = qwiklabs-gcp-44776a13dea667a6
+</ql-code-block>
+<aside>
+  For full documentation of <code>gcloud</code> see the <a href="https://cloud.google.com/sdk/gcloud" target="_blank">gcloud command-line tool overview</a>.
+</aside>
+<h2 id="step5">Create an instance of AI Platform Pipelines</h2>
+<ol>
+<li>From the the Navigation menu, scroll down to <strong>AI Platform</strong> and pin the section for easier access later in the lab.</li>
+</ol>
+<p><img alt="ai_platform_pin.png" src="https://cdn.qwiklabs.com/Fg8%2FeMr%2FyFLm0G3LgjsuRuGyzNE3XO92swp6Gh6HTLI%3D"></p>
+<ol start="2">
+<li>Click <strong>Pipelines</strong>.</li>
+</ol>
+<p><img alt="pipelines_button.png" src="https://cdn.qwiklabs.com/%2BGdM4TO8fdwon1uZ7WuuZuGxuk%2FRJfym6GaJQowqmoM%3D"></p>
+<ol start="3">
+<li>Then click <strong>New Instance</strong>.</li>
+</ol>
+<p><img alt="new_pipelines_instance" src="https://cdn.qwiklabs.com/tADefcYXM7Ior2LE7eUJruvfmJ3o4neoU8XjihwoImg%3D"></p>
+<ol start="4">
+<li>Click <strong>Configure</strong>.</li>
+</ol>
+<p><img alt="kfp_configure_button.png" src="https://cdn.qwiklabs.com/xfy3pagtcdLU%2F7QrYv2AktCUCm7Nba8AOuhOUlXTpv8%3D"></p>
+
+<ol start="5">
+<li>A cluster named <code>cluster-1</code> was provisioned for you on lab startup. Because this is the only cluster in your project, it should be automatically selected:</li>
+</ol>
+<p><img alt="kfp-cluster.png" src="https://cdn.qwiklabs.com/4NyS%2BeE0OpIN%2BdoqZcvm5uO5ftntniIukV%2Fu6X0mzOM%3D"></p>
+<ol start="6">
+<li>When the cluster creation is complete, check the <strong>Terms of Service</strong> box, leave other settings unchanged, and then click <strong>Deploy</strong>. You will see the individual services of KFP deployed to your GKE cluster. Proceed to the next step while installation occurs. This should take another 3-5 minutes to deploy.</li>
+</ol>
+<p><img alt="kfp_deploy.png" src="https://cdn.qwiklabs.com/Zqe0C3CDgXFYuVdayUijBYhRCeYfFWwOJhnIdsuWEtI%3D"></p>
+<p>Click <em>Check my progress</em> to verify the objective.
+<ql-activity-tracking step="1">
+Creating an instance of AI Platform Pipelines
+</ql-activity-tracking></p>
+<h2 id="step6">Access AI Platform Notebook</h2>
+<p>An instance of AI Platform Notebooks is used as a primary experimentation/development workbench for this lab.</p>
+<p>To launch AI Platform Notebooks:</p>
+<ol>
+<li>
+<p>Click on the <strong>Navigation Menu</strong> and navigate to <strong>AI Platform</strong>, then to <strong>Notebooks</strong>.</p>
+</li>
+<li>
+<p>You should see <code>tfx-on-googlecloud</code> notebook preprovisioned for you. If not, wait a few minutes and refresh the page.</p>
+</li>
+<li>
+<p>Click <strong>Open JupyterLab</strong>. A JupyterLab window will open in a new tab.</p>
+</li>
+</ol>
+<h2 id="step7">Clone the example repo within your AI Platform Notebooks instance</h2>
+<p>To clone the <code>training-data-analyst</code> notebook in your JupyterLab instance:</p>
+<ol>
+<li>In JupyterLab, click the <strong>Terminal</strong> icon to open a new terminal.</li>
+</ol>
+<p><img alt="Open Terminal" src="https://cdn.qwiklabs.com/rSJUVtqbDlE28I3g1GyCXTkPI2nFhq1oA%2FXXMISaSdQ%3D"></p>
+<ol start="2">
+<li>
+<p>At the command-line prompt, type in the following command and press Enter.</p>
+</li>
+</ol>
+<ql-code-block language="bash">
+git clone https://github.com/GoogleCloudPlatform/training-data-analyst
+</ql-code-block>
+<ol start="3">
+<li>Confirm that you have cloned the repository by double clicking on the <code>training-data-analyst</code> directory and ensuring that you can see its contents. The files for all the Jupyter notebook-based labs throughout this course are available in this directory.</li>
+</ol>
+<p><img alt="Training data analyst repository" src="https://cdn.qwiklabs.com/viCi2TfN6FSS9PR2xkTx4S59n2yPDDWf4lHgn79Chy4%3D"></p>
+<h2 id="step8">Navigate to the lab notebook</h2>
+<p>Run the following to go to the  <code>training-data-analyst/self-paced-labs/tfx/tfx-ai-platform</code> folder, then execute the <code>install.sh</code> script to install TFX and KFP SDKs.</p>
+<ql-code-block language="bash">
+cd training-data-analyst/self-paced-labs/tfx/tfx-ai-platform
+./install.sh
+</ql-code-block>
+<p>Now, in AI Platform Notebook, navigate to <code>training-data-analyst/self-paced-labs/tfx/tfx-ai-platform/labs</code> and open <code>lab_exercise.ipynb</code>.</p>
+<p>Clear all the cells in the notebook (look for the <strong>Clear</strong> button on the notebook toolbar) and then <strong>Run</strong> the cells one by one.</p>
+<p>When prompted, come back to these instructions to <em>check my progress</em>. You will need to do this to receive credit for completing the lab.</p>
+<h2 id="step9">Run your training job in the cloud</h2>
+<h3>Test Completed Tasks - Complile the kubeflow pipeline</h3>
+<p>Click <em>Check my progress</em> to verify the objective.
+<ql-activity-tracking step="2">
+Complile the kubeflow pipeline
+</ql-activity-tracking></p>
+<h3>Test Completed Tasks - Deploy the pipeline package to AI Platform Pipelines</h3>
+<p>Click <em>Check my progress</em> to verify the objective.
+<ql-activity-tracking step="3">
+Deploy the pipeline package to AI Platform Pipelines
+</ql-activity-tracking></p>
+<h3>Test Completed Tasks - Create kubeflow pipeline run using TFX CLI</h3>
+<p>Click <em>Check my progress</em> to verify the objective.
+<ql-activity-tracking step="4">
+Create kubeflow pipeline run using TFX CLI
+</ql-activity-tracking></p>
+<h2 id="step10">Congratulations!</h2>
+<p>You have learned how to build and deploy a TFX pipeline to Cloud AI Platform Pipelines and triggered a pipeline run.</p>
+<h3>Google Cloud Training &amp; Certification</h3>
+<p>...helps you make the most of Google Cloud technologies. <a href="https://cloud.google.com/training/courses" target="_blank">Our classes</a> include technical skills and best practices to help you get up to speed quickly and continue your learning journey. We offer fundamental to advanced level training, with on-demand, live, and virtual options to suit your busy schedule. <a href="https://cloud.google.com/certification/" target="_blank">Certifications</a> help you validate and prove your skill and expertise in Google Cloud technologies.</p>
+<h5>Manual Last Updated September 13, 2021</h5>
+<h5>Lab Last Tested September 13, 2021</h5>
+<p>Copyright 2021 Google LLC All rights reserved. Google and the Google logo are trademarks of Google LLC. All other company and product names may be trademarks of the respective companies with which they are associated.</p>
+
+</div>
+</div>
+
+
+<div class='lab-content__end-lab-button js-end-lab-button-container hidden'>
+<ql-lab-control-button class='js-end-lab-button' running></ql-lab-control-button>
+</div>
+<!-- / TODO: Move recommendations into the end lab modal -->
+</ql-drawer-content>
+<ql-drawer end id='outline-drawer' open slot='drawer' width='320'>
+<div aria-label='Lab Table of Contents' role='navigation'>
+<ul class='lab-content__outline js-lab-content-outline'>
+<li><a href='#step1'>GSP821</a></li><li><a href='#step2'>Overview</a></li><li><a href='#step3'>Objectives</a></li><li><a href='#step4'>Setup</a></li><li><a href='#step5'>Create an instance of AI Platform Pipelines</a></li><li><a href='#step6'>Access AI Platform Notebook</a></li><li><a href='#step7'>Clone the example repo within your AI Platform Notebooks instance</a></li><li><a href='#step8'>Navigate to the lab notebook</a></li><li><a href='#step9'>Run your training job in the cloud</a></li><li><a href='#step10'>Congratulations!</a></li>
+</ul>
+</div>
+</ql-drawer>
+</ql-drawer-container>
+</ql-drawer-content>
+</ql-drawer-container>
+
+
+
+</div>
+</main>
+
+<span class='hidden' id='flash-sibling-before'></span>
+<ql-snackbar></ql-snackbar>
+
+
+<div class='modal fade' id='lab-details-modal'>
+<div class='modal-container'>
+<div class='modal-content mdl-shadow--24dp'>
+<div class='modal-body'>
+<p class='l-mbm'>
+In this lab you will develop, deploy, and run a TFX pipeline on Google Cloud AI Platform Pipelines. It uses a managed Kubeflow instance on Cloud AI Platform Pipelines for orchestration, Cloud Dataflow for data processing, Cloud AI Platform Training for model training, Cloud AI Platform Vizier for hyperparameter tuning, and Cloud AI Platform Prediction for model serving.
+</p>
+<p class='small-label l-mbs'>
+<strong>
+Duration:
+</strong>
+9m setup
+&middot;
+90m access
+&middot;
+90m completion
+</p>
+<p class='small-label l-mbs'>
+<span><strong>Levels: </strong>advanced</span>
+</p>
+<p class='small-label'>
+<strong>
+Permalink:
+</strong>
+<a href="https://googlecoursera.qwiklabs.com/catalog_lab/3632">https://googlecoursera.qwiklabs.com/catalog_lab/3632</a>
+</p>
+</div>
+<div class='modal-actions'>
+<a class='button button--text' data-dismiss='modal'>
+Got It
+</a>
+</div>
+
+
+</div>
+</div>
+<iframe class='l-ie-iframe-fix'></iframe>
+</div>
+<ql-dialog headline='How satisfied are you with this lab?&lt;span aria-hidden=&quot;true&quot;&gt;*&lt;/span&gt;' id='lab-review-dialog'>
+<form class="simple_form js-lab-review-form" id="new_lab_review" action="/lab_reviews" accept-charset="UTF-8" data-remote="true" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><div aria-labelledby='lab-review-dialog' aria-required='true' aria-valuemax='5' aria-valuemin='0' aria-valuenow='0' class='rateit js-rateit' data-rateit-max='5' data-rateit-min='0' data-rateit-resetable='false' data-rateit-step='1' data-rateit-value='0' id='lab-review-rateit' role='slider' tabindex='0'></div>
+<div class='l-mtm'>
+
+<div class="control-group hidden lab_review_user_id"><div class="controls"><input class="hidden" type="hidden" value="5338830" name="lab_review[user_id]" id="lab_review_user_id" /></div></div>
+<div class="control-group hidden lab_review_classroom_id"><div class="controls"><input class="hidden" type="hidden" name="lab_review[classroom_id]" id="lab_review_classroom_id" /></div></div>
+<div class="control-group hidden lab_review_lab_id"><div class="controls"><input class="hidden" type="hidden" value="3632" name="lab_review[lab_id]" id="lab_review_lab_id" /></div></div>
+<div class="control-group hidden lab_review_focus_id"><div class="controls"><input class="hidden" type="hidden" name="lab_review[focus_id]" id="lab_review_focus_id" /></div></div>
+<div class="control-group hidden lab_review_rating"><div class="controls"><input class="hidden js-rating-input" type="hidden" name="lab_review[rating]" id="lab_review_rating" /></div></div>
+<div class="control-group text optional lab_review_comment"><label class="text optional control-label" for="lab_review_comment">Additional Comments</label><div class="controls"><textarea class="text optional" name="lab_review[comment]" id="lab_review_comment">
+</textarea></div></div>
+</div>
+</form><ql-button disabled id='submit' label='Submit' slot='action' text></ql-button>
+</ql-dialog>
+
+<ql-dialog headline='All done? If you end this lab, you will lose all your work. You may not be able to restart the lab if there is a quota limit. Are you sure you want to end this lab?' icon='error_outline' id='js-lab-are-you-sure-dialog'>
+<ql-button id='js-are-you-sure-button' label='Submit' slot='action' text></ql-button>
+</ql-dialog>
+
+
+<script>
+  $( function() {
+    ql.initMaterialInputs();
+    initChosen();
+    initSearch();
+    initTabs();
+    ql.list.init();
+    ql.favoriting.init();
+    ql.header.myAccount.init();
+    initTooltips();
+    ql.autocomplete.init();
+    ql.modals.init();
+    ql.toggleButtons.init();
+    ql.analytics.init();
+    ql.labControlPanel.addRecaptchaErrorHandler();
+  initLabContent();
+  ql.labOutline.links.init();
+  initLabReviewModal();
+  initLabReviewTranslations( {"star_amount_1":"1 of 5 stars","star_amount_2":"2 of 5 stars","star_amount_3":"3 of 5 stars","star_amount_4":"4 of 5 stars","star_amount_5":"5 of 5 stars"} )
+  ql.labAssessment.init();
+  ql.labData.init();
+  initLabTranslations( {"are_you_sure":"All done? If you end this lab, you will lose all your work. You may not be able to restart the lab if there is a quota limit. Are you sure you want to end this lab?","in_progress":"*In Progress*","ending":"*Ending*","starting":"*Starting, please wait*","end_concurrent_labs":"Sorry, you can only run one lab at a time. To start this lab, please confirm that you want all of your existing labs to end.","copied":"Copied","no_resource":"Error retrieving resource.","no_support":"No Support","mac_press":"Press ⌘-C to copy","thanks_review":"Thanks for reviewing this lab.","windows_press":"Press Ctrl-C to copy","days":"days"} );
+  ql.labRun.init();
+  ql.chat.init();
+  ql.initHeader();
+  ql.navPanel.init();
+  ql.navigation.init();
+  
+  });
+</script>
+
+</body>
+</html>
+
