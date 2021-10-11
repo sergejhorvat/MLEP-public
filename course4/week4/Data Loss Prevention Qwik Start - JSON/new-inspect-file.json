@@ -1,0 +1,21 @@
+{
+  "item": {
+     "value":"My email is test@gmail.com",
+   },
+   "deidentifyConfig": {
+     "infoTypeTransformations":{
+          "transformations": [
+            {
+              "primitiveTransformation": {
+                "replaceWithInfoTypeConfig": {}
+              }
+            }
+          ]
+        }
+    },
+    "inspectConfig": {
+      "infoTypes": {
+        "name": "EMAIL_ADDRESS"
+      }
+    }
+}

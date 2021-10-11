@@ -1,0 +1,372 @@
+Welcome to Cloud Shell! Type "help" to get started.
+Your Cloud Platform project in this session is set to qwiklabs-gcp-04-6e9cb45c1b45.
+Use “gcloud config set project [PROJECT_ID]” to change to a different project.
+student_02_938f6432a0a6@cloudshell:~ (qwiklabs-gcp-04-6e9cb45c1b45)$ gcloud auth list
+Credentialed Accounts
+
+ACTIVE: *
+ACCOUNT: student-02-938f6432a0a6@qwiklabs.net
+
+To set the active account, run:
+    $ gcloud config set account `ACCOUNT`
+
+student_02_938f6432a0a6@cloudshell:~ (qwiklabs-gcp-04-6e9cb45c1b45)$ gcloud config list projects
+ERROR: (gcloud.config.list) Section [core] has no property [projects].
+student_02_938f6432a0a6@cloudshell:~ (qwiklabs-gcp-04-6e9cb45c1b45)$ gcloud config list project
+[core]
+project = qwiklabs-gcp-04-6e9cb45c1b45
+
+Your active configuration is: [cloudshell-727]
+student_02_938f6432a0a6@cloudshell:~ (qwiklabs-gcp-04-6e9cb45c1b45)$ export PROJECT_ID=$DEVSHELL_PROJECT_ID
+student_02_938f6432a0a6@cloudshell:~ (qwiklabs-gcp-04-6e9cb45c1b45)$ gcloud iam service-accounts create qwiklab \
+>   --display-name "Qwiklab Service Account"
+Created service account [qwiklab].
+student_02_938f6432a0a6@cloudshell:~ (qwiklabs-gcp-04-6e9cb45c1b45)$ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+> --member serviceAccount:qwiklab@${PROJECT_ID}.iam.gserviceaccount.com \
+> --role roles/owner
+Updated IAM policy for project [qwiklabs-gcp-04-6e9cb45c1b45].
+bindings:
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/appengine.appAdmin
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/bigquery.admin
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/bigquery.dataEditor
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/bigquery.dataOwner
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/bigquery.dataViewer
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/bigquery.user
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/browser
+- members:
+  - serviceAccount:618133983835@cloudbuild.gserviceaccount.com
+  role: roles/cloudbuild.builds.builder
+- members:
+  - serviceAccount:service-618133983835@gcp-sa-cloudbuild.iam.gserviceaccount.com
+  role: roles/cloudbuild.serviceAgent
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.imageUser
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.instanceAdmin
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.networkAdmin
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.networkViewer
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.securityAdmin
+- members:
+  - serviceAccount:service-618133983835@compute-system.iam.gserviceaccount.com
+  role: roles/compute.serviceAgent
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.storageAdmin
+- members:
+  - serviceAccount:service-618133983835@container-engine-robot.iam.gserviceaccount.com
+  role: roles/container.serviceAgent
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/dataflow.developer
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/dataflow.viewer
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/dataflow.worker
+- members:
+  - serviceAccount:618133983835-compute@developer.gserviceaccount.com
+  - serviceAccount:618133983835@cloudservices.gserviceaccount.com
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/editor
+- members:
+  - serviceAccount:admiral@qwiklabs-services-prod.iam.gserviceaccount.com
+  - serviceAccount:qwiklab@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/bigquery.user
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/browser
+- members:
+  - serviceAccount:618133983835@cloudbuild.gserviceaccount.com
+  role: roles/cloudbuild.builds.builder
+- members:
+  - serviceAccount:service-618133983835@gcp-sa-cloudbuild.iam.gserviceaccount.com
+  role: roles/cloudbuild.serviceAgent
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.imageUser
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.instanceAdmin
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.networkAdmin
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.networkViewer
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.securityAdmin
+- members:
+  - serviceAccount:service-618133983835@compute-system.iam.gserviceaccount.com
+  role: roles/compute.serviceAgent
+- members:
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.storageAdmin
+- members:
+  - serviceAccount:service-618133983835@container-engine-robot.iam.gserviceaccount.com
+  role: roles/container.serviceAgent
+- members:
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/dataflow.developer
+- members:
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/dataflow.viewer
+- members:
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/dataflow.worker
+- members:
+  - serviceAccount:618133983835-compute@developer.gserviceaccount.com
+  - serviceAccount:618133983835@cloudservices.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/editor
+- members:
+  - serviceAccount:admiral@qwiklabs-services-prod.iam.gserviceaccount.com
+  - serviceAccount:qwiklab@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/owner
+- members:
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/storage.admin
+- members:
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/storage.objectAdmin
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.imageUser
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.instanceAdmin
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.networkAdmin
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.networkViewer
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.securityAdmin
+- members:
+  - serviceAccount:service-618133983835@compute-system.iam.gserviceaccount.com
+  role: roles/compute.serviceAgent
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/compute.storageAdmin
+- members:
+  - serviceAccount:service-618133983835@container-engine-robot.iam.gserviceaccount.com
+  role: roles/container.serviceAgent
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/dataflow.developer
+- members:
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/dataflow.viewer
+- members:
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/dataflow.worker
+- members:
+  - serviceAccount:618133983835-compute@developer.gserviceaccount.com
+  - serviceAccount:618133983835@cloudservices.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/editor
+- members:
+  - serviceAccount:admiral@qwiklabs-services-prod.iam.gserviceaccount.com
+  - serviceAccount:qwiklab@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/owner
+- members:
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/storage.admin
+- members:
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/storage.objectAdmin
+- members:
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/storage.objectCreator
+- members:
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/storage.objectViewer
+- members:
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/storage.admin
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/storage.objectAdmin
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/storage.objectCreator
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/storage.objectViewer
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/storage.admin
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/storage.objectAdmin
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/storage.objectCreator
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/storage.objectViewer
+- members:
+  - serviceAccount:qwiklabs-gcp-04-6e9cb45c1b45@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com
+  - user:student-02-938f6432a0a6@qwiklabs.net
+  role: roles/viewer
+etag: BwXOAyueoq0=
+version: 1
+student_02_938f6432a0a6@cloudshell:~ (qwiklabs-gcp-04-6e9cb45c1b45)$ gcloud iam service-accounts keys create ~/key.json \
+> --iam-account qwiklab@${PROJECT_ID}.iam.gserviceaccount.comž
+ERROR: (gcloud.iam.service-accounts.keys.create) NOT_FOUND: Not found; Gaia id not found for email qwiklab@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.comž
+student_02_938f6432a0a6@cloudshell:~ (qwiklabs-gcp-04-6e9cb45c1b45)$ gcloud iam service-accounts keys create ~/key.json --iam-account qwiklab@${PROJECT_ID}.iam.gserviceaccount.com
+created key [ced003d7abd415edaba7b1b97c5ae6a5dca1acbc] of type [json] as [/home/student_02_938f6432a0a6/key.json] for [qwiklab@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com]
+student_02_938f6432a0a6@cloudshell:~ (qwiklabs-gcp-04-6e9cb45c1b45)$ gcloud auth activate-service-account --key-file=key.json
+Activated service account credentials for: [qwiklab@qwiklabs-gcp-04-6e9cb45c1b45.iam.gserviceaccount.com]
+student_02_938f6432a0a6@cloudshell:~ (qwiklabs-gcp-04-6e9cb45c1b45)$ gcloud auth print-access-token
+ya29.c.KqYBFAiFctHSFbQPtpTOc2If4YfuseDgxVBUonSBRGg_JbCzKeT5Aix5KQ_fAEMouauReydfK1aCAEGce4MU5Az1ePl0V5pmhCFH_OnOrC9XNTcAUscSns4bOaHZ97vRzFitenWaqxm_-Wp8Zzx4gO7gHiacfS7UpwRhi4JvIt65P8vrm-EyVhlmofcZeyPYa_mOeHiO5aUM0L7Dbba_CmpUZz6hq404QA.....................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+student_02_938f6432a0a6@cloudshell:~ (qwiklabs-gcp-04-6e9cb45c1b45)$ curl -s \
+>   -H "Authorization: Bearer ACCESS_TOKEN" \
+>   -H "Content-Type: application/json" \
+>   https://dlp.googleapis.com/v2/projects/$PROJECT_ID/content:inspect \
+>   -d @inspect-request.json
+{
+  "error": {
+    "code": 401,
+    "message": "Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.",
+......................................................................................................................................................................................................................................................................................................................................................................................................
+student_02_938f6432a0a6@cloudshell:~ (qwiklabs-gcp-04-6e9cb45c1b45)$ curl -s \
+>   -H "Authorization: Bearer ACCESS_TOKEN" \
+>   -H "Content-Type: application/json" \
+>   https://dlp.googleapis.com/v2/projects/$PROJECT_ID/content:inspect \
+>   -d @inspect-request.json
+{
+  "error": {
+    "code": 401,
+    "message": "Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.",
+    "status": "UNAUTHENTICATED"
+  }
+}
+student_02_938f6432a0a6@cloudshell:~ (qwiklabs-gcp-04-6e9cb45c1b45)$ ^C
+student_02_938f6432a0a6@cloudshell:~ (qwiklabs-gcp-04-6e9cb45c1b45)$ curl -s \
+>   -H "Authorization: Bearer ya29.c.KqYBFAiFctHSFbQPtpTOc2If4YfuseDgxVBUonSBRGg_JbCzKeT5Aix5KQ_fAEMouauReydfK1aCAEGce4MU5Az1ePl0V5pmhCFH_OnOrC9XNTcAUscSns4bOaHZ97vRzFitenWaqxm_-Wp8Zzx4gO7gHiacfS7UpwRhi4JvIt65P8vrm-EyVhlmofcZeyPYa_mOeHiO5aUM0L7Dbba_CmpUZz6hq404QA....................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................." \
+>   -H "Content-Type: application/json" \
+>   https://dlp.googleapis.com/v2/projects/$PROJECT_ID/content:inspect \
+>   -d @inspect-request.json
+{
+  "result": {
+    "findings": [
+      {
+        "quote": "(206) 555-0123",
+        "infoType": {
+          "name": "PHONE_NUMBER"
+        },
+        "likelihood": "LIKELY",
+        "location": {
+          "byteRange": {
+            "start": "19",
+            "end": "33"
+          },
+          "codepointRange": {
+            "start": "19",
+            "end": "33"
+          }
+        },
+        "createTime": "2021-10-10T17:52:34.546Z",
+        "findingId": "2021-10-10T17:52:34.548721Z857144708003006141"
+      }
+    ]
+  }
+}
+student_02_938f6432a0a6@cloudshell:~ (qwiklabs-gcp-04-6e9cb45c1b45)$ curl -s \
+>   -H "Authorization: Bearer ya29.c.KqYBFAiFctHSFbQPtpTOc2If4YfuseDgxVBUonSBRGg_JbCzKeT5Aix5KQ_fAEMouauReydfK1aCAEGce4MU5Az1ePl0V5pmhCFH_OnOrC9XNTcAUscSns4bOaHZ97vRzFitenWaqxm_-Wp8Zzx4gO7gHiacfS7UpwRhi4JvIt65P8vrm-EyVhlmofcZeyPYa_mOeHiO5aUM0L7Dbba_CmpUZz6hq404QA....................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................." \
+>   -H "Content-Type: application/json" \
+>   https://dlp.googleapis.com/v2/projects/$PROJECT_ID/content:deidentify \
+>   -d @new-inspect-file.json
+{
+  "item": {
+    "value": "My email is [EMAIL_ADDRESS]"
+  },
+  "overview": {
+    "transformedBytes": "14",
+    "transformationSummaries": [
+      {
+        "infoType": {
+          "name": "EMAIL_ADDRESS"
+        },
+        "transformation": {
+          "replaceWithInfoTypeConfig": {}
+        },
+        "results": [
+          {
+            "count": "1",
+            "code": "SUCCESS"
+          }
+        ],
+        "transformedBytes": "14"
+      }
+    ]
+  }
+}
+student_02_938f6432a0a6@cloudshell:~ (qwiklabs-gcp-04-6e9cb45c1b45)$

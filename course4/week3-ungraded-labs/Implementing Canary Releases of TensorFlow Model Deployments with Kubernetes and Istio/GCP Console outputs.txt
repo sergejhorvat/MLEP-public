@@ -1,0 +1,635 @@
+Welcome to Cloud Shell! Type "help" to get started.
+Your Cloud Platform project in this session is set to qwiklabs-gcp-04-caaf29a98ec9.
+Use “gcloud config set project [PROJECT_ID]” to change to a different project.
+student_02_f256626b6ef4@cloudshell:~ (qwiklabs-gcp-04-caaf29a98ec9)$ gcloud auth list
+Credentialed Accounts
+
+ACTIVE: *
+ACCOUNT: student-02-f256626b6ef4@qwiklabs.net
+
+To set the active account, run:
+    $ gcloud config set account `ACCOUNT`
+
+student_02_f256626b6ef4@cloudshell:~ (qwiklabs-gcp-04-caaf29a98ec9)$ gcloud config list
+[accessibility]
+screen_reader = True
+[component_manager]
+disable_update_check = True
+[compute]
+gce_metadata_read_timeout_sec = 30
+[core]
+account = student-02-f256626b6ef4@qwiklabs.net
+disable_usage_reporting = True
+project = qwiklabs-gcp-04-caaf29a98ec9
+[metrics]
+environment = devshell
+
+Your active configuration is: [cloudshell-14660]
+student_02_f256626b6ef4@cloudshell:~ (qwiklabs-gcp-04-caaf29a98ec9)$ cd
+student_02_f256626b6ef4@cloudshell:~ (qwiklabs-gcp-04-caaf29a98ec9)$ SRC_REPO=https://github.com/GoogleCloudPlatform/mlops-on-gcp
+student_02_f256626b6ef4@cloudshell:~ (qwiklabs-gcp-04-caaf29a98ec9)$ kpt pkg get $SRC_REPO/workshops/mlep-qwiklabs/tfserving-canary-gke tfserving-canary
+Package "tfserving-canary":
+Fetching https://github.com/GoogleCloudPlatform/mlops-on-gcp@master
+From https://github.com/GoogleCloudPlatform/mlops-on-gcp
+ * branch            master     -> FETCH_HEAD
+ * [new branch]      master     -> origin/master
+Adding package "workshops/mlep-qwiklabs/tfserving-canary-gke".
+
+Fetched 1 package(s).
+student_02_f256626b6ef4@cloudshell:~ (qwiklabs-gcp-04-caaf29a98ec9)$ cd tfserving-canary
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ ls
+archive  Kptfile  payloads  README_copy.md  README.md  tf-serving
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ gcloud config set compute/zone us-central1-f
+Updated property [compute/zone].
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ PROJECT_ID=$(gcloud config get-value project)
+Your active configuration is: [cloudshell-14660]
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ CLUSTER_NAME=cluster-1
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ gcloud beta container clusters create $CLUSTER_NAME \
+>   --project=$PROJECT_ID \
+>   --addons=Istio \
+>   --istio-config=auth=MTLS_PERMISSIVE \
+>   --cluster-version=latest \
+>   --machine-type=n1-standard-4 \
+>   --num-nodes=3
+WARNING: Currently VPC-native is the default mode during cluster creation for versions greater than 1.21.0-gke.1500. To create advanced routes based clusters, please pass the `--no-enable-ip-alias` flag
+WARNING: Starting with version 1.18, clusters will have shielded GKE nodes by default.
+WARNING: Your Pod address range (`--cluster-ipv4-cidr`) can accommodate at most 1008 node(s).
+WARNING: Starting with version 1.19, newly created clusters and node-pools will have COS_CONTAINERD as the default node image when no image type is specified.
+Creating cluster cluster-1 in us-central1-f...done.     
+Created [https://container.googleapis.com/v1beta1/projects/qwiklabs-gcp-04-caaf29a98ec9/zones/us-central1-f/clusters/cluster-1].
+To inspect the contents of your cluster, go to: https://console.cloud.google.com/kubernetes/workload_/gcloud/us-central1-f/cluster-1?project=qwiklabs-gcp-04-caaf29a98ec9
+kubeconfig entry generated for cluster-1.
+NAME: cluster-1
+LOCATION: us-central1-f
+MASTER_VERSION: 1.21.4-gke.2300MASTER_IP: 34.123.138.163
+MACHINE_TYPE: n1-standard-4
+NODE_VERSION: 1.21.4-gke.2300
+NUM_NODES: 3
+STATUS: RUNNING
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ gcloud container clusters get-credentials $CLUSTER_NAME
+Fetching cluster endpoint and auth data.
+kubeconfig entry generated for cluster-1.
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl get service -n istio-system
+NAME                     TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)                                                                                                                                      AGE
+istio-citadel            ClusterIP      10.96.1.109    <none>         8060/TCP,15014/TCP                                                                                                                           6m52s
+istio-galley             ClusterIP      10.96.0.101    <none>         443/TCP,15014/TCP,9901/TCP                                                                                                                   6m52s
+istio-ingressgateway     LoadBalancer   10.96.13.84    34.71.71.210   15020:31046/TCP,80:30938/TCP,443:30584/TCP,31400:30404/TCP,15029:31054/TCP,15030:30745/TCP,15031:31393/TCP,15032:32567/TCP,15443:32209/TCP   6m52s
+istio-pilot              ClusterIP      10.96.1.253    <none>         15010/TCP,15011/TCP,8080/TCP,15014/TCP                                                                                                       6m52s
+istio-policy             ClusterIP      10.96.4.3      <none>         9091/TCP,15004/TCP,15014/TCP                                                                                                                 6m52s
+istio-sidecar-injector   ClusterIP      10.96.1.175    <none>         443/TCP,15014/TCP                                                                                                                            6m52s
+istio-telemetry          ClusterIP      10.96.0.229    <none>         9091/TCP,15004/TCP,15014/TCP,42422/TCP                                                                                                       6m52s
+istiod-istio-1611        ClusterIP      10.96.4.247    <none>         15010/TCP,15012/TCP,443/TCP,15014/TCP,853/TCP                                                                                                5m14s
+prometheus               ClusterIP      10.96.3.247    <none>         9090/TCP                                                                                                                                     5m1s
+promsd                   ClusterIP      10.96.10.185   <none>         9090/TCP                                                                                                                                     6m52s
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl get service -n istio-system
+NAME                     TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)                                                                                                                                      AGE
+istio-citadel            ClusterIP      10.96.1.109    <none>         8060/TCP,15014/TCP                                                                                                                           7m52s
+istio-galley             ClusterIP      10.96.0.101    <none>         443/TCP,15014/TCP,9901/TCP                                                                                                                   7m52s
+istio-ingressgateway     LoadBalancer   10.96.13.84    34.71.71.210   15020:31046/TCP,80:30938/TCP,443:30584/TCP,31400:30404/TCP,15029:31054/TCP,15030:30745/TCP,15031:31393/TCP,15032:32567/TCP,15443:32209/TCP   7m52s
+istio-pilot              ClusterIP      10.96.1.253    <none>         15010/TCP,15011/TCP,8080/TCP,15014/TCP                                                                                                       7m52s
+istio-policy             ClusterIP      10.96.4.3      <none>         9091/TCP,15004/TCP,15014/TCP                                                                                                                 7m52s
+istio-sidecar-injector   ClusterIP      10.96.1.175    <none>         443/TCP,15014/TCP                                                                                                                            7m52s
+istio-telemetry          ClusterIP      10.96.0.229    <none>         9091/TCP,15004/TCP,15014/TCP,42422/TCP                                                                                                       7m52s
+istiod-istio-1611        ClusterIP      10.96.4.247    <none>         15010/TCP,15012/TCP,443/TCP,15014/TCP,853/TCP                                                                                                6m14s
+prometheus               ClusterIP      10.96.3.247    <none>         9090/TCP                                                                                                                                     6m1s
+promsd                   ClusterIP      10.96.10.185   <none>         9090/TCP                                                                                                                                     7m52s
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl get pods -n istio-system
+NAME                                              READY   STATUS      RESTARTS   AGE
+istio-citadel-76685f699d-fzqhf                    1/1     Running     0          8m24s
+istio-galley-58d48bcb98-5sf8x                     1/1     Running     0          8m24s
+istio-ingressgateway-5fb67c59c4-mpkgx             1/1     Running     0          8m24s
+istio-pilot-dc6499cf7-j8knt                       2/2     Running     1          8m24s
+istio-policy-676cd7984-9v5qb                      2/2     Running     2          8m23s
+istio-security-post-install-1.4.10-gke.17-6rmrw   0/1     Completed   0          7m42s
+istio-sidecar-injector-6bcb464d69-8k24z           1/1     Running     0          8m22s
+istio-telemetry-75ff96df6f-77t64                  2/2     Running     1          8m22s
+istiod-istio-1611-8859565d6-mw4kz                 1/1     Running     0          6m47s
+prometheus-7bd69d7dd-8qgmj                        2/2     Running     0          6m34s
+promsd-6d88cd87-wpgfs                             2/2     Running     1          8m21s
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl label namespace default istio-injection=enabled
+namespace/default labeled
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ ^C
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ export MODEL_BUCKET=${PROJECT_ID}-bucket
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ gsutil mb gs://${MODEL_BUCKET}
+Creating gs://qwiklabs-gcp-04-caaf29a98ec9-bucket/...
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ gsutil cp -r gs://workshop-datasets/models/resnet_101 gs://${MODEL_BUCKET}
+Copying gs://workshop-datasets/models/resnet_101/1/saved_model.pb [Content-Type=application/octet-stream]...
+Copying gs://workshop-datasets/models/resnet_101/1/variables/variables.data-00000-of-00001 [Content-Type=application/octet-stream]...
+Copying gs://workshop-datasets/models/resnet_101/1/variables/variables.index [Content-Type=application/octet-stream]...
+- [3 files][173.7 MiB/173.7 MiB]
+Operation completed over 3 objects/173.7 MiB.
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ gsutil cp -r gs://workshop-datasets/models/resnet_50 gs://${MODEL_BUCKET}
+Copying gs://workshop-datasets/models/resnet_50/1/saved_model.pb [Content-Type=application/octet-stream]...
+Copying gs://workshop-datasets/models/resnet_50/1/variables/variables.data-00000-of-00001 [Content-Type=application/octet-stream]...
+Copying gs://workshop-datasets/models/resnet_50/1/variables/variables.index [Content-Type=application/octet-stream]...
+- [3 files][ 99.4 MiB/ 99.4 MiB]
+Operation completed over 3 objects/99.4 MiB.
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ echo $MODEL_BUCKET
+qwiklabs-gcp-04-caaf29a98ec9-bucket
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl apply -f tf-serving/configmap-resnet50.yaml
+configmap/resnet50-configs created
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ cat tf-serving/deployment-resnet50.yaml
+# Copyright 2020 Google Inc. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#            http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata: # kpt-merge: default/image-classifier-resnet50
+  name: image-classifier-resnet50
+  namespace: default
+  labels:
+    app: image-classifier
+    version: resnet50
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: image-classifier
+      version: resnet50
+  template:
+    metadata:
+      labels:
+        app: image-classifier
+        version: resnet50
+    spec:
+      containers:
+      - name: tf-serving
+        image: "tensorflow/serving"
+        args:
+        - "--model_name=$(MODEL_NAME)"
+        - "--model_base_path=$(MODEL_PATH)"
+        envFrom:
+        - configMapRef:
+            name: resnet50-configs
+        imagePullPolicy: IfNotPresent
+        readinessProbe:
+          tcpSocket:
+            port: 8500
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 10
+        ports:
+        - name: http
+          containerPort: 8501
+          protocol: TCP
+        - name: grpc
+          containerPort: 8500
+          protocol: TCP
+        resources:
+          requests:
+            cpu: "3"
+            memory: 4Gi
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl apply -f tf-serving/deployment-resnet50.yaml
+deployment.apps/image-classifier-resnet50 created
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl get deployments
+NAME                        READY   UP-TO-DATE   AVAILABLE   AGE
+image-classifier-resnet50   1/1     1            1           22s
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ cat tf-serving/service.yaml
+# Copyright 2020 Google Inc. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#            http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: v1
+kind: Service
+metadata: # kpt-merge: default/image-classifier
+  name: image-classifier
+  namespace: default
+  labels:
+    app: image-classifier
+    service: image-classifier
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8500
+    protocol: TCP
+    name: tf-serving-grpc
+  - port: 8501
+    protocol: TCP
+    name: tf-serving-http
+  selector:
+    app: image-classifier
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl apply -f tf-serving/service.yaml
+service/image-classifier created
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl
+archive/        Kptfile         payloads/       README_copy.md  README.md       tf-serving/
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl
+archive/        Kptfile         payloads/       README_copy.md  README.md       tf-serving/
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ cat tf-serving/gateway.yaml
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata: # kpt-merge: /image-classifier-gateway
+  name: image-classifier-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl apply -f tf-serving/gateway.yamlgateway.networking.istio.io/image-classifier-gateway created
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ cat tf-serving/virtualservice
+virtualservice-focused-routing.yaml  virtualservice-weight-100.yaml       virtualservice-weight-70.yaml        virtualservice.yaml
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ cat tf-serving/virtualservice.yaml
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata: # kpt-merge: /image-classifier
+  name: image-classifier
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - image-classifier-gateway
+  http:
+  - route:
+    - destination:
+        host: image-classifier
+        port:
+          number: 8501
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl apply -f tf-serving/virtualservice.yaml
+virtualservice.networking.istio.io/image-classifier created
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ echo $GATEWAY_URL
+34.71.71.210:80
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "labels": ["military uniform", "pickelhaube", "suit", "Windsor tie", "bearskin"],
+            "probabilities": [0.453408211, 0.209194973, 0.193582058, 0.0409308933, 0.0137334978]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ cat tf-serving/destinationrule.yaml
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata: # kpt-merge: /image-classifier
+  name: image-classifier
+spec:
+  host: image-classifier
+  subsets:
+  - name: resnet101
+    labels:
+      version: resnet101
+  - name: resnet50
+    labels:
+      version: resnet50
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl apply -f tf-serving/destinationrule.yaml
+destinationrule.networking.istio.io/image-classifier created
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ cat tf-serving/virtualservice.yaml
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata: # kpt-merge: /image-classifier
+  name: image-classifier
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - image-classifier-gateway
+  http:
+  - route:
+    - destination:
+        host: image-classifier
+        port:
+          number: 8501
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ cat tf-serving/virtualservice-
+virtualservice-focused-routing.yaml  virtualservice-weight-100.yaml       virtualservice-weight-70.yaml
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ cat tf-serving/virtualservice-weight-100.yaml
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata: # kpt-merge: /image-classifier
+  name: image-classifier
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - image-classifier-gateway
+  http:
+  - route:
+    - destination:
+        host: image-classifier
+        subset: resnet50
+        port:
+          number: 8501
+      weight: 100
+    - destination:
+        host: image-classifier
+        subset: resnet101
+        port:
+          number: 8501
+      weight: 0
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl apply -f tf-serving/virtualservice-weight-100.yaml
+virtualservice.networking.istio.io/image-classifier configured
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ cat tf-serving/configmap-resnet101.yaml
+# Copyright 2020 Google Inc. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#            http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: v1
+kind: ConfigMap
+metadata: # kpt-merge: /resnet101-configs
+  name: resnet101-configs
+data:
+  MODEL_NAME: image_classifier
+  MODEL_PATH: gs://qwiklabs-gcp-04-caaf29a98ec9-bucket/resnet_101
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl apply -f tf-serving/configmap-resnet101.yaml
+configmap/resnet101-configs created
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ cat tf-serving/deployment-resnet101.yaml
+# Copyright 2020 Google Inc. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#            http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata: # kpt-merge: default/image-classifier-resnet101
+  name: image-classifier-resnet101
+  namespace: default
+  labels:
+    app: image-classifier
+    version: resnet101
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: image-classifier
+      version: resnet101
+  template:
+    metadata:
+      labels:
+        app: image-classifier
+        version: resnet101
+    spec:
+      containers:
+      - name: tf-serving
+        image: "tensorflow/serving"
+        args:
+        - "--model_name=$(MODEL_NAME)"
+        - "--model_base_path=$(MODEL_PATH)"
+        envFrom:
+        - configMapRef:
+            name: resnet101-configs
+        imagePullPolicy: IfNotPresent
+        readinessProbe:
+          tcpSocket:
+            port: 8500
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 10
+        ports:
+        - name: http
+          containerPort: 8501
+          protocol: TCP
+        - name: grpc
+          containerPort: 8500
+          protocol: TCP
+        resources:
+          requests:
+            cpu: "3"
+            memory: 4Gi
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl apply -f tf-serving/deployment-resnet101.yaml
+deployment.apps/image-classifier-resnet101 created
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl get deployments
+NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
+image-classifier-resnet101   0/1     1            0           15s
+image-classifier-resnet50    1/1     1            1           25m
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl get deployments
+NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
+image-classifier-resnet101   1/1     1            1           24s
+image-classifier-resnet50    1/1     1            1           25m
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "probabilities": [0.453408211, 0.209194973, 0.193582058, 0.0409308933, 0.0137334978],
+            "labels": ["military uniform", "pickelhaube", "suit", "Windsor tie", "bearskin"]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "labels": ["military uniform", "pickelhaube", "suit", "Windsor tie", "bearskin"],
+            "probabilities": [0.453408211, 0.209194973, 0.193582058, 0.0409308933, 0.0137334978]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ cat tf-serving/virtualservice-weight-70.yaml
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata: # kpt-merge: /image-classifier
+  name: image-classifier
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - image-classifier-gateway
+  http:
+  - route:
+    - destination:
+        host: image-classifier
+        subset: resnet50
+        port:
+          number: 8501
+      weight: 70
+    - destination:
+        host: image-classifier
+        subset: resnet101
+        port:
+          number: 8501
+      weight: 30
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl apply -f tf-serving/virtualservice-weight-70.yaml
+virtualservice.networking.istio.io/image-classifier configured
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "labels": ["military uniform", "pickelhaube", "suit", "Windsor tie", "bearskin"],
+            "probabilities": [0.453408211, 0.209194973, 0.193582058, 0.0409308933, 0.0137334978]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "labels": ["military uniform", "suit", "Windsor tie", "pickelhaube", "bow tie"],
+            "probabilities": [0.940013, 0.0485330448, 0.00640664576, 0.0020130109, 0.000604341098]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "labels": ["military uniform", "pickelhaube", "suit", "Windsor tie", "bearskin"],
+            "probabilities": [0.453408211, 0.209194973, 0.193582058, 0.0409308933, 0.0137334978]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "labels": ["military uniform", "suit", "Windsor tie", "pickelhaube", "bow tie"],
+            "probabilities": [0.940013, 0.0485330448, 0.00640664576, 0.0020130109, 0.000604341098]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "labels": ["military uniform", "pickelhaube", "suit", "Windsor tie", "bearskin"],
+            "probabilities": [0.453408211, 0.209194973, 0.193582058, 0.0409308933, 0.0137334978]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "probabilities": [0.453408211, 0.209194973, 0.193582058, 0.0409308933, 0.0137334978],
+            "labels": ["military uniform", "pickelhaube", "suit", "Windsor tie", "bearskin"]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "labels": ["military uniform", "suit", "Windsor tie", "pickelhaube", "bow tie"],
+            "probabilities": [0.940013, 0.0485330448, 0.00640664576, 0.0020130109, 0.000604341098]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "labels": ["military uniform", "suit", "Windsor tie", "pickelhaube", "bow tie"],
+            "probabilities": [0.940013, 0.0485330448, 0.00640664576, 0.0020130109, 0.000604341098]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "labels": ["military uniform", "pickelhaube", "suit", "Windsor tie", "bearskin"],
+            "probabilities": [0.453408211, 0.209194973, 0.193582058, 0.0409308933, 0.0137334978]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "labels": ["military uniform", "suit", "Windsor tie", "pickelhaube", "bow tie"],
+            "probabilities": [0.940013, 0.0485330448, 0.00640664576, 0.0020130109, 0.000604341098]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ cat tf-serving/virtualservice-focused-routing.yaml
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata: # kpt-merge: /image-classifier
+  name: image-classifier
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - image-classifier-gateway
+  http:
+  - match:
+    - headers:
+        user-group:
+          exact: canary
+    route:
+    - destination:
+        host: image-classifier
+        subset: resnet101
+        port:
+          number: 8501
+  - route:
+    - destination:
+        host: image-classifier
+        subset: resnet50
+        port:
+          number: 8501
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ kubectl apply -f tf-serving/virtualservice-focused-routing.yaml
+virtualservice.networking.istio.io/image-classifier configured
+student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "labels": ["military uniform", "pickelhaube", "suit", "Windsor tie", "bearskin"],
+            "probabilities": [0.453408211, 0.209194973, 0.193582058, 0.0409308933, 0.0137334978]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "labels": ["military uniform", "pickelhaube", "suit", "Windsor tie", "bearskin"],
+            "probabilities": [0.453408211, 0.209194973, 0.193582058, 0.0409308933, 0.0137334978]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "labels": ["military uniform", "pickelhaube", "suit", "Windsor tie", "bearskin"],
+            "probabilities": [0.453408211, 0.209194973, 0.193582058, 0.0409308933, 0.0137334978]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -H "user-group: canary" -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "labels": ["military uniform", "suit", "Windsor tie", "pickelhaube", "bow tie"],
+            "probabilities": [0.940013, 0.0485330448, 0.00640664576, 0.0020130109, 0.000604341098]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$ curl -d @payloads/request-body.json -H "user-group: canary" -X POST http://$GATEWAY_URL/v1/models/image_classifier:predict
+{
+    "predictions": [
+        {
+            "labels": ["military uniform", "suit", "Windsor tie", "pickelhaube", "bow tie"],
+            "probabilities": [0.940013, 0.0485330448, 0.00640664576, 0.0020130109, 0.000604341098]
+        }
+    ]
+}student_02_f256626b6ef4@cloudshell:~/tfserving-canary (qwiklabs-gcp-04-caaf29a98ec9)$
