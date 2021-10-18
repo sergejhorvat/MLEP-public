@@ -1,0 +1,1834 @@
+<!doctype html>
+<html lang="en-US">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>Retraining Model During Deployment: Continuous Training and Continuous Testing - neptune.ai</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&display=swap" rel="stylesheet">
+  <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+
+	<!-- This site is optimized with the Yoast SEO plugin v17.3 - https://yoast.com/wordpress/plugins/seo/ -->
+	<link rel="canonical" href="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="Retraining Model During Deployment: Continuous Training and Continuous Testing - neptune.ai" />
+	<meta property="og:description" content="Train, test and deploy &#8211; that’s it, right? Is your work done? Not quite! One of the biggest mistakes data scientists make with machine learning is that they assume their models will keep working properly forever after deployment. But what about the data, which will inevitably keep changing? A model deployed in production and left [&hellip;]" />
+	<meta property="og:url" content="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing" />
+	<meta property="og:site_name" content="neptune.ai" />
+	<meta property="article:publisher" content="https://www.facebook.com/neptuneML/" />
+	<meta property="article:published_time" content="2021-08-16T16:11:28+00:00" />
+	<meta property="article:modified_time" content="2021-08-25T16:52:15+00:00" />
+	<meta property="og:image" content="https://neptune.ai/wp-content/uploads/Retraining-models.jpg" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="628" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:creator" content="@neptuneml" />
+	<meta name="twitter:site" content="@neptuneml" />
+	<meta name="twitter:label1" content="Written by" />
+	<meta name="twitter:data1" content="Akinwande Komolafe" />
+	<meta name="twitter:label2" content="Est. reading time" />
+	<meta name="twitter:data2" content="24 minutes" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://neptune.ai/#website","url":"https://neptune.ai/","name":"neptune.ai","description":"Metadata store for MLOps, built for teams that run a lot of experiments.","potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://neptune.ai/?s={search_term_string}"},"query-input":"required name=search_term_string"}],"inLanguage":"en-US"},{"@type":"ImageObject","@id":"https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing#primaryimage","inLanguage":"en-US","url":"https://i0.wp.com/neptune.ai/wp-content/uploads/Retraining-models.jpg?fit=1200%2C628&ssl=1","contentUrl":"https://i0.wp.com/neptune.ai/wp-content/uploads/Retraining-models.jpg?fit=1200%2C628&ssl=1","width":1200,"height":628,"caption":"Retraining models"},{"@type":"WebPage","@id":"https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing#webpage","url":"https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing","name":"Retraining Model During Deployment: Continuous Training and Continuous Testing - neptune.ai","isPartOf":{"@id":"https://neptune.ai/#website"},"primaryImageOfPage":{"@id":"https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing#primaryimage"},"datePublished":"2021-08-16T16:11:28+00:00","dateModified":"2021-08-25T16:52:15+00:00","author":{"@id":"https://neptune.ai/#/schema/person/17ab4811290bee48ce83fbc32e79ebac"},"breadcrumb":{"@id":"https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing"]}]},{"@type":"BreadcrumbList","@id":"https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Blog","item":"https://neptune.ai/blog"},{"@type":"ListItem","position":2,"name":"ML Model Management","item":"https://neptune.ai/blog/category/machine-learning-model-management"},{"@type":"ListItem","position":3,"name":"Retraining Model During Deployment: Continuous Training and Continuous Testing"}]},{"@type":"Person","@id":"https://neptune.ai/#/schema/person/17ab4811290bee48ce83fbc32e79ebac","name":"Akinwande Komolafe","image":{"@type":"ImageObject","@id":"https://neptune.ai/#personlogo","inLanguage":"en-US","url":"https://secure.gravatar.com/avatar/2ffe451471c0524e1d21369cf008e81b?s=96&d=blank&r=g","contentUrl":"https://secure.gravatar.com/avatar/2ffe451471c0524e1d21369cf008e81b?s=96&d=blank&r=g","caption":"Akinwande Komolafe"},"url":"https://neptune.ai/blog/author/akinwande-komolafe"}]}</script>
+	<!-- / Yoast SEO plugin. -->
+
+
+<link rel='dns-prefetch' href='//secure.gravatar.com' />
+<link rel='dns-prefetch' href='//code.jquery.com' />
+<link rel='dns-prefetch' href='//ajax.googleapis.com' />
+<link rel='dns-prefetch' href='//cdnjs.cloudflare.com' />
+<link rel='dns-prefetch' href='//stackpath.bootstrapcdn.com' />
+<link rel='dns-prefetch' href='//s.w.org' />
+<link rel='dns-prefetch' href='//widgets.wp.com' />
+<link rel='dns-prefetch' href='//i0.wp.com' />
+<link rel='dns-prefetch' href='//i1.wp.com' />
+<link rel='dns-prefetch' href='//i2.wp.com' />
+<link rel='dns-prefetch' href='//c0.wp.com' />
+<link rel='dns-prefetch' href='//v0.wordpress.com' />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/13.1.0\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/13.1.0\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/neptune.ai\/wp-includes\/js\/wp-emoji-release.min.js?ver=5.8.1"}};
+			!function(e,a,t){var n,r,o,i=a.createElement("canvas"),p=i.getContext&&i.getContext("2d");function s(e,t){var a=String.fromCharCode;p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,e),0,0);e=i.toDataURL();return p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,t),0,0),e===i.toDataURL()}function c(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(o=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},r=0;r<o.length;r++)t.supports[o[r]]=function(e){if(!p||!p.fillText)return!1;switch(p.textBaseline="top",p.font="600 32px Arial",e){case"flag":return s([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])?!1:!s([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!s([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]);case"emoji":return!s([10084,65039,8205,55357,56613],[10084,65039,8203,55357,56613])}return!1}(o[r]),t.supports.everything=t.supports.everything&&t.supports[o[r]],"flag"!==o[r]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[o[r]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(n=t.source||{}).concatemoji?c(n.concatemoji):n.wpemoji&&n.twemoji&&(c(n.twemoji),c(n.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel='stylesheet' id='wp-block-library-css'  href='https://c0.wp.com/c/5.8.1/wp-includes/css/dist/block-library/style.min.css' type='text/css' media='all' />
+<style id='wp-block-library-inline-css' type='text/css'>
+.has-text-align-justify{text-align:justify;}
+</style>
+<link rel='stylesheet' id='mediaelement-css'  href='https://c0.wp.com/c/5.8.1/wp-includes/js/mediaelement/mediaelementplayer-legacy.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-mediaelement-css'  href='https://c0.wp.com/c/5.8.1/wp-includes/js/mediaelement/wp-mediaelement.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-bootstrap-blocks-styles-css'  href='https://neptune.ai/wp-content/plugins/wp-bootstrap-blocks/build/style-index.css?ver=4.0.0' type='text/css' media='all' />
+<link rel='stylesheet' id='contact-form-7-css'  href='https://neptune.ai/wp-content/plugins/contact-form-7/includes/css/styles.css?ver=5.5.1' type='text/css' media='all' />
+<link rel='stylesheet' id='cookie-law-info-css'  href='https://neptune.ai/wp-content/plugins/cookie-law-info/public/css/cookie-law-info-public.css?ver=2.0.6' type='text/css' media='all' />
+<link rel='stylesheet' id='cookie-law-info-gdpr-css'  href='https://neptune.ai/wp-content/plugins/cookie-law-info/public/css/cookie-law-info-gdpr.css?ver=2.0.6' type='text/css' media='all' />
+<link rel='stylesheet' id='lbwps-styles-css'  href='https://neptune.ai/wp-content/plugins/lightbox-photoswipe/assets/styles/default.css?ver=3.2.2' type='text/css' media='all' />
+<link rel='stylesheet' id='bootstrap-css'  href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css?ver=4.3.1' type='text/css' media='all' />
+<link rel='stylesheet' id='style-css'  href='https://neptune.ai/wp-content/themes/neptune-experience/style.css?ver=1.6.8.45' type='text/css' media='all' />
+<link rel='stylesheet' id='jetpack_css-css'  href='https://neptune.ai/wp-content/plugins/jetpack/css/jetpack.css?ver=10.3-2110.1' type='text/css' media='all' />
+<script type='text/javascript' src='https://code.jquery.com/jquery-3.5.1.min.js?ver=3.3.1' id='jquery-js'></script>
+<script type='text/javascript' id='cookie-law-info-js-extra'>
+/* <![CDATA[ */
+var Cli_Data = {"nn_cookie_ids":[],"cookielist":[],"non_necessary_cookies":[],"ccpaEnabled":"","ccpaRegionBased":"","ccpaBarEnabled":"","strictlyEnabled":["necessary","obligatoire"],"ccpaType":"gdpr","js_blocking":"1","custom_integration":"","triggerDomRefresh":"","secure_cookies":""};
+var cli_cookiebar_settings = {"animate_speed_hide":"500","animate_speed_show":"500","background":"#FFF","border":"#b1a6a6c2","border_on":"","button_1_button_colour":"#00b978","button_1_button_hover":"#009460","button_1_link_colour":"#fff","button_1_as_button":"1","button_1_new_win":"","button_2_button_colour":"#333","button_2_button_hover":"#292929","button_2_link_colour":"#444","button_2_as_button":"","button_2_hidebar":"","button_3_button_colour":"#3566bb","button_3_button_hover":"#2a5296","button_3_link_colour":"#fff","button_3_as_button":"1","button_3_new_win":"","button_4_button_colour":"#000","button_4_button_hover":"#000000","button_4_link_colour":"#333333","button_4_as_button":"","button_7_button_colour":"#61a229","button_7_button_hover":"#4e8221","button_7_link_colour":"#fff","button_7_as_button":"1","button_7_new_win":"","font_family":"inherit","header_fix":"","notify_animate_hide":"1","notify_animate_show":"","notify_div_id":"#cookie-law-info-bar","notify_position_horizontal":"right","notify_position_vertical":"bottom","scroll_close":"","scroll_close_reload":"","accept_close_reload":"","reject_close_reload":"","showagain_tab":"","showagain_background":"#fff","showagain_border":"#000","showagain_div_id":"#cookie-law-info-again","showagain_x_position":"100px","text":"#ccd5ff","show_once_yn":"","show_once":"10000","logging_on":"","as_popup":"","popup_overlay":"1","bar_heading_text":"","cookie_bar_as":"banner","popup_showagain_position":"bottom-right","widget_position":"left"};
+var log_object = {"ajax_url":"https:\/\/neptune.ai\/wp-admin\/admin-ajax.php"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://neptune.ai/wp-content/plugins/cookie-law-info/public/js/cookie-law-info-public.js?ver=2.0.6' id='cookie-law-info-js'></script>
+<link rel="https://api.w.org/" href="https://neptune.ai/wp-json/" /><link rel="alternate" type="application/json" href="https://neptune.ai/wp-json/wp/v2/posts/51066" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://neptune.ai/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://neptune.ai/wp-includes/wlwmanifest.xml" /> 
+<link rel='shortlink' href='https://wp.me/paIqge-dhE' />
+<link rel="alternate" type="application/json+oembed" href="https://neptune.ai/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fneptune.ai%2Fblog%2Fretraining-model-during-deployment-continuous-training-continuous-testing" />
+<link rel="alternate" type="text/xml+oembed" href="https://neptune.ai/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fneptune.ai%2Fblog%2Fretraining-model-during-deployment-continuous-training-continuous-testing&#038;format=xml" />
+<style type='text/css'>img#wpstats{display:none}</style>
+		<style type="text/css"></style>		<style type="text/css">
+			.recentcomments a {
+				display: inline !important;
+				padding: 0 !important;
+				margin: 0 !important;
+			}
+
+			table.recentcommentsavatartop img.avatar, table.recentcommentsavatarend img.avatar {
+				border: 0px;
+				margin: 0;
+			}
+
+			table.recentcommentsavatartop a, table.recentcommentsavatarend a {
+				border: 0px !important;
+				background-color: transparent !important;
+			}
+
+			td.recentcommentsavatarend, td.recentcommentsavatartop {
+				padding: 0px 0px 1px 0px;
+				margin: 0px;
+			}
+
+			td.recentcommentstextend {
+				border: none !important;
+				padding: 0px 0px 2px 10px;
+			}
+
+			.rtl td.recentcommentstextend {
+				padding: 0px 10px 2px 0px;
+			}
+
+			td.recentcommentstexttop {
+				border: none;
+				padding: 0px 0px 0px 10px;
+			}
+
+			.rtl td.recentcommentstexttop {
+				padding: 0px 10px 0px 0px;
+			}
+		</style>
+		<link rel="amphtml" href="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing/amp">			<style type="text/css">
+				/* If html does not have either class, do not show lazy loaded images. */
+				html:not( .jetpack-lazy-images-js-enabled ):not( .js ) .jetpack-lazy-image {
+					display: none;
+				}
+			</style>
+			<script>
+				document.documentElement.classList.add(
+					'jetpack-lazy-images-js-enabled'
+				);
+			</script>
+		<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MZNL966');</script>
+<!-- End Google Tag Manager -->
+<script src="https://www.googleoptimize.com/optimize.js?id=OPT-KP9KMK8"></script><link rel="icon" href="https://i2.wp.com/neptune.ai/wp-content/uploads/2019/03/cropped-Artboard-12.png?fit=32%2C32&#038;ssl=1" sizes="32x32" />
+<link rel="icon" href="https://i2.wp.com/neptune.ai/wp-content/uploads/2019/03/cropped-Artboard-12.png?fit=192%2C192&#038;ssl=1" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://i2.wp.com/neptune.ai/wp-content/uploads/2019/03/cropped-Artboard-12.png?fit=180%2C180&#038;ssl=1" />
+<meta name="msapplication-TileImage" content="https://i2.wp.com/neptune.ai/wp-content/uploads/2019/03/cropped-Artboard-12.png?fit=270%2C270&#038;ssl=1" />
+</head>
+
+<body class="post-template-default single single-post postid-51066 single-format-standard sidebar-style-first footer-out-newsletter">
+    <header class="header header--blog">
+    <div class="container">
+      <div class="row header__row">
+        <div class="col header__logo">
+          <a href="https://neptune.ai/blog">
+            <svg width="137" height="27" viewBox="0 0 137 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M54.1276 19.1056C54.1276 19.3679 53.7779 19.6303 53.4281 19.6303C52.9909 19.6303 52.7285 19.3679 52.7285 19.1056V12.4597C52.7285 12.1974 52.9909 12.0225 53.4281 12.0225C53.7779 12.0225 54.0402 12.1974 54.0402 12.4597V13.1593C54.39 12.5472 55.0895 11.9351 56.2263 11.9351C57.7129 11.9351 59.0246 13.3342 59.0246 14.9956V19.1056C59.0246 19.4554 58.6748 19.6303 58.325 19.6303C57.9752 19.6303 57.6255 19.4554 57.6255 19.1056V14.9082C57.6255 13.9463 56.751 12.9844 55.7891 12.9844C54.9147 12.9844 54.0402 13.684 54.0402 14.9082V19.1056H54.1276Z" fill="#151928" />
+              <path d="M67.3336 14.7336C67.3336 16.0453 66.6341 16.0453 65.9345 16.0453H62.4367V16.57C62.4367 17.7942 63.3986 18.5812 64.7103 18.5812C65.9345 18.5812 66.2843 17.9691 66.7215 17.9691C67.0713 17.9691 67.2462 18.3189 67.2462 18.5812C67.2462 19.0184 66.2843 19.718 64.7103 19.718C62.6116 19.718 61.125 18.4938 61.125 16.57V14.9085C61.125 13.247 62.5241 11.8479 64.3605 11.8479C65.9345 11.8479 67.3336 13.0721 67.3336 14.7336ZM65.3224 15.1708C65.9345 15.1708 66.0219 15.0834 66.0219 14.6462C66.0219 13.6843 65.2349 12.8098 64.1856 12.8098C63.1362 12.8098 62.3492 13.5968 62.3492 14.5587V15.1708H65.3224Z" fill="#151928" />
+              <path d="M70.5695 12.3726V13.0721C70.9193 12.46 71.7063 11.8479 72.7556 11.8479C74.3296 11.8479 75.6413 13.247 75.6413 14.9085V16.57C75.6413 18.144 74.3297 19.718 72.8431 19.718C71.8812 19.718 71.0067 19.1059 70.6569 18.4938V22.866C70.6569 23.1284 70.3072 23.3907 69.9574 23.3907C69.5202 23.3907 69.2578 23.1284 69.2578 22.866V12.3726C69.2578 12.1102 69.5202 11.9353 69.8699 11.9353C70.3072 11.9353 70.5695 12.1102 70.5695 12.3726ZM74.2422 14.9085C74.2422 13.9466 73.3677 12.9847 72.3184 12.9847C71.4439 12.9847 70.5695 13.6843 70.5695 14.9085V17.0072C70.5695 17.4444 71.3565 18.4938 72.4059 18.4938C73.3678 18.4938 74.2422 17.5319 74.2422 16.57V14.9085Z" fill="#151928" />
+              <path d="M78.9636 17.0946C78.9636 18.0565 79.3134 18.3189 80.2753 18.3189H80.7999C81.1497 18.3189 81.4121 18.5812 81.4121 18.931C81.4121 19.2808 81.1497 19.5431 80.7999 19.5431H80.2753C78.5264 19.5431 77.5645 18.7561 77.5645 17.0946V8.78732C77.5645 8.52499 77.9142 8.3501 78.264 8.3501C78.6138 8.3501 78.9636 8.52499 78.9636 8.78732V11.8479H80.9748C81.2372 11.8479 81.4121 12.1103 81.4121 12.3726C81.4121 12.6349 81.2372 12.8973 80.9748 12.8973H78.9636V17.0946Z" fill="#151928" />
+              <path d="M83.0723 16.57V12.3726C83.0723 12.1102 83.3346 11.8479 83.7718 11.8479C84.1216 11.8479 84.4714 12.1102 84.4714 12.3726V16.57C84.4714 17.5319 85.2584 18.4938 86.3077 18.4938C87.3571 18.4938 88.1441 17.5319 88.1441 16.57V12.3726C88.1441 12.1102 88.4939 11.9353 88.8437 11.9353C89.2809 11.9353 89.5432 12.1977 89.5432 12.3726V16.57C89.5432 18.2314 88.1441 19.6305 86.3952 19.6305C84.4714 19.718 83.0723 18.2314 83.0723 16.57Z" fill="#151928" />
+              <path d="M93.0417 19.1056C93.0417 19.3679 92.6919 19.6303 92.3421 19.6303C91.9049 19.6303 91.6426 19.3679 91.6426 19.1056V12.4597C91.6426 12.1974 91.9049 12.0225 92.3421 12.0225C92.6919 12.0225 92.9543 12.1974 92.9543 12.4597V13.1593C93.304 12.5472 94.0036 11.9351 95.1404 11.9351C96.627 11.9351 97.9386 13.3342 97.9386 14.9956V19.1056C97.9386 19.4554 97.5889 19.6303 97.2391 19.6303C96.8893 19.6303 96.5395 19.4554 96.5395 19.1056V14.9082C96.5395 13.9463 95.6651 12.9844 94.7032 12.9844C93.8287 12.9844 92.9543 13.684 92.9543 14.9082V19.1056H93.0417Z" fill="#151928" />
+              <path d="M106.334 14.7336C106.334 16.0453 105.634 16.0453 104.934 16.0453H101.437V16.57C101.437 17.7942 102.399 18.5812 103.71 18.5812C104.934 18.5812 105.284 17.9691 105.722 17.9691C106.071 17.9691 106.246 18.3189 106.246 18.5812C106.246 19.0184 105.284 19.718 103.71 19.718C101.612 19.718 100.125 18.4938 100.125 16.57V14.9085C100.125 13.247 101.524 11.8479 103.36 11.8479C104.847 11.8479 106.334 13.0721 106.334 14.7336ZM104.322 15.1708C104.935 15.1708 105.022 15.0834 105.022 14.6462C105.022 13.6843 104.235 12.8098 103.186 12.8098C102.136 12.8098 101.349 13.5968 101.349 14.5587V15.1708H104.322Z" fill="#151928" />
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M38.2132 23.8278C39.0002 22.0789 39.3499 19.8927 39.6997 17.7941C39.7872 17.1819 39.9621 16.6573 40.0495 16.1326C40.2244 15.1707 40.3118 14.5586 40.3118 13.859C40.2244 13.1594 39.6997 12.4599 38.9127 12.4599C37.8634 12.3724 37.3387 12.8971 37.1638 13.9465L36.7266 15.7828C36.4642 17.1819 36.2019 18.5811 35.9396 20.0676C35.9396 20.1551 35.9396 20.2425 35.8521 20.33C35.6772 21.3793 35.5023 21.904 35.24 22.2538C35.1526 22.3412 34.8028 22.691 34.2781 22.6035C34.0158 22.5161 33.666 22.3412 33.4037 21.7291C33.3162 21.2919 33.2288 20.5049 33.1413 20.0676C32.879 18.9308 32.7041 17.7941 32.4417 16.6573C31.9171 14.2088 31.4798 11.6729 30.8677 9.13695C30.4305 7.21315 29.8184 5.20191 29.0314 3.19066C28.3318 1.44175 27.4574 0.742188 25.9708 0.742188C24.2219 0.742188 23.3474 1.87898 22.6479 3.19066C21.686 5.11446 21.1613 7.3006 20.6366 9.74907C20.1994 11.8478 19.7622 13.9465 19.4124 15.9577C19.15 17.007 18.9752 18.0564 18.8003 19.1057C18.8003 19.1932 18.2756 21.3793 18.2756 21.5542C18.0133 22.1663 17.6635 22.4287 17.3137 22.4287C16.7016 22.4287 16.3518 21.6417 16.3518 21.4668C16.3518 21.3793 16.1769 20.8546 16.0894 20.7672C16.002 20.5049 15.9146 20.2425 15.8271 19.9802C15.5648 18.8434 15.3899 17.6192 15.1275 16.4824C14.6029 14.0339 14.1657 11.498 13.5535 8.96206C13.1163 7.03826 12.5042 5.11446 11.7172 3.19066C11.1051 1.61664 9.96827 1.00452 8.91892 1.00452C8.91892 1.00452 6.5579 0.917078 5.50855 3.27811C4.6341 5.11446 3.93453 7.21315 3.32241 9.92396C2.97263 11.5854 2.7103 12.8097 2.62285 13.9465C2.53541 14.646 3.06008 15.3456 3.6722 15.6079C4.19687 15.7828 4.6341 15.7828 5.07132 15.5205C5.42111 15.2581 5.68344 14.9084 5.85833 14.3837C6.12067 13.1594 6.38301 11.8478 6.5579 10.6235C6.73279 10.0114 7.34491 6.68848 7.5198 6.25125C7.69469 5.81402 7.95702 4.93957 8.56914 4.93957C8.56914 4.93957 8.56914 4.93957 8.65659 4.93957C9.2687 5.02701 9.53104 5.81402 9.70593 6.51359C9.79338 6.86337 9.96827 7.73782 10.1432 8.52483C10.2306 8.96206 10.318 9.31184 10.4055 9.57418C10.6678 10.7984 10.9302 12.1101 11.1925 13.3343C11.3674 14.0339 11.5423 14.7335 11.6297 15.433C12.1544 17.7066 12.5916 19.9802 13.2038 22.2538C13.5535 23.5655 14.1657 24.7022 14.6029 25.4018C15.1276 26.2763 16.002 26.8009 16.9639 26.8009C18.5379 26.8884 19.9371 25.7516 20.6366 23.9152C21.5985 21.3793 22.1232 18.6685 22.7353 15.9577C22.7353 15.9577 24.047 9.31184 24.3093 8.0876C24.3968 7.73782 24.7465 6.16381 24.834 5.90147C25.1838 4.85212 25.7085 4.76468 25.8833 4.76468H25.9708C26.6704 4.76468 27.1076 5.72658 27.6322 8.69972L27.7197 8.87461C28.0695 10.2737 28.3318 11.6729 28.5942 13.072C29.1188 15.5205 29.5561 17.9689 30.0807 20.33C30.518 22.4287 31.1301 23.8278 32.0045 25.052C33.1413 26.7135 34.8028 27.0633 36.4642 26.0139C37.1638 25.6641 37.7759 24.7897 38.2132 23.8278Z" fill="#151928" />
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M2.01125 22.6035C0.874454 22.6035 0 23.5654 0 24.7022C0 25.2269 0.262336 25.6641 0.612118 26.1013C1.04935 26.5386 1.48657 26.7135 2.01125 26.7135C2.53592 26.7135 3.06059 26.4511 3.41037 26.0139C3.76015 25.5767 4.02249 25.1394 4.02249 24.6148C4.02249 23.5654 3.06059 22.6035 2.01125 22.6035Z" fill="#151928" />
+              <path d="M108.756 18.8438V8.00055C108.756 7.82566 108.843 7.65076 109.018 7.56332C109.193 7.47587 109.455 7.38843 109.718 7.38843C109.98 7.38843 110.242 7.47587 110.505 7.56332C110.68 7.65076 110.855 7.82566 110.855 8.00055V12.9849C111.029 12.6352 111.292 12.3728 111.642 12.1105C111.991 11.8481 112.429 11.7607 112.866 11.7607C113.653 11.7607 114.352 12.1105 114.877 12.7226C115.402 13.3347 115.751 14.1217 115.751 14.9962V16.3079C115.751 17.1823 115.489 17.9693 114.877 18.5814C114.265 19.281 113.653 19.5433 112.866 19.5433C112.341 19.5433 111.904 19.4559 111.467 19.1936C111.029 18.9312 110.767 18.6689 110.592 18.3191V18.7563C110.592 18.9312 110.505 19.1061 110.33 19.1936C110.155 19.3685 109.893 19.3685 109.63 19.3685C109.368 19.3685 109.106 19.281 108.931 19.1936C108.931 19.1936 108.756 19.0187 108.756 18.8438ZM110.855 16.6576C110.855 16.8325 111.029 17.0949 111.292 17.4447C111.554 17.7944 111.904 17.8819 112.341 17.8819C112.778 17.8819 113.041 17.707 113.303 17.4447C113.565 17.1823 113.74 16.8325 113.74 16.3953V15.0836C113.74 14.7338 113.565 14.3841 113.303 14.1217C113.041 13.8594 112.691 13.6845 112.341 13.6845C111.991 13.6845 111.642 13.8594 111.379 14.1217C111.117 14.3841 110.942 14.7338 110.942 15.1711V16.6576H110.855Z" fill="#151928" />
+              <path d="M117.676 18.8435V8.0003C117.676 7.82541 117.763 7.65052 117.938 7.56307C118.113 7.47563 118.375 7.38818 118.725 7.38818C118.987 7.38818 119.25 7.47563 119.512 7.56307C119.687 7.65052 119.862 7.82541 119.862 8.0003V18.8435C119.862 19.0184 119.774 19.1933 119.512 19.2808C119.337 19.4557 119.075 19.4557 118.813 19.4557C118.55 19.4557 118.288 19.3682 118.113 19.2808C117.938 19.1933 117.676 19.0184 117.676 18.8435Z" fill="#151928" />
+              <path d="M121.611 16.3951V15.0834C121.611 14.2089 121.961 13.4219 122.661 12.8098C123.36 12.1977 124.147 11.8479 125.109 11.8479C126.071 11.8479 126.858 12.1977 127.558 12.8098C128.257 13.4219 128.607 14.2089 128.607 15.0834V16.3951C128.607 17.2695 128.257 18.0565 127.558 18.6686C126.858 19.3682 126.071 19.6305 125.109 19.6305C124.147 19.6305 123.36 19.2808 122.661 18.6686C121.961 17.9691 121.611 17.2695 121.611 16.3951ZM123.71 16.3951C123.71 16.7448 123.885 17.0946 124.147 17.4444C124.41 17.7067 124.759 17.8816 125.109 17.8816C125.459 17.8816 125.809 17.7067 126.071 17.4444C126.333 17.1821 126.508 16.8323 126.508 16.3951V15.0834C126.508 14.7336 126.333 14.3838 126.071 14.1215C125.809 13.8591 125.459 13.6843 125.109 13.6843C124.759 13.6843 124.41 13.8591 124.147 14.1215C123.885 14.3838 123.71 14.7336 123.71 15.0834V16.3951Z" fill="#151928" />
+              <path d="M129.83 20.8547C129.83 20.0677 130.267 19.543 131.054 19.1058C130.617 18.9309 130.355 18.5811 130.355 18.0565C130.355 17.6192 130.617 17.182 131.142 16.8322C130.442 16.3076 130.18 15.608 130.18 14.7335V14.3838C130.18 13.5968 130.442 12.9846 131.054 12.46C131.666 11.9353 132.366 11.673 133.328 11.673C134.027 11.673 134.64 11.8478 135.164 12.1102C135.514 11.4106 135.776 10.9734 136.126 10.9734C136.388 10.9734 136.563 11.0608 136.738 11.1483C136.913 11.2357 137.001 11.4106 137.001 11.5855C137.001 11.7604 136.913 11.9353 136.738 12.0227C136.301 12.2851 136.126 12.5474 135.951 12.6349C136.301 13.0721 136.476 13.5968 136.476 14.2089V14.7335C136.476 15.5206 136.214 16.1327 135.601 16.6573C134.989 17.182 134.202 17.4444 133.328 17.4444C132.978 17.4444 132.628 17.3569 132.279 17.2695C132.191 17.3569 132.104 17.4444 132.104 17.6192C132.104 17.7941 132.279 17.969 132.628 18.0565C132.978 18.1439 133.328 18.2314 133.853 18.2314C134.29 18.3188 134.814 18.4063 135.252 18.4937C135.689 18.5811 136.126 18.8435 136.476 19.1933C136.826 19.543 137.001 19.9803 137.001 20.5924C137.001 21.4668 136.651 22.079 135.951 22.5162C135.252 22.9534 134.465 23.1283 133.415 23.1283C132.453 23.1283 131.579 22.9534 130.879 22.5162C130.18 22.079 129.83 21.5543 129.83 20.8547ZM131.754 20.5924C131.754 20.9422 131.929 21.2045 132.191 21.4668C132.453 21.7292 132.891 21.8166 133.328 21.8166C133.765 21.8166 134.115 21.7292 134.465 21.4668C134.814 21.2045 134.902 21.0296 134.902 20.6798C134.902 20.5049 134.902 20.4175 134.814 20.2426C134.727 20.1552 134.64 20.0677 134.552 19.9803C134.377 19.8928 134.29 19.8054 134.202 19.8054C134.115 19.7179 133.94 19.7179 133.678 19.7179C133.415 19.7179 133.328 19.6305 133.153 19.6305C133.066 19.6305 132.891 19.6305 132.628 19.543C132.104 19.8054 131.754 20.1552 131.754 20.5924ZM132.191 14.7335C132.191 15.1708 132.279 15.5206 132.541 15.7829C132.716 16.0452 133.066 16.2201 133.415 16.2201C133.765 16.2201 134.027 16.0452 134.29 15.7829C134.465 15.5206 134.64 15.1708 134.64 14.7335V14.3838C134.64 13.9465 134.552 13.6842 134.29 13.4219C134.115 13.1595 133.765 12.9846 133.415 12.9846C133.066 12.9846 132.803 13.1595 132.541 13.4219C132.366 13.6842 132.191 14.034 132.191 14.4712V14.7335Z" fill="#151928" />
+            </svg>
+          </a>
+        </div>
+
+        <nav class="col header__nav">
+          <button class="header__hamburger">
+            <span class="header__hamburger-line"></span>
+          </button>
+
+          
+
+
+<form action="/" method="get" class="header__search header__search--tablet">
+  <input type="text" id="autocomplate" name="s" id="search" value="" placeholder="Search all articles" class="header__search-input">
+    <input type="hidden" value="post" name="post_type" />
+  <input type="submit" class="header__search-submit">
+  <div class="ajax-results"></div>
+</form>          <ul class="nav__list "><li class="nav__item  nav__item--21343  nav__item--green"><a href="/product" class="nav__link">What is Neptune?</a></li>
+
+  <li class="header__button header__tablet header__newsletter  header-newsletter ">
+    <form action="https://neptune.us19.list-manage.com/subscribe/post?u=8da2bdd288186da3ffeec5626&id=59d3dc2c24" method="post" target="_blank" class="header-newsletter__form">
+    <input type="email" class="header-newsletter__form-email" name="EMAIL" placeholder="Type your email here">
+    <input type="submit" class="header-newsletter__form-button button blue-not-filled" value="Get Newsletter">
+    </form>
+  </li>
+  </ul>                  </nav>
+      </div>
+
+      <!-- new version -->
+
+              <div class="header-categories">
+                      <div class="header-categories__list header-categories__list--top">
+                <a class="header-categories__list-single" href="https://neptune.ai/blog/category/how-to-use-neptune">How to Use Neptune</a>
+  <a class="header-categories__list-single" href="https://neptune.ai/blog/category/experiment-tracking">ML Experiment Tracking</a>
+  <a class="header-categories__list-single" href="https://neptune.ai/blog/category/machine-learning-model-management">ML Model Management</a>
+  <a class="header-categories__list-single" href="https://neptune.ai/blog/category/mlops">MLOps</a>
+  <a class="header-categories__list-single" href="https://neptune.ai/blog/category/machine-learning-tools">ML Tools</a>
+              
+
+
+<form action="/" method="get" class="header__search header-categories__search">
+  <input type="text" id="autocomplate" name="s" id="search" value="" placeholder="Search all articles" class="header__search-input">
+    <input type="hidden" value="post" name="post_type" />
+  <input type="submit" class="header__search-submit">
+  <div class="ajax-results"></div>
+</form>            </div>
+          
+                      <div class="header-categories__list header-categories__list--bottom">
+                <a class="header-categories__list-single" href="https://neptune.ai/blog/category/computer-vision">Computer Vision</a>
+  <a class="header-categories__list-single" href="https://neptune.ai/blog/category/natural-language-processing">Natural Language Processing</a>
+  <a class="header-categories__list-single" href="https://neptune.ai/blog/category/reinforcement-learning">Reinforcement Learning</a>
+  <a class="header-categories__list-single" href="https://neptune.ai/blog/category/tabular-data">Tabular Data</a>
+  <a class="header-categories__list-single" href="https://neptune.ai/blog/category/hyperparameter-optimization">Hyperparameter Optimization</a>
+  <a class="header-categories__list-single" href="https://neptune.ai/blog/category/model-evaluation">Model Evaluation</a>
+  <a class="header-categories__list-single" href="https://neptune.ai/blog/category/time-series-forecasting">Time Series</a>
+  <a class="header-categories__list-single" href="https://neptune.ai/blog/category/ml-project-management">ML Project Management</a>
+            </div>
+                      <a href="#slideDown" class="header-categories__more"></a>
+                  </div>
+          </div>
+  </header>
+<main class="main blog">
+  <section class="section blog__section singlePost container">
+    <p id="breadcrumbs" class="article__breadcrumbs breadcrumbs"><span><span><a href="https://neptune.ai/blog">Blog</a> » <span><a href="https://neptune.ai/blog/category/machine-learning-model-management">ML Model Management</a> » <span class="breadcrumb_last" aria-current="page">Retraining Model During Deployment: Continuous Training and Continuous Testing</span></span></span></span></p>    <div class="article__row row">
+              <aside class="col-12 col-lg-3 sidebar">        <div class="before-sidebar-newsletter"></div>
+<a href="https://docs.neptune.ai/how-to-guides/model-registry/log-model-building-metadata" target="_blank" class="sidebar-newsletter sidebar-newsletter--sticky">
+    <img src="https://neptune.ai/wp-content/themes/neptune-experience/img/chart.svg" />    <div class="sidebar-newsletter__content"><p><strong>Having problems with deploying models to production?</strong></p>
+<p>Start tracking your model building metadata to be able to package, test, and review it quickly.</p>
+</div>
+            <span class="button green-filled sidebar-newsletter__button">
+            Check how        </span>
+    
+</a></aside>
+      
+      <article class="col-12 col-lg-9 article">
+        <header class="article__header col-lg-10">  <h1 class="article__title">Retraining Model During Deployment: Continuous Training and Continuous Testing</h1>
+  <ul class="article__info">
+    <li class="article__info-single article__info--read-single">
+      <span class="article__info-time"></span>
+      <span class="article__info-mins">mins</span>
+      <span class="article__info-read">read</span>
+    </li>
+    <li class="article__info-single">
+        Author Akinwande Komolafe    </li>
+          <li class="article__info-single">Updated August 25th, 2021</li>
+      </ul>
+</header>
+        <div class="article__content col-lg-10">
+<p>Train, test and deploy &#8211; that’s it, right? Is your work done? Not quite!</p>
+
+
+
+<p>One of the biggest mistakes data scientists make with machine learning is that they assume their models will keep working properly forever after deployment. But what about the data, which will inevitably keep changing? A model deployed in production and left to itself won’t be able to adapt to changes in data by itself.</p>
+
+
+
+<p>In a UK bank <a href="https://www.bankofengland.co.uk/bank-overground/2021/how-has-covid-affected-the-performance-of-machine-learning-models-used-by-uk-banks" target="_blank" rel="noreferrer noopener nofollow">survey</a> from August 2020, 35% of asked bankers reported a negative impact on ML model performance because of the pandemic. Unpredictable events like this are a great example of why continuous training and monitoring of ML models in production is important compared to static validation and testing techniques.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img data-attachment-id="51075" data-permalink="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing/retraining-models-impact-of-changes" data-orig-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-impact-of-changes.png?fit=829%2C354&amp;ssl=1" data-orig-size="829,354" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Retraining-models-impact-of-changes" data-image-description="" data-image-caption="" data-medium-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-impact-of-changes.png?fit=300%2C128&amp;ssl=1" data-large-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-impact-of-changes.png?fit=829%2C354&amp;ssl=1" loading="lazy" width="829" height="354" src="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-impact-of-changes.png?resize=829%2C354&#038;ssl=1" alt="Retraining models - impact of changes" class="wp-image-51075" data-recalc-dims="1"/><figcaption><em>The impact of the pandemic on the performance of banks’ machine learning models |  <a href="https://www.bankofengland.co.uk/bank-overground/2021/how-has-covid-affected-the-performance-of-machine-learning-models-used-by-uk-banks" target="_blank" rel="noreferrer noopener nofollow">Source</a></em></figcaption></figure></div>
+
+
+<div class="table-of-contents">
+        <h2>In this article, I will explain the following concepts:</h2>
+        <div class="table-elements">
+                                    <div class="table-element">
+                    <a href="#monitor">
+                        <span>How to monitor models in deployment?</span>
+                    </a>
+                </div>
+                            <div class="table-element">
+                    <a href="#what">
+                        <span>What is model retraining, and why is it important to retrain your models?</span>
+                    </a>
+                </div>
+                            <div class="table-element">
+                    <a href="#when">
+                        <span>When do you need to retrain your models?</span>
+                    </a>
+                </div>
+                            <div class="table-element">
+                    <a href="#how">
+                        <span>How to retrain your models?</span>
+                    </a>
+                </div>
+                            <div class="table-element">
+                    <a href="#deploy">
+                        <span>When to deploy your models after retraining?</span>
+                    </a>
+                </div>
+                        </div>
+</div>
+
+
+<h2>Deploying your models in production</h2>
+
+
+
+<p>A startup recently employed you as a lead data scientist to build a predictive model that determines housing prices in certain cities. Your model performance metrics look great, your app is ready to be deployed to production.&nbsp;</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-large is-resized"><img data-attachment-id="51080" data-permalink="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing/model-deployment" data-orig-file="https://i0.wp.com/neptune.ai/wp-content/uploads/Model-deployment.png?fit=1260%2C460&amp;ssl=1" data-orig-size="1260,460" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Model-deployment" data-image-description="" data-image-caption="" data-medium-file="https://i0.wp.com/neptune.ai/wp-content/uploads/Model-deployment.png?fit=300%2C110&amp;ssl=1" data-large-file="https://i0.wp.com/neptune.ai/wp-content/uploads/Model-deployment.png?fit=1024%2C374&amp;ssl=1" loading="lazy" src="https://i0.wp.com/neptune.ai/wp-content/uploads/Model-deployment.png?resize=843%2C307&#038;ssl=1" alt="Model deployment" class="wp-image-51080" width="843" height="307" data-recalc-dims="1" /><figcaption><em>Life cycle of a model deployed in production | <a href="https://martinfowler.com/articles/cd4ml.html">Source</a></em></figcaption></figure></div>
+
+
+
+<p>You successfully deploy your model. What’s next? Three things:</p>
+
+
+<div class="custom-point-list">
+<ul><li>Model serving</li><li>Model performance monitoring</li><li>Model re-training</li></ul>
+</div>
+
+
+<h3>Model serving</h3>
+
+
+
+<p>Model serving is the process of how your model is consumed in production. It varies across different business use cases. It’s important to understand how your model would be consumed in production before you build an automated model retraining pipeline. There are several ways to productionalize your machine learning models, such as <a href="https://ml-ops.org/content/three-levels-of-ml-software#code-deployment-pipelines" target="_blank" rel="noreferrer noopener nofollow"><strong>model-as-service, model-as-dependency, and batch predictions (precompute serving)</strong></a><strong>.&nbsp;</strong></p>
+
+
+
+<h3>Model performance monitoring</h3>
+
+
+
+<p>Model performance monitoring is the process of tracking the performance of your machine learning model based on live data in order to identify potential issues that might impact the business. A good model monitoring pipeline should monitor the availability of the model, model prediction and performance on live data, and the computational performance of the ML system</p>
+
+
+
+<div id="blog-cta-intext-block_611d0dce80e48" class="blog-cta-intext">
+  <h3 class="blog-cta-intext__title">Check also </h3>
+  <div class="blog-cta-intext__content"><p>👉 <a href="/blog/ml-model-serving-best-tools" target="_blank" rel="noopener">Best Tools to Do ML Model Serving</a><br />
+👉 <a href="/blog/ml-model-monitoring-best-tools" target="_blank" rel="noopener">Best Tools to Do ML Model Monitoring</a></p>
+</div>
+  </div>
+
+
+<h3>Model retraining</h3>
+
+
+
+<p>After monitoring and tracking your model performance, the next step in model management is retraining your machine learning model. The objective is to ensure that the quality of your model in production is up to date.</p>
+
+
+
+<h2 id="monitor">How to continuously monitor models in production?</h2>
+
+
+
+<p>Now you realize that deployment is not the last stage in model management, it’s just the beginning. Just like software deployment, your code is deterministic and will always run as it’s written, and your team can always deploy new features on the software. But in machine learning, the development pipeline includes 3 levels of changes: Data, Algorithm (Model), and Code.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img data-attachment-id="51081" data-permalink="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing/retraining-models-just-a-phase" data-orig-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-just-a-phase.gif?fit=480%2C270&amp;ssl=1" data-orig-size="480,270" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Retraining-models-just-a-phase" data-image-description="" data-image-caption="" data-medium-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-just-a-phase.gif?fit=300%2C169&amp;ssl=1" data-large-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-just-a-phase.gif?fit=480%2C270&amp;ssl=1" loading="lazy" width="480" height="270" src="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-just-a-phase.gif?resize=480%2C270&#038;ssl=1" alt="Retraining models - just a phase" class="wp-image-51081" data-recalc-dims="1"/><figcaption><em><a href="https://www.pinterest.com/pin/511510470175606491/" target="_blank" rel="noreferrer noopener nofollow">Source</a></em></figcaption></figure></div>
+
+
+
+<p>So what do you need to monitor when you deploy your model in production?</p>
+
+
+
+<h3>Data validation</h3>
+
+
+
+<p>You need to monitor the data your model is ingesting in the upstream pipeline because ‘garbage in, garbage out’. Your model is sensitive to the input data it receives. If there’s a change in the statistical distribution of the trained data from the data in production, model performance will decline significantly.&nbsp;&nbsp;</p>
+
+
+
+<h4>Major data quality issues to monitor:</h4>
+
+
+<div class="custom-point-list">
+<ol><li><strong>Data schema</strong></li></ol>
+</div>
+
+
+<p>Before retraining your model, you need to validate that your input data complies with the expected schema upstream.&nbsp; This means that your downstream pipeline steps, including data processing and model training, should be exactly the same with the schema from the production data. You can make use of the Python<strong> Assertion method</strong><strong> </strong>to validate your schema against the expected schema.</p>
+
+
+
+<p>If the schema doesn’t comply with the expected schema, the data science team can update the pipeline to handle these changes. This might mean retraining a new model from scratch to accommodate the new features, or it might only mean renaming the features.</p>
+
+
+<div class="custom-point-list">
+<ol start="2"><li><strong>Data Drift</strong></li></ol>
+</div>
+
+
+<p>Another data quality issue to watch out for is data drift. This simply means that there’s a change in the statistical properties of data.</p>
+
+
+
+<h3>Model validation</h3>
+
+
+
+<p>After successfully validating your data pipeline, you need to also validate your model pipeline. The model pipeline is validated before it’s deployed to production.&nbsp;</p>
+
+
+
+<p>Model validation steps include:</p>
+
+
+<div class="custom-point-list">
+<ol><li><strong>Testing model performance using an adopted metric with a chosen threshold.</strong> It’s important to monitor model performance in production. If it falls below the threshold, a retraining job can be triggered. The re-trained model can be tested.</li><li><strong>Model metadata and versioning. </strong>Monitoring what works well in production is important. After running a series of experiments when retraining your machine learning model, you need to save all the model metadata for <a href="/blog/how-to-solve-reproducibility-in-ml" target="_blank" rel="noreferrer noopener">reproducibility</a>. Your retraining pipeline should log different model versions and metadata to a metadata store alongside model performance metrics. A very good tool for managing your model metadata is <a href="/blog/ml-metadata-store" target="_blank" rel="noreferrer noopener">Neptune AI</a>.</li><li><strong>Concerted adversaries. </strong>As the field of machine learning is evolving, businesses are beginning to employ machine learning applications as the central decision maker. It’s important to monitor the security of models in production. Some machine learning models, like credit risk models, are susceptible to adversarial attacks. Fraudsters are always looking for different ways to trick a model poised with the task to identify suspicious credit card transactions.</li><li><strong>Model Infrastructure. </strong>You also need to monitor your model infrastructure compatibility and consistency with the prediction service API before you deploy into production.&nbsp;</li></ol>
+</div>
+
+
+<h2>Tools you need for continuous monitoring</h2>
+
+
+
+<p>Let’s take a look at some of the best tools that you can use for continuous monitoring. With these tools, you can run models simultaneously to test their performance in production.&nbsp;</p>
+
+
+
+<h3><a href="/product" target="_blank" rel="noreferrer noopener">Neptune</a></h3>
+
+
+
+<p>Neptune is a model monitoring platform that allows you to run a lot of experiments and store all your metadata for your MLOps workflow. With Neptune, your team can track experiments and reproduce promising models. It’s easy to integrate with any other frameworks. With Neptune AI, you can monitor your model pipeline effectively. Every model experiment/run can be logged.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-large"><img data-attachment-id="51082" data-permalink="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing/monitoring-models-neptune" data-orig-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Monitoring-models-Neptune.png?fit=1600%2C811&amp;ssl=1" data-orig-size="1600,811" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Monitoring-models-Neptune" data-image-description="" data-image-caption="" data-medium-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Monitoring-models-Neptune.png?fit=300%2C152&amp;ssl=1" data-large-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Monitoring-models-Neptune.png?fit=1024%2C519&amp;ssl=1" loading="lazy" width="1024" height="519" src="https://i2.wp.com/neptune.ai/wp-content/uploads/Monitoring-models-Neptune.png?resize=1024%2C519&#038;ssl=1" alt="Monitoring models Neptune" class="wp-image-51082" data-recalc-dims="1"/><figcaption><em><a href="https://app.neptune.ai/common/example-project-tensorflow-keras/e/TFKERAS-14/monitoring" target="_blank" rel="noreferrer noopener">Source</a></em></figcaption></figure></div>
+
+
+
+<h3><strong><a href="https://www.qualdo.ai/" target="_blank" rel="noreferrer noopener nofollow">Qualdo</a></strong></h3>
+
+
+
+<p>Qualdo is a good tool for monitoring your models in production. You can monitor your upstream pipeline to identify data issues during ingestion continuously. You can also monitor your model performance in production and derive insights from predictions on production data. Qualdo also allows you to set alerts to prompt your team when a model performance has passed a certain threshold or if data drift is identified in the upstream pipeline. Qualdo allows you to also monitor your model pipeline performance in Tensorflow.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-large is-resized"><img data-attachment-id="51083" data-permalink="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing/monitoring-models-qualdo" data-orig-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Monitoring-models-Qualdo.png?fit=1600%2C862&amp;ssl=1" data-orig-size="1600,862" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Monitoring-models-Qualdo" data-image-description="" data-image-caption="" data-medium-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Monitoring-models-Qualdo.png?fit=300%2C162&amp;ssl=1" data-large-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Monitoring-models-Qualdo.png?fit=1024%2C552&amp;ssl=1" loading="lazy" src="https://i2.wp.com/neptune.ai/wp-content/uploads/Monitoring-models-Qualdo.png?resize=772%2C416&#038;ssl=1" alt="Monitoring models Qualdo" class="wp-image-51083" width="772" height="416" data-recalc-dims="1" /><figcaption><a href="https://www.qualdo.ai/" target="_blank" rel="noreferrer noopener nofollow"><em>Source</em></a></figcaption></figure></div>
+
+
+
+<div id="blog-cta-intext-block_6116930f8525e" class="blog-cta-intext">
+  <h3 class="blog-cta-intext__title">Dig deeper</h3>
+  <div class="blog-cta-intext__content"><p>You can read up some more on the best tools to use to monitor your models in production <a href="https://neptune.ai/blog/ml-model-monitoring-best-tools" target="_blank" rel="noreferrer noopener">here</a>.</p>
+</div>
+  </div>
+
+
+<p>Now you understand how to continuously monitor your model in production. What next?&nbsp;</p>
+
+
+
+<h2 id="what">What is Continuous Training?</h2>
+
+
+
+<p>Continuous training is an aspect of machine learning operations that automatically and continuously retrains machine learning models to adapt to changes in the data before it is redeployed. The trigger for a re-build can be data change, model change, or code change.&nbsp;</p>
+
+
+
+<h2>Why is continuous training important?</h2>
+
+
+
+<p>We’re going to explore the reasons why you still need to change your model in production after spending so much time training and deploying it in the first place.</p>
+
+
+
+<h3>Machine learning models get stale with time</h3>
+
+
+
+<p>As soon as you deploy your machine learning model in production, the performance of your model degrades. This is because your model is sensitive to changes in the real world, and user behaviour keeps changing with time. Although all machine learning models decay, the speed of decay varies with time. This is mostly caused by data drift, concept drift, or both.&nbsp;</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-large is-resized"><img data-attachment-id="51084" data-permalink="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing/retraining-models-graph" data-orig-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-graph.jpg?fit=1600%2C1343&amp;ssl=1" data-orig-size="1600,1343" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Retraining-models-graph" data-image-description="" data-image-caption="" data-medium-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-graph.jpg?fit=300%2C252&amp;ssl=1" data-large-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-graph.jpg?fit=1024%2C860&amp;ssl=1" loading="lazy" src="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-graph.jpg?resize=768%2C645&#038;ssl=1" alt="Retraining models - graph" class="wp-image-51084" width="768" height="645" data-recalc-dims="1" /><figcaption><em>Model performance decays with time</em></figcaption></figure></div>
+
+
+
+<p>Ever heard of data drift? Let’s explore the concept of data drift and the business implications.</p>
+
+
+
+<h3>What is data drift?</h3>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full is-resized"><img data-attachment-id="51086" data-permalink="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing/retraining-models-data-drift" data-orig-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Retraining-models-data-drift.png?fit=700%2C393&amp;ssl=1" data-orig-size="700,393" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Retraining-models-data-drift" data-image-description="" data-image-caption="" data-medium-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Retraining-models-data-drift.png?fit=300%2C168&amp;ssl=1" data-large-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Retraining-models-data-drift.png?fit=700%2C393&amp;ssl=1" loading="lazy" src="https://i2.wp.com/neptune.ai/wp-content/uploads/Retraining-models-data-drift.png?resize=702%2C394&#038;ssl=1" alt="Retraining models - data drift" class="wp-image-51086" width="702" height="394" data-recalc-dims="1" /><figcaption><em>Consumer demand changes suddenly due to stay-at-home policy. | Image by Elena Samuylova <a href="https://towardsdatascience.com/machine-learning-in-production-why-you-should-care-about-data-and-concept-drift-d96d0bc907fb" target="_blank" rel="noreferrer noopener nofollow">Source</a></em></figcaption></figure></div>
+
+
+
+<p>Data drift (covariate shift) is a change in the statistical distribution of production data from the baseline data used to train or build the model. Data from real-time serving can drift from the baseline data due to:</p>
+
+
+<div class="custom-point-list">
+<ul><li>Changes in the real world,</li><li>Training data not being a representation of the population,</li><li>Data quality issues like outliers in the dataset.</li></ul>
+</div>
+
+
+<p>For example, if you built a model with temperature data collected from a sensor in Celsius degrees, but the unit changed to Fahrenheit &#8211; it means there’s been a change in your input data, so the data has drifted.</p>
+
+
+
+<h3>How to monitor data drift in production</h3>
+
+
+
+<p>The best approach to handling data drift is to continuously monitor your data with advanced MLOps tools instead of using traditional rule-based methods. Rule based methods, like calculating the data range or comparing data attributes to detect alien values, can be time-consuming and are susceptible to error.&nbsp;</p>
+
+
+
+<p><strong>Steps you can take to detect data drift:</strong></p>
+
+
+<div class="custom-point-list">
+<ol><li>Take advantage of the <a href="https://en.wikipedia.org/wiki/Jensen%E2%80%93Shannon_divergence" target="_blank" rel="noreferrer noopener nofollow">JS-Divergence algorithm</a> to identify prediction drift in real-time model output and compare it with training data.</li><li>Compare the data distribution from both upstream and downstream data to view the actual difference.</li></ol>
+</div>
+
+
+<p>As mentioned above, you can also take advantage of the <a href="https://www.fiddler.ai/" target="_blank" rel="noreferrer noopener nofollow">Fiddler AI</a> platform to monitor data drift in production.</p>
+
+
+
+<h3>What is concept drift?</h3>
+
+
+
+<p>Concept drift is a phenomenon where the statistical properties of the target variable you’re trying to predict changes over time. This means that the concept has changed but the model doesn’t know about the change.&nbsp;</p>
+
+
+
+<p>Concept drift happens when the original idea your model had about the target class changes. For example, you build a model to classify positive and negative sentiment of tweets around certain topics, and over time people’s sentiment about these topics changes. Tweets belonging to positive sentiment may evolve over time to be negative.&nbsp;</p>
+
+
+
+<p>In simple terms, the concept of sentiment analysis has drifted. Unfortunately, your model will keep predicting positive sentiments as negative sentiments.</p>
+
+
+
+<div id="blog-cta-intext-block_611d0e5280e49" class="blog-cta-intext">
+  <h3 class="blog-cta-intext__title">Dig deeper</h3>
+  <div class="blog-cta-intext__content"><p><a href="/blog/concept-drift-best-practices" target="_blank" rel="noopener">Best Practices for Dealing with Concept Drift</a></p>
+</div>
+  </div>
+
+
+<h3>Data drift vs concept drift</h3>
+
+
+
+<p>It’s an obvious fact that data is generated at every moment in the world. As data is collected from multiple sources, data itself is changing. This change can be due to the dynamic nature of the data, or it can be caused by changes in the real world.</p>
+
+
+
+<p>If the input distribution changes but the true labels don’t (the probability of the model’s input changes but the probability of the target class given the probability of the model input doesn&#8217;t change), then this kind of change is considered as data drift.</p>
+
+
+
+<p>Meanwhile, if there’s a change in the labels or target classes of your model, that is the probability of the target class changes given the probability of the input data. This means we’re detecting the effect of concept drift. Both data drift and concept drift cause model decay and should both be addressed separately.</p>
+
+
+
+<h2>Defining the retraining strategy</h2>
+
+
+
+<p>Now you understand why it’s important to monitor and retrain your machine learning models in production. So how can you retrain your machine learning models?</p>
+
+
+
+<p>In order to answer this question, let’s look at some questions that should be asked before designing a continuous training strategy.&nbsp;</p>
+
+
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Mulish, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 10px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Mulish, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 10px;word-break:normal;}
+.tg .tg-7ymp{background-color:#ccd5ff;border-color:#ffffff;color:#151928;font-size:18px;font-weight:bold;text-align:left;
+  vertical-align:top}
+.tg .tg-5tdu{background-color:#ffffff;border-color:#ccd5ff;color:#151928;font-size:16px;text-align:left;vertical-align:top}
+</style>
+<table class="tg" style="undefined;table-layout: fixed; width: 900px">
+<colgroup>
+<col style="width: 450px">
+<col style="width: 450px">
+</colgroup>
+<thead>
+  <tr>
+    <th class="tg-7ymp"><span style="font-style:normal;text-decoration:none">Questions</span></th>
+    <th class="tg-7ymp"><span style="font-style:normal;text-decoration:none">Answers</span></th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-5tdu"><span style="font-weight:400;font-style:normal;text-decoration:none">When should a model be retrained?</span></td>
+    <td class="tg-5tdu"><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Periodic training</span><br><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Performance-based trigger</span><br><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Trigger based on Data changes</span><br><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Retraining on demand</span></td>
+  </tr>
+  <tr>
+    <td class="tg-5tdu"><span style="font-weight:400;font-style:normal;text-decoration:none">How much data is needed for retraining?</span></td>
+    <td class="tg-5tdu"><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Fixed window</span><br><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Dynamic window</span><br><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Representative Subsample selection</span></td>
+  </tr>
+  <tr>
+    <td class="tg-5tdu"><span style="font-weight:400;font-style:normal;text-decoration:none">What should be retrained?</span></td>
+    <td class="tg-5tdu"><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Continual learning vs Transfer learning</span><br><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Offline(batch) Vs Online(Incremental) </span></td>
+  </tr>
+  <tr>
+    <td class="tg-5tdu"><span style="font-weight:400;font-style:normal;text-decoration:none">When to deploy your model after retraining? </span></td>
+    <td class="tg-5tdu"><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; A/B testing</span></td>
+  </tr>
+</tbody>
+</table>
+
+
+<div id="block_6116947d8525f" class="separator separator-15"></div>
+
+
+
+<p>The answers to these questions can be answered separately and can help determine the strategies to adopt. For each question, we’ll come up with different approaches to fit with the principles of continuous delivery.&nbsp;</p>
+
+
+
+<h2 id="when">When should you retrain a model?</h2>
+
+
+
+<p>It’s important to understand your business use cases before retraining a machine learning model. Some use cases have a high requirement for when, and how often you need to retrain your model. Business use cases like fraud detection and search engine ranking algorithms need frequent retraining. Just like machine learning models trained on behavioural data, because behavioural data is dynamic &#8211; whereas machine learning models trained on manufacturing data need less retraining.</p>
+
+
+
+<p>There are four different approaches to choosing a retraining schedule:</p>
+
+
+<div class="custom-point-list">
+<ul><li><strong>Retraining based on interval</strong></li></ul>
+</div>
+
+
+<p>Wondering how to schedule your model retraining &#8211; weekly, monthly, or yearly? Well, periodic training is the most intuitive and straightforward approach to retraining your model. By choosing an interval for retraining your model, you have an idea of when your retraining pipeline will be triggered. It depends on how frequently your training data gets updated.&nbsp;</p>
+
+
+
+<p>Retraining your model based on an interval only makes sense if it aligns with your business use case. Otherwise, the selection of a random period will lead to complexities and might even give you a worse model than the previous model.&nbsp;</p>
+
+
+<div class="custom-point-list">
+<ul><li><strong>Performance-based trigger</strong></li></ul>
+</div>
+
+
+<p>After deploying your model in production, you need to determine your baseline metric score. In this approach, a trigger for a rebuild is due to the model performance degrading in production. If your model performance falls below your set threshold which is the ground truth, this automatically triggers the retraining pipeline. This approach assumes that you have implemented a sophisticated monitoring system in production.&nbsp;</p>
+
+
+
+<p>The drawback to relying on the performance of a model in production is that it takes time to get the ground truth. In cases of loan/credit model, it may take 30-90 days to obtain ground truth. What this means is that you need to wait until you get your result before triggering a retraining job and in most cases might have impacted the business.</p>
+
+
+
+<p>This approach is very good for use cases that don&#8217;t take long to get the ground truth. You can monitor model predictions in real-time&nbsp;</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img data-attachment-id="51088" data-permalink="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing/model-decay-monitoring" data-orig-file="https://i0.wp.com/neptune.ai/wp-content/uploads/Model-decay-monitoring.jpg?fit=800%2C582&amp;ssl=1" data-orig-size="800,582" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Model-decay-monitoring" data-image-description="" data-image-caption="" data-medium-file="https://i0.wp.com/neptune.ai/wp-content/uploads/Model-decay-monitoring.jpg?fit=300%2C218&amp;ssl=1" data-large-file="https://i0.wp.com/neptune.ai/wp-content/uploads/Model-decay-monitoring.jpg?fit=800%2C582&amp;ssl=1" loading="lazy" width="800" height="582" src="https://i0.wp.com/neptune.ai/wp-content/uploads/Model-decay-monitoring.jpg?resize=800%2C582&#038;ssl=1" alt="Model decay monitoring" class="wp-image-51088" data-recalc-dims="1"/><figcaption><em>Trigger retraining Machine learning models based on performance | <a href="https://ml-ops.org/" target="_blank" rel="noreferrer noopener nofollow">Source</a></em></figcaption></figure></div>
+
+
+
+<p>From the image above, you can see that the performance of a machine learning model deployed in September keeps dipping with time.&nbsp;</p>
+
+
+<div class="custom-point-list">
+<ul><li><strong>Trigger based on data changes</strong></li></ul>
+</div>
+
+
+<p>By monitoring your upstream data in production, you can identify changes in the distribution of your data. This can indicate that your model is outdated or that you’re in a dynamic environment. It’s a good approach to consider when you don’t get quick feedback or ground truth from your model in production.</p>
+
+
+
+<p>You can also combine this approach with the performance-based trigger. Data drift is a major reason why your model performance dips in production, and in any case might also lead to your model performance falling below your accepted performance threshold. This will automatically trigger a build for model retraining.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img data-attachment-id="51091" data-permalink="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing/model-retraining-signal-trigger" data-orig-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Model-retraining-signal-trigger.png?fit=624%2C272&amp;ssl=1" data-orig-size="624,272" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Model-retraining-signal-trigger" data-image-description="" data-image-caption="" data-medium-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Model-retraining-signal-trigger.png?fit=300%2C131&amp;ssl=1" data-large-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Model-retraining-signal-trigger.png?fit=624%2C272&amp;ssl=1" loading="lazy" width="624" height="272" src="https://i1.wp.com/neptune.ai/wp-content/uploads/Model-retraining-signal-trigger.png?resize=624%2C272&#038;ssl=1" alt="Model retraining signal trigger" class="wp-image-51091" data-recalc-dims="1"/><figcaption><em>Retraining machine learning models based on changes in datas</em> <em>| Image by Vidhi Chugh <a href="https://towardsdatascience.com/when-are-you-planning-to-retrain-your-machine-learning-model-5349eb0c4706" target="_blank" rel="noreferrer noopener nofollow">Source</a> </em></figcaption></figure></div>
+
+
+<div class="custom-point-list">
+<ul><li><strong>Retraining on demand</strong></li></ul>
+</div>
+
+
+<p>This is a manual way of retraining your models and usually employs traditional techniques to retraining your models. Most startups employ this technique in retraining their models, it’s a heuristic approach that might improve your model performance but it’s not the best. In a production environment, your machine learning operations should be automated.</p>
+
+
+
+<h2 id="how">How much data is needed for retraining?</h2>
+
+
+
+<p>I hope by now it’s clear when you need to retrain your models and why to choose a retraining schedule. It’s also important to know how to select the right data for retraining your models, and whether or not to drop the old data.&nbsp;</p>
+
+
+
+<p>Three things to consider when choosing the right size of data:</p>
+
+
+<div class="custom-point-list">
+<ol><li>What is the size of your data?</li><li>Is your data drifting?</li><li>How often do you get new data?</li></ol>
+</div>
+
+
+<h3>Fixed window size</h3>
+
+
+
+<p>This is a straightforward approach to selecting the training data and an approach to consider if your training data is too large to fit, and you also don&#8217;t want to train your model on historical data. By selecting data from X months to retrain your model, you should bear in mind the frequency of retraining your model.&nbsp;</p>
+
+
+
+<p>Selecting the right window size is a major drawback to using this approach, because if the window size is too large, we may introduce noise into the data. If it’s too narrow, it might lead to underfitting. For example, if you’ve decided to retrain your model periodically based on your business use case, you should select data before your retraining interval.&nbsp;</p>
+
+
+
+<p>Overall, this approach is a simple heuristic approach that will work well in some cases, but will fail in a dynamic environment where data is constantly changing.</p>
+
+
+
+<h3>Dynamic window size</h3>
+
+
+
+<p>This is an alternative to the fixed window size approach. This approach helps to determine how much historical data should be used to retrain your model by iterating through the window size to determine the optimal window size to use. It’s an approach to consider if your data is large and you also get new data frequently.&nbsp;</p>
+
+
+
+<p>Imagine you trained your model on 100,000 records and now you have 5000 new records available to you. You can make these 5000 new records your test data and a part or all of the old dataset can be your training data depending on the best model performance on the test data after doing a grid search to select the right window size. In the future, a different window can be selected for retraining depending on the performance after comparing it with the test data.</p>
+
+
+
+<figure class="wp-block-image size-large is-resized"><img data-attachment-id="51092" data-permalink="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing/training-data-vs-test-data" data-orig-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Training-data-vs-test-data.png?fit=1400%2C653&amp;ssl=1" data-orig-size="1400,653" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Training-data-vs-test-data" data-image-description="" data-image-caption="" data-medium-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Training-data-vs-test-data.png?fit=300%2C140&amp;ssl=1" data-large-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Training-data-vs-test-data.png?fit=1024%2C478&amp;ssl=1" loading="lazy" src="https://i2.wp.com/neptune.ai/wp-content/uploads/Training-data-vs-test-data.png?resize=900%2C420&#038;ssl=1" alt="Training data vs test data" class="wp-image-51092" width="900" height="420" data-recalc-dims="1" /><figcaption><em>Using dynamic window size to select the best training data | <a href="https://towardsdatascience.com/framework-for-a-successful-continuous-training-strategy-8c83d17bb9dc" target="_blank" rel="noreferrer noopener nofollow">Source</a></em></figcaption></figure>
+
+
+
+<p>Although the dynamic window size approach eliminates the challenge of what window size to select from and is more data-driven, it also gives more priority to new data like the fixed window size approach. It’s compute-intensive and takes a lot of time to arrive at the perfect window size.</p>
+
+
+
+<h3>Representative subsample selection</h3>
+
+
+
+<p>This approach uses training data that is similar to the production data, which is the basic idea of retraining machine learning models. In order to achieve this, you need to first do a thorough analysis of your production data and exclude data indicating the presence of drift. Then you can select a sample of data that’s representative of the population and similar to the statistical distribution of the original data.</p>
+
+
+
+<h2>What should be retrained?</h2>
+
+
+
+<p>For example, you deployed your model in production and also built a monitoring system to detect model drift in real-time. After observing model performance degrading, you selected a re-training strategy based on your business use case. Now you’re left with what exactly should be trained. There are different approaches to retraining your model and the best approach to consider depends on your use case.&nbsp;</p>
+
+
+
+<h3>Continual learning vs transfer learning</h3>
+
+
+
+<h4>Continual learning&nbsp;</h4>
+
+
+
+<p>Continual learning is also called lifelong learning. This type of learning algorithm tries to mimic human learning. A machine learning algorithm is applied to a dataset to produce a model without considering any previously learned knowledge and as new data is made available, continual learning algorithm makes small consistent updates to the machine learning model over time.&nbsp;</p>
+
+
+
+<p>In order to understand this concept more, let’s consider a use case where you’re building a recommendation system for Spotify that recommends what kind of songs users are interested in listening to. In order to recommend new songs based on new interests, you need to retrain your model periodically because user behaviour keeps changing with time.&nbsp;</p>
+
+
+
+<h4>Transfer learning</h4>
+
+
+
+<p>Transfer learning is a machine learning technique that reuses an existing model as a basis for retraining a new model.&nbsp;</p>
+
+
+
+<p><em>“Transfer learning is the improvement of learning in a new task through the transfer of knowledge from a related task that has already been learned”. — </em><em>Chapter 11: Transfer Learning</em><em>, </em><a href="https://amzn.to/2fgeVro"><em>Handbook of Research on Machine Learning Applications</em></a><em>, 2009</em></p>
+
+
+
+<p>A major advantage of transfer learning is the ability of a model to be retrained without rebuilding from scratch. It’s an optimization technique that allows models to be trained incrementally. It’s widely used in deep learning algorithms.&nbsp;</p>
+
+
+
+<p>Further reading on how to use transfer learning -&gt; <a href="https://machinelearningmastery.com/how-to-use-transfer-learning-when-developing-convolutional-neural-network-models/">How to Use Transfer Learning when Developing Convolutional Neural Network Models</a></p>
+
+
+
+<div id="blog-cta-intext-block_611d0e8c80e4a" class="blog-cta-intext">
+  <h3 class="blog-cta-intext__title">May interest you</h3>
+  <div class="blog-cta-intext__content"><p><a href="/blog/transfer-learning-guide-examples-for-images-and-text-in-keras" target="_blank" rel="noopener">Transfer Learning Guide: A Practical Tutorial With Examples for Images and Text in Keras</a></p>
+</div>
+  </div>
+
+
+<h4>Pros and cons of using transfer learning and continual learning</h4>
+
+
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Mulish, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 10px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Mulish, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 10px;word-break:normal;}
+.tg .tg-yn59{background-color:#ffffff;border-color:#ccd5ff;color:#151928;font-size:18px;font-weight:bold;text-align:left;
+  vertical-align:top}
+.tg .tg-rmtc{background-color:#ccd5ff;border-color:#ffffff;color:#151928;font-size:16px;text-align:left;vertical-align:top}
+.tg .tg-7ymp{background-color:#ccd5ff;border-color:#ffffff;color:#151928;font-size:18px;font-weight:bold;text-align:left;
+  vertical-align:top}
+.tg .tg-5tdu{background-color:#ffffff;border-color:#ccd5ff;color:#151928;font-size:16px;text-align:left;vertical-align:top}
+</style>
+<table class="tg" style="undefined;table-layout: fixed; width: 900px">
+<colgroup>
+<col style="width: 200px">
+<col style="width: 350px">
+<col style="width: 350px">
+</colgroup>
+<thead>
+  <tr>
+    <th class="tg-rmtc"></th>
+    <th class="tg-7ymp"><span style="font-style:normal;text-decoration:none">Transfer Learning</span></th>
+    <th class="tg-7ymp"><span style="font-style:normal;text-decoration:none">Continual Learning</span></th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-yn59"><span style="font-style:normal;text-decoration:none">Advantages</span></td>
+    <td class="tg-5tdu"><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Transfer of knowledge. The model can be trained on a new task/concept</span><br><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Saves retraining time</span></td>
+    <td class="tg-5tdu"><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Retains knowledge after training </span><br><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Saves training time</span><br><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Makes model auto-adaptive</span><br><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Improve model performance</span></td>
+  </tr>
+  <tr>
+    <td class="tg-yn59"><span style="font-style:normal;text-decoration:none">Disadvantages</span></td>
+    <td class="tg-5tdu"><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Susceptible to data drift</span><br><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Transfer learning only works well when the initial problem is relevant to the new problem the model is trying to solve.</span></td>
+    <td class="tg-5tdu"><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Susceptible to concept drift</span></td>
+  </tr>
+</tbody>
+</table>
+
+
+<div id="block_611695e585260" class="separator separator-10"></div>
+
+
+
+<h3>Offline learning vs online learning</h3>
+
+
+
+<h4>Offline learning</h4>
+
+
+
+<p>Offline learning is also known as <strong>Batch learning</strong>. You’re probably already familiar with this type of learning technique but may not know it by name. It’s the standard approach to building machine learning models. Basically, you get a training dataset and build the model on the dataset at once. An offline learning system is incapable of incremental learning. Once a model is deployed in production it applies what it had learned, and runs without learning anymore.&nbsp;</p>
+
+
+
+<p>Retraining your model with offline learning means building a new system from scratch with updated data. This approach is easy and straightforward but you need to consider a retraining strategy and coming up with one requires a clear understanding of the business objectives.&nbsp;</p>
+
+
+
+<h3>Online learning</h3>
+
+
+
+<p>Also known as<strong> Incremental learning. </strong>In online learning, you retrain the system incrementally by passing data instances sequentially. This means you’re retraining your model as the data comes in. This type of learning makes it easier to retrain and makes no assumption about how the data is distributed. It takes no account of the varying customer behaviour.&nbsp;</p>
+
+
+
+<p>It’s also great for systems that receive data continuously and it’s cost-effective. In cases when your data is too large to fit, online learning is an acceptable tradeoff. Online learning helps your machine learning model avoid data drift. If your application works on a real-time streaming data feed, then online learning is the way to go.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img data-attachment-id="51094" data-permalink="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing/online-learning" data-orig-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Online-learning.png?fit=1024%2C374&amp;ssl=1" data-orig-size="1024,374" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Online-learning" data-image-description="" data-image-caption="" data-medium-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Online-learning.png?fit=300%2C110&amp;ssl=1" data-large-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Online-learning.png?fit=1024%2C374&amp;ssl=1" loading="lazy" width="1024" height="374" src="https://i2.wp.com/neptune.ai/wp-content/uploads/Online-learning.png?resize=1024%2C374&#038;ssl=1" alt="Online learning" class="wp-image-51094" data-recalc-dims="1"/><figcaption><em> <a href="/blog/concept-drift-best-practices" target="_blank" rel="noreferrer noopener">Source</a></em></figcaption></figure></div>
+
+
+
+<h3>How to retrain scikit-learn models</h3>
+
+
+
+<p>Some Sci-kit Learn algorithms support online learning. These algorithms can learn incrementally, without having to load all the instances at once. These estimators have a method called <strong><em>partial_fit</em></strong> API. It’s good for out-of-core learning and it guarantees that the retraining time will be short. While some scikit-learn models don’t support partial fit, some algorithms can allow you to retrain by using the <a href="https://scikit-learn.org/stable/glossary.html#term-warm_start" target="_blank" rel="noreferrer noopener nofollow"><strong><em>warm_start </em></strong></a>argument.&nbsp;</p>
+
+
+
+<p>Examples of scikit-learn models that support incremental learning can be found <a href="https://scikit-learn.org/0.15/modules/scaling_strategies.html" target="_blank" rel="noreferrer noopener nofollow">here</a>.</p>
+
+
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Mulish, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 10px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Mulish, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 10px;word-break:normal;}
+.tg .tg-yn59{background-color:#ffffff;border-color:#ccd5ff;color:#151928;font-size:18px;font-weight:bold;text-align:left;
+  vertical-align:top}
+.tg .tg-rmtc{background-color:#ccd5ff;border-color:#ffffff;color:#151928;font-size:18px;text-align:left;vertical-align:top}
+.tg .tg-7ymp{background-color:#ccd5ff;border-color:#ffffff;color:#151928;font-size:18px;font-weight:bold;text-align:left;
+  vertical-align:top}
+.tg .tg-5tdu{background-color:#ffffff;border-color:#ccd5ff;color:#151928;font-size:16px;text-align:left;vertical-align:top}
+</style>
+<table class="tg" style="undefined;table-layout: fixed; width: 900px">
+<colgroup>
+<col style="width: 200px">
+<col style="width: 350px">
+<col style="width: 350px">
+</colgroup>
+<thead>
+  <tr>
+    <th class="tg-rmtc"></th>
+    <th class="tg-7ymp"><span style="font-style:normal;text-decoration:none">Offline Learning</span></th>
+    <th class="tg-7ymp"><span style="font-style:normal;text-decoration:none">Online Learning</span></th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-yn59"><span style="font-style:normal;text-decoration:none">Advantages</span></td>
+    <td class="tg-5tdu"><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Easy and straightforward approach.</span><br><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; If the training data is properly selected using various windows selection process, there is little or no room for data drift</span></td>
+    <td class="tg-5tdu"><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Saves a lot of training time</span><br><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Doesn’t take a lot of compute power.</span><br><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Cost effective</span></td>
+  </tr>
+  <tr>
+    <td class="tg-yn59"><span style="font-style:normal;text-decoration:none">Disadvantages</span></td>
+    <td class="tg-5tdu"><span style="font-weight:400;font-style:normal;text-decoration:none">Takes a lot of time to retrain model from scratch</span></td>
+    <td class="tg-5tdu"><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Susceptible to concept drift</span><br><span style="font-weight:400;font-style:normal;text-decoration:none">&#8211; Takes time to converge to minima compared to Offline learning</span></td>
+  </tr>
+</tbody>
+</table>
+
+
+<div id="block_6116972e85261" class="separator separator-20"></div>
+
+
+
+<h2 id="deploy">Deployment after retraining model</h2>
+
+
+
+<p>Yay!!! Almost done. You must be excited now. You understand why you need to monitor your model pipeline in production and when to trigger your retraining pipeline. Now you have retrained your machine learning model and your boss asks “When are you deploying the new model update?”.</p>
+
+
+
+<p><strong>Should you deploy as soon as you retrain?</strong></p>
+
+
+
+<p>Even though you have retrained your model and the performance metrics look great, there’s still a big risk of the updated model performing poorer than the previous model even after retraining.</p>
+
+
+
+<p>It’s good practice to leave the old model for a specific window or until the model has served a particular number of requests. Then you can serve the new model the same data and get the predictions. This way, you can compare both models&#8217; predictions to understand which of them is performing better.&nbsp;</p>
+
+
+
+<p>If you’re satisfied with the new model’s performance, you can start using it confidently. This is a typical example of A/B testing, this would ensure that your model is validated on upstream data.</p>
+
+
+
+<p>Best practice is to automate how to deploy your models after retraining. You can deploy your machine learning models to the production environment using <a href="https://kubernetes.io/" target="_blank" rel="noreferrer noopener nofollow">kubernetes</a>.&nbsp;</p>
+
+
+
+<h2>Disadvantages of retraining your models frequently&nbsp;</h2>
+
+
+
+<p>How can frequent retraining be bad?<strong> </strong>Before considering retraining your models, you should have a particular business use case and the right retraining strategy. The right strategy won’t always mean frequent retraining.</p>
+
+
+
+<p>Retraining your model frequently can lead to complexities or hidden costs in the system, and it can also be error-prone. So, there should be a balance between cost and business objectives. Some of the complexities or costs that are associated with retraining your models are:</p>
+
+
+<div class="custom-point-list">
+<ul><li><strong>Computational costs</strong></li></ul>
+</div>
+
+
+<p>Training models on cloud solutions can be very expensive and takes a lot of time. Imagine having to retrain your model daily on cloud GPUs, this will incur unnecessary costs because retraining a model doesn’t necessarily mean ‘improved model performance’.</p>
+
+
+<div class="custom-point-list">
+<ul><li><strong>Labour costs</strong></li></ul>
+</div>
+
+
+<p>Different teams are involved in a life cycle of machine learning model development, not just the data science team. Before a new model is deployed it may require business stakeholders to approve, then machine learning engineers have to worry about deploying it in production.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-large"><img data-attachment-id="51097" data-permalink="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing/retraining-models-ml-team" data-orig-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-ML-team.png?fit=1300%2C480&amp;ssl=1" data-orig-size="1300,480" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Retraining-models-ML-team" data-image-description="" data-image-caption="" data-medium-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-ML-team.png?fit=300%2C111&amp;ssl=1" data-large-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-ML-team.png?fit=1024%2C378&amp;ssl=1" loading="lazy" width="1024" height="378" src="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-ML-team.png?resize=1024%2C378&#038;ssl=1" alt="Retraining models - ML team" class="wp-image-51097" data-recalc-dims="1"/><figcaption><em>Disadvantages of retraining your models frequently | <a href="https://martinfowler.com/articles/cd4ml.html" target="_blank" rel="noreferrer noopener nofollow">Source</a></em></figcaption></figure></div>
+
+
+
+<p>This causes delay or friction. This particular use case is critical if you don’t have an advanced machine learning operations platform.</p>
+
+
+<div class="custom-point-list">
+<ul><li><strong>Architecture costs</strong></li></ul>
+</div>
+
+
+<p>If you retrain your models rarely, then it’s easy to use a simple system architecture. But if you retrain your models frequently, you have to design a more complex system. You need to design a pipeline that retrains, evaluates, and deploys your model to production without human intervention.&nbsp;</p>
+
+
+
+<h2>Best practices for Continuous Training and Continuous Monitoring in production&nbsp;</h2>
+
+
+
+<p>Before building any machine learning model, you need to have a mindset of MLOps. Your <a href="/blog/end-to-end-mlops-platforms" target="_blank" rel="noreferrer noopener">end-to-end pipeline</a> should follow the four key MLOps principles:</p>
+
+
+<div class="custom-point-list">
+<ol><li>Automation,</li><li>Reusability,</li><li>Reproducibility,</li><li>Manageability.</li></ol>
+</div>
+
+
+<p>With these principles, you’re certain to protect your models from undesired performance decline, and the quality of your model in production is up to date.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-large is-resized"><a href="https://i0.wp.com/neptune.ai/wp-content/uploads/Best-practices-CT-CM.png?ssl=1" data-lbwps-width="1600" data-lbwps-height="1269"><img data-attachment-id="51098" data-permalink="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing/best-practices-ct-cm" data-orig-file="https://i0.wp.com/neptune.ai/wp-content/uploads/Best-practices-CT-CM.png?fit=1600%2C1269&amp;ssl=1" data-orig-size="1600,1269" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Best-practices-CT-CM" data-image-description="" data-image-caption="" data-medium-file="https://i0.wp.com/neptune.ai/wp-content/uploads/Best-practices-CT-CM.png?fit=300%2C238&amp;ssl=1" data-large-file="https://i0.wp.com/neptune.ai/wp-content/uploads/Best-practices-CT-CM.png?fit=1024%2C812&amp;ssl=1" loading="lazy" src="https://i0.wp.com/neptune.ai/wp-content/uploads/Best-practices-CT-CM.png?resize=768%2C609&#038;ssl=1" alt="Best practices CT CM" class="wp-image-51098" width="768" height="609" data-recalc-dims="1" /></a><figcaption><a href="https://www.viqtordavis.com/en-us/ml-ops" target="_blank" rel="noreferrer noopener nofollow"><em>Source</em></a></figcaption></figure></div>
+
+
+
+<p>By automating your ML lifecycle to building, training, deployment, and monitoring your ML models, you can easily deliver your ML applications and business value.</p>
+
+
+
+<p>Your end-to-end ML pipeline consists of 3 components:</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-large"><img data-attachment-id="51099" data-permalink="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing/end-to-end-ml-pipeline" data-orig-file="https://i0.wp.com/neptune.ai/wp-content/uploads/End-to-end-ML-pipeline.png?fit=1600%2C390&amp;ssl=1" data-orig-size="1600,390" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="End-to-end-ML-pipeline" data-image-description="" data-image-caption="" data-medium-file="https://i0.wp.com/neptune.ai/wp-content/uploads/End-to-end-ML-pipeline.png?fit=300%2C73&amp;ssl=1" data-large-file="https://i0.wp.com/neptune.ai/wp-content/uploads/End-to-end-ML-pipeline.png?fit=1024%2C250&amp;ssl=1" loading="lazy" width="1024" height="250" src="https://i0.wp.com/neptune.ai/wp-content/uploads/End-to-end-ML-pipeline.png?resize=1024%2C250&#038;ssl=1" alt="End to end ML pipeline" class="wp-image-51099" data-recalc-dims="1"/><figcaption><em>Image modified by the author and adapted from this </em><a href="https://www.viqtordavis.com/en-us/ml-ops" target="_blank" rel="noreferrer noopener nofollow"><em>source</em></a><em>.</em></figcaption></figure></div>
+
+
+
+<h3>Build/CI pipeline</h3>
+
+
+
+<p>This is an infrastructure deployed as code. The CI pipeline deploys the resources or dependencies based on a template. Most data scientists make use of docker to build docker images for their models. Apart from building packages and executables, you can as well test your code quality, run some unit tests and measure your model latency. If these tests are successful then the train/release pipeline is orchestrated.</p>
+
+
+
+<h3>Train/CT pipeline</h3>
+
+
+
+<p>This is the pipeline where your data is extracted from your data storage, transformed, features are created and stored. You can make use of a feature store in your CT pipeline automation process. It’s a centralized place to store curated features for training your machine learning model. <a href="https://towardsdatascience.com/what-are-feature-stores-and-why-are-they-critical-for-scaling-data-science-3f9156f7ab4" target="_blank" rel="noreferrer noopener nofollow">Feature stores</a> let you reuse features instead of rebuilding these features every time you need to train an ML model.&nbsp;</p>
+
+
+
+<p>Trained models are also evaluated and validated before storing in the model registry.</p>
+
+
+
+<h3>Release/CD pipeline</h3>
+
+
+
+<p>The artifacts produced by the CI/CT stage are deployed to the production environment. The model artifact is packaged and deployed to serve requests in production. Performance results, data drift and data quality should be monitored, and a good alert system should be set up. The output of this stage is a deployed model prediction service.</p>
+
+
+
+<h2>Final thoughts</h2>
+
+
+
+<p>Now I hope you understand what continuous training means, and why it’s important to re-train your models in production. Don’t deploy your model in production and fold your hands. As soon as your model is deployed, the model performance begins to drop.&nbsp;</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img data-attachment-id="51100" data-permalink="https://neptune.ai/blog/retraining-model-during-deployment-continuous-training-continuous-testing/retraining-models-before-and-after" data-orig-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-before-and-after.jpg?fit=529%2C499&amp;ssl=1" data-orig-size="529,499" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Retraining-models-before-and-after" data-image-description="" data-image-caption="" data-medium-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-before-and-after.jpg?fit=300%2C283&amp;ssl=1" data-large-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-before-and-after.jpg?fit=529%2C499&amp;ssl=1" loading="lazy" width="529" height="499" src="https://i1.wp.com/neptune.ai/wp-content/uploads/Retraining-models-before-and-after.jpg?resize=529%2C499&#038;ssl=1" alt="Retraining models before and after" class="wp-image-51100" data-recalc-dims="1"/></figure></div>
+
+
+
+<p>Before choosing a retraining strategy, you need to understand your specific use cases. Then you can consider how frequently you want to re-train, how to re-train your models, what data you need to use to re-train your model, and when to deploy your model after retraining.</p>
+
+
+
+<p>You need to continuously monitor your models in production and ensure that your model is up to date. This is the only way to ensure long-term performance.</p>
+
+
+
+<h3>References:</h3>
+
+
+<div class="custom-point-list">
+<ol><li><a href="https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning" target="_blank" rel="noreferrer noopener nofollow">MLOps: Continuous delivery and automation pipelines in machine learning</a>&nbsp;</li><li><a href="https://towardsdatascience.com/framework-for-a-successful-continuous-training-strategy-8c83d17bb9dc" target="_blank" rel="noreferrer noopener nofollow">Framework for a successful Continuous Training Strategy</a></li><li>&nbsp;<a href="https://towardsdatascience.com/machine-learning-in-production-why-you-should-care-about-data-and-concept-drift-d96d0bc907fb" target="_blank" rel="noreferrer noopener nofollow">Why you should care about data and concept drift</a></li><li><a href="https://medium.com/data-from-the-trenches/a-primer-on-data-drift-18789ef252a6" target="_blank" rel="noreferrer noopener nofollow">A Primer on Data Drift</a></li><li><a href="/blog/how-to-monitor-your-models-in-production-guide" target="_blank" rel="noreferrer noopener nofollow">A Comprehensive Guide On How to Monitor Your Models in Production</a></li><li><a href="https://www.viqtordavis.com/en-us/ml-ops" target="_blank" rel="noreferrer noopener nofollow">Machine Learning (ML) Ops Accelerator</a></li><li><a href="/blog/concept-drift-best-practices" target="_blank" rel="noreferrer noopener">Concept drift best practices</a></li><li><a href="https://martinfowler.com/articles/cd4ml.html" target="_blank" rel="noreferrer noopener nofollow">Continuous Delivery for Machine Learning</a></li></ol>
+</div>
+
+
+
+<div id="author-box-new-format-block_61168c683ac42" class="article__footer article__author">
+  <div class="article__authorImage">
+          <img width="230" height="230" src="https://i2.wp.com/neptune.ai/wp-content/uploads/Akinwande-Komolafe.png?fit=230%2C230&amp;ssl=1" class="article__authorImage-img jetpack-lazy-image" alt="Akinwande Komolafe" loading="lazy" data-attachment-id="51070" data-permalink="https://neptune.ai/?attachment_id=51070" data-orig-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Akinwande-Komolafe.png?fit=460%2C460&amp;ssl=1" data-orig-size="460,460" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Akinwande Komolafe" data-image-description="" data-image-caption="" data-medium-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Akinwande-Komolafe.png?fit=300%2C300&amp;ssl=1" data-large-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Akinwande-Komolafe.png?fit=460%2C460&amp;ssl=1" data-lazy-src="https://i2.wp.com/neptune.ai/wp-content/uploads/Akinwande-Komolafe.png?fit=230%2C230&amp;ssl=1&amp;is-pending-load=1" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />      </div>
+
+  <div class="article__authorContent">
+          <h3 class="article__authorContent-name">Akinwande Komolafe</h3>
+    
+          <p class="article__authorContent-text">Data scientist by day, technical content writer by night. I am particularly fascinated in open source MLOps. Currently developing an open source package to handle data and model pipelines when building machine learning models. </p>
+    
+          <ul class="article__authorSocial">
+        <li class="article__authorSocial-single article__authorSocial-name">Follow me on</li>
+                  <li class="article__authorSocial-single"><a href="https://twitter.com/akinwhande" class="article__authorSocial-tw" target="_blank"></a></li>
+        
+                  <li class="article__authorSocial-single"><a href="https://www.linkedin.com/in/akinwande-komolafe-49166b147/" class="article__authorSocial-lk" target="_blank"></a></li>
+        
+              </ul>
+    
+  </div>
+</div>
+
+
+<div class="wp-block-group"><div class="wp-block-group__inner-container">
+<hr class="wp-block-separator"/>
+
+
+
+<p class="has-text-color" style="color:#4455a6"><strong>READ NEXT</strong></p>
+
+
+
+<h2>Best Tools to Do ML Model Monitoring</h2>
+
+
+
+<p class="has-small-font-size">4 mins read | Paweł Kijko | Posted March 4, 2021</p>
+
+
+<div id="block_5ffc75def9f8e" class="separator separator-10"></div>
+
+
+
+<p>Why should you monitor your model? There are many reasons. It can help you understand the accuracy of your predictions, prevent prediction errors, and tweak your models to perfect them.</p>
+
+
+
+<p>Overall, ML model monitoring is necessary for making your model successful. One of the easiest ways to ensure things work smoothly is to use&nbsp;<strong>ML model monitoring tools</strong>.</p>
+
+
+
+<p>They’ll allow you to automate work and optimize smallish processes. It’s often possible to simultaneously run two models to test their performance, see the connection between your model and the input data, and perform advanced tests.</p>
+
+
+
+<p>Dedicated tools can also be used to <a href="/blog/roles-in-ml-team-and-how-they-collaborate" target="_blank" rel="noreferrer noopener">collaborate with your team</a>, share your work with other people—it’s a shared space for teams to collaborate, participate in model creation and further monitoring. It’s easier to exchange ideas, thoughts and observations, and spot errors when you have real-time insight into what’s happening with your models.</p>
+
+
+
+<p>Here are the best tools that’ll help you do ML model monitoring as best as possible. Let’s dive in!</p>
+
+
+<a class="button continous-post blue-filled" href="/blog/ml-model-monitoring-best-tools" target="_blank">
+    Continue reading -&gt;</a>
+
+
+
+<hr class="wp-block-separator"/>
+</div></div>
+</div>
+      </article>
+    </div>
+
+    
+      <div class="blogSmall">
+      <div class="blogSmall__single">
+      <img width="355" height="185" src="https://i1.wp.com/neptune.ai/wp-content/uploads/Best-MLOps-tools.jpg?resize=355%2C185&amp;ssl=1" class="blogSmall__single-img wp-post-image jetpack-lazy-image" alt="Best MLOps tools" loading="lazy" data-attachment-id="50897" data-permalink="https://neptune.ai/blog/best-mlops-tools/best-mlops-tools-2" data-orig-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Best-MLOps-tools.jpg?fit=1200%2C628&amp;ssl=1" data-orig-size="1200,628" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Best MLOps tools" data-image-description="" data-image-caption="" data-medium-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Best-MLOps-tools.jpg?fit=300%2C157&amp;ssl=1" data-large-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Best-MLOps-tools.jpg?fit=1024%2C536&amp;ssl=1" data-lazy-src="https://i1.wp.com/neptune.ai/wp-content/uploads/Best-MLOps-tools.jpg?resize=355%2C185&amp;ssl=1&amp;is-pending-load=1" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />    <div class="blogSmall__content">
+    <h3 class="blogSmall__content-title">The Best MLOps Tools and How to Evaluate Them</h3>
+    <p class="blogSmall__content-author">
+      <strong>by Jakub Czakon,</strong>
+      <span class="blogSmall__content-day">August 12th, 2021</span>
+    </p>
+    <a href="https://neptune.ai/blog/best-mlops-tools" class="blogSmall__single-link">Read more</a>
+  </div>
+  <a href="https://neptune.ai/blog/best-mlops-tools" class="blogSmall__url"></a>
+</div><div class="blogSmall__single">
+      <img width="355" height="185" src="https://i1.wp.com/neptune.ai/wp-content/uploads/ML-model-management-1.jpg?resize=355%2C185&amp;ssl=1" class="blogSmall__single-img wp-post-image jetpack-lazy-image" alt="ML model management" loading="lazy" data-attachment-id="48785" data-permalink="https://neptune.ai/blog/machine-learning-model-management/ml-model-management-2" data-orig-file="https://i1.wp.com/neptune.ai/wp-content/uploads/ML-model-management-1.jpg?fit=1200%2C628&amp;ssl=1" data-orig-size="1200,628" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="ML model management" data-image-description="" data-image-caption="" data-medium-file="https://i1.wp.com/neptune.ai/wp-content/uploads/ML-model-management-1.jpg?fit=300%2C157&amp;ssl=1" data-large-file="https://i1.wp.com/neptune.ai/wp-content/uploads/ML-model-management-1.jpg?fit=1024%2C536&amp;ssl=1" data-lazy-src="https://i1.wp.com/neptune.ai/wp-content/uploads/ML-model-management-1.jpg?resize=355%2C185&amp;ssl=1&amp;is-pending-load=1" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />    <div class="blogSmall__content">
+    <h3 class="blogSmall__content-title">Machine Learning Model Management: What It Is, Why You Should Care, and How to Implement It</h3>
+    <p class="blogSmall__content-author">
+      <strong>by Prince Canuma,</strong>
+      <span class="blogSmall__content-day">March 19th, 2021</span>
+    </p>
+    <a href="https://neptune.ai/blog/machine-learning-model-management" class="blogSmall__single-link">Read more</a>
+  </div>
+  <a href="https://neptune.ai/blog/machine-learning-model-management" class="blogSmall__url"></a>
+</div><div class="blogSmall__single">
+      <img width="355" height="185" src="https://i1.wp.com/neptune.ai/wp-content/uploads/Monitoring-models-in-production.jpg?resize=355%2C185&amp;ssl=1" class="blogSmall__single-img wp-post-image jetpack-lazy-image" alt="Monitoring models in production" loading="lazy" data-attachment-id="47423" data-permalink="https://neptune.ai/blog/how-to-monitor-your-models-in-production-guide/monitoring-models-in-production" data-orig-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Monitoring-models-in-production.jpg?fit=1920%2C1377&amp;ssl=1" data-orig-size="1920,1377" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Monitoring models in production" data-image-description="" data-image-caption="" data-medium-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Monitoring-models-in-production.jpg?fit=300%2C215&amp;ssl=1" data-large-file="https://i1.wp.com/neptune.ai/wp-content/uploads/Monitoring-models-in-production.jpg?fit=1024%2C734&amp;ssl=1" data-lazy-src="https://i1.wp.com/neptune.ai/wp-content/uploads/Monitoring-models-in-production.jpg?resize=355%2C185&amp;ssl=1&amp;is-pending-load=1" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />    <div class="blogSmall__content">
+    <h3 class="blogSmall__content-title">A Comprehensive Guide On How to Monitor Your Models in Production</h3>
+    <p class="blogSmall__content-author">
+      <strong>by Stephen Oladele,</strong>
+      <span class="blogSmall__content-day">June 3rd, 2021</span>
+    </p>
+    <a href="https://neptune.ai/blog/how-to-monitor-your-models-in-production-guide" class="blogSmall__single-link">Read more</a>
+  </div>
+  <a href="https://neptune.ai/blog/how-to-monitor-your-models-in-production-guide" class="blogSmall__url"></a>
+</div><div class="blogSmall__single">
+      <img width="355" height="185" src="https://i2.wp.com/neptune.ai/wp-content/uploads/Improve-ML-DL-models.jpg?resize=355%2C185&amp;ssl=1" class="blogSmall__single-img wp-post-image jetpack-lazy-image" alt="Improve ML DL models" loading="lazy" data-attachment-id="51041" data-permalink="https://neptune.ai/blog/improving-machine-learning-deep-learning-models/improve-ml-dl-models" data-orig-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Improve-ML-DL-models.jpg?fit=1200%2C628&amp;ssl=1" data-orig-size="1200,628" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Improve ML DL models" data-image-description="" data-image-caption="" data-medium-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Improve-ML-DL-models.jpg?fit=300%2C157&amp;ssl=1" data-large-file="https://i2.wp.com/neptune.ai/wp-content/uploads/Improve-ML-DL-models.jpg?fit=1024%2C536&amp;ssl=1" data-lazy-src="https://i2.wp.com/neptune.ai/wp-content/uploads/Improve-ML-DL-models.jpg?resize=355%2C185&amp;ssl=1&amp;is-pending-load=1" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />    <div class="blogSmall__content">
+    <h3 class="blogSmall__content-title">Best Practices for Improving Your Machine Learning and Deep Learning Models</h3>
+    <p class="blogSmall__content-author">
+      <strong>by Sundeep Teki,</strong>
+      <span class="blogSmall__content-day">August 13th, 2021</span>
+    </p>
+    <a href="https://neptune.ai/blog/improving-machine-learning-deep-learning-models" class="blogSmall__single-link">Read more</a>
+  </div>
+  <a href="https://neptune.ai/blog/improving-machine-learning-deep-learning-models" class="blogSmall__url"></a>
+</div>    </div>
+  
+
+<div class="newsletter-horizontal if-viewport-hide-right-sidebar">
+  <h3 class="newsletter-horizontal__headline">Top MLOps articles from our blog in your inbox every month.</h3>
+  <form action="https://neptune.us19.list-manage.com/subscribe/post?u=8da2bdd288186da3ffeec5626&id=59d3dc2c24" method="post" target="_blank" class="newsletter-horizontal__form">
+    <div class="newsletter-horizontal__field">
+      <input type="email" name="EMAIL" class="newsletter-horizontal__field-email" placeholder="Type your email here">
+      <input type="submit" class="newsletter-horizontal__field-button" value="Get Newsletter">
+    </div>
+    <p class="newsletter-horizontal__form-rodo">GDPR compliant. <a href="/wp-content/uploads/privacy-policy.pdf">Privacy policy</a>.</p>
+  </form>
+</div>
+  </section>
+
+
+</main>
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-lg-3 description">
+
+                <div class="newsletter-container footer-newsletter">
+                    <h3>Newsletter</h3>
+                    <p>Top MLOps articles from our blog in your inbox every month.</p>
+                    <form action="https://neptune.us19.list-manage.com/subscribe/post?u=8da2bdd288186da3ffeec5626&id=59d3dc2c24" method="post" target="_blank" class="newsletter-horizontal__form">
+                        <input type="email" name="EMAIL" placeholder="Type your email here" class="newsletterNew__form-email">
+                        <input type="submit" value="Get Newsletter" class="newsletterNew__form-button">
+                    </form>
+                </div>
+
+                                    <div class="logo">
+                        <img width="47" height="30" src="https://neptune.ai/wp-content/uploads/footer-logo.svg" class="logo--footer-img jetpack-lazy-image" alt="" loading="lazy" data-attachment-id="767" data-permalink="https://neptune.ai/footer-logo" data-orig-file="https://neptune.ai/wp-content/uploads/footer-logo.svg" data-orig-size="47,30" data-comments-opened="1" data-image-meta="[]" data-image-title="footer-logo" data-image-description="" data-image-caption="" data-medium-file="https://neptune.ai/wp-content/uploads/footer-logo.svg" data-large-file="https://neptune.ai/wp-content/uploads/footer-logo.svg" data-lazy-src="https://neptune.ai/wp-content/uploads/footer-logo.svg?is-pending-load=1" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />                    </div>
+                                <p>Neptune is a metadata store for MLOps, built for research and production teams that run a lot of experiments.</p>
+
+                                    <ul class="social">
+                                                    <li>
+                                <a href="https://www.linkedin.com/company/neptuneai">
+                                    <img width="30" height="30" src="https://neptune.ai/wp-content/uploads/in.png" class="social-img jetpack-lazy-image" alt="" loading="lazy" data-attachment-id="772" data-permalink="https://neptune.ai/in" data-orig-file="https://i2.wp.com/neptune.ai/wp-content/uploads/in.png?fit=30%2C30&amp;ssl=1" data-orig-size="30,30" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="in" data-image-description="" data-image-caption="" data-medium-file="https://i2.wp.com/neptune.ai/wp-content/uploads/in.png?fit=30%2C30&amp;ssl=1" data-large-file="https://i2.wp.com/neptune.ai/wp-content/uploads/in.png?fit=30%2C30&amp;ssl=1" data-lazy-src="https://neptune.ai/wp-content/uploads/in.png?is-pending-load=1" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />                                </a>
+                            </li>
+                                                    <li>
+                                <a href="https://twitter.com/neptune_ai">
+                                    <img width="30" height="30" src="https://neptune.ai/wp-content/uploads/tw.png" class="social-img jetpack-lazy-image" alt="" loading="lazy" data-attachment-id="773" data-permalink="https://neptune.ai/tw" data-orig-file="https://i2.wp.com/neptune.ai/wp-content/uploads/tw.png?fit=30%2C30&amp;ssl=1" data-orig-size="30,30" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="tw" data-image-description="" data-image-caption="" data-medium-file="https://i2.wp.com/neptune.ai/wp-content/uploads/tw.png?fit=30%2C30&amp;ssl=1" data-large-file="https://i2.wp.com/neptune.ai/wp-content/uploads/tw.png?fit=30%2C30&amp;ssl=1" data-lazy-src="https://neptune.ai/wp-content/uploads/tw.png?is-pending-load=1" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />                                </a>
+                            </li>
+                                                    <li>
+                                <a href="https://www.facebook.com/neptuneAI">
+                                    <img width="30" height="30" src="https://neptune.ai/wp-content/uploads/fb.png" class="social-img jetpack-lazy-image" alt="" loading="lazy" data-attachment-id="775" data-permalink="https://neptune.ai/fb" data-orig-file="https://i0.wp.com/neptune.ai/wp-content/uploads/fb.png?fit=30%2C30&amp;ssl=1" data-orig-size="30,30" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="fb" data-image-description="" data-image-caption="" data-medium-file="https://i0.wp.com/neptune.ai/wp-content/uploads/fb.png?fit=30%2C30&amp;ssl=1" data-large-file="https://i0.wp.com/neptune.ai/wp-content/uploads/fb.png?fit=30%2C30&amp;ssl=1" data-lazy-src="https://neptune.ai/wp-content/uploads/fb.png?is-pending-load=1" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />                                </a>
+                            </li>
+                                                    <li>
+                                <a href="https://github.com/neptune-ai">
+                                    <img width="30" height="30" src="https://neptune.ai/wp-content/uploads/Github-bottom-logo.svg" class="social-img jetpack-lazy-image" alt="" loading="lazy" data-attachment-id="40868" data-permalink="https://neptune.ai/github-bottom-logo" data-orig-file="https://neptune.ai/wp-content/uploads/Github-bottom-logo.svg" data-orig-size="30,30" data-comments-opened="0" data-image-meta="[]" data-image-title="Github bottom logo" data-image-description="" data-image-caption="" data-medium-file="https://neptune.ai/wp-content/uploads/Github-bottom-logo.svg" data-large-file="https://neptune.ai/wp-content/uploads/Github-bottom-logo.svg" data-lazy-src="https://neptune.ai/wp-content/uploads/Github-bottom-logo.svg?is-pending-load=1" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />                                </a>
+                            </li>
+                                            </ul>
+                
+            </div>
+
+            <div class="col-12 col-md-6 offset-lg-1 col-lg-4 menu-container">
+                <div class = "footer-menu"><h3>Product</h3><div class="menu-product-container"><ul id="menu-product" class="menu"><li id="menu-item-36797" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-36797"><a href="https://neptune.ai/product">Overview</a></li>
+<li id="menu-item-38779" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-38779"><a href="/product/experiment-tracking">Experiment Tracking</a></li>
+<li id="menu-item-38777" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-38777"><a href="https://neptune.ai/product/model-registry">Model Registry</a></li>
+<li id="menu-item-38778" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-38778"><a href="/product#what-is-metadata-store">ML Metadata Store</a></li>
+<li id="menu-item-36799" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-36799"><a href="https://docs.neptune.ai/keep-track-of-jupyter-notebooks/index.html">Notebooks in Neptune</a></li>
+<li id="menu-item-36798" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-36798"><a href="https://docs.neptune.ai/getting-started/hello-world">Get Started</a></li>
+<li id="menu-item-36792" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-36792"><a href="https://docs.neptune.ai/integrations-and-supported-tools/languages/neptune-client-python">Python API</a></li>
+<li id="menu-item-36793" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-36793"><a href="https://docs.neptune.ai/integrations-and-supported-tools/languages/neptune-client-r">R Support</a></li>
+<li id="menu-item-45809" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-45809"><a href="https://neptune.ai/pricing">Pricing</a></li>
+<li id="menu-item-36795" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-36795"><a href="https://portal.neptune.ai/">Roadmap</a></li>
+<li id="menu-item-36796" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-36796"><a href="https://status.neptune.ai/">Service Status</a></li>
+</ul></div></div><div class = "footer-menu"><h3>Company</h3><div class="menu-company-container"><ul id="menu-company" class="menu"><li id="menu-item-21334" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-21334"><a href="https://neptune.ai/about-us">About us</a></li>
+<li id="menu-item-21335" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-21335"><a href="https://neptune.ai/jobs">Jobs</a></li>
+</ul></div></div><div class = "footer-menu"><h3>Legal</h3><div class="menu-legal-container"><ul id="menu-legal" class="menu"><li id="menu-item-21345" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-21345"><a href="https://neptune.ai/terms-of-service.pdf">Terms of service</a></li>
+<li id="menu-item-21346" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-21346"><a href="https://neptune.ai/privacy-policy.pdf">Privacy policy</a></li>
+</ul></div></div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4 menu-container">
+                <div class = "footer-menu"><h3>Resources</h3><div class="menu-resources-container"><ul id="menu-resources" class="menu"><li id="menu-item-21348" class="menu-item menu-item-type-post_type menu-item-object-page current_page_parent menu-item-21348"><a href="https://neptune.ai/blog">Neptune Blog</a></li>
+<li id="menu-item-36871" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-36871"><a href="https://docs.neptune.ai">Neptune Docs</a></li>
+<li id="menu-item-21349" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-21349"><a href="https://docs.neptune.ai/integrations/index.html">Neptune Integrations</a></li>
+<li id="menu-item-21350" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-21350"><a href="/blog/ml-experiment-tracking">ML Experiment Tracking</a></li>
+<li id="menu-item-21353" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-21353"><a href="/blog/machine-learning-model-management-in-2020-and-beyond">ML Model Management</a></li>
+<li id="menu-item-21351" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-21351"><a href="/blog/mlops-what-it-is-why-it-matters-and-how-to-implement-it-from-a-data-scientist-perspective">MLOps</a></li>
+<li id="menu-item-21352" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-21352"><a href="/blog/data-science-project-management-in-2021-the-new-guide-for-ml-teams">ML Project Management</a></li>
+</ul></div></div><div class = "footer-menu"><h3>Competitor Comparison</h3><div class="menu-competitor-comparison-container"><ul id="menu-competitor-comparison" class="menu"><li id="menu-item-36800" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-36800"><a href="/blog/best-ml-experiment-tracking-tools">ML Experiment Tracking Tools</a></li>
+<li id="menu-item-21339" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-21339"><a href="/blog/the-best-mlflow-alternatives">Best MLflow Alternatives</a></li>
+<li id="menu-item-21340" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-21340"><a href="/blog/the-best-tensorboard-alternatives">Best TensorBoard Alternatives</a></li>
+<li id="menu-item-21341" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-21341"><a href="/blog/the-best-kubeflow-alternatives">Best Kubeflow Alternatives</a></li>
+<li id="menu-item-21342" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-21342"><a href="/vs">Other Alternatives</a></li>
+</ul></div></div>            </div>
+        </div>
+    </div>
+</footer>
+
+<!--  -->
+<script defer id='bilmur' data-provider='wordpress.com' data-service='atomic' src='https://s0.wp.com/wp-content/js/bilmur.min.js?m=202141'></script>
+<!--googleoff: all--><div id="cookie-law-info-bar" data-nosnippet="true"><span><div class="neptune-cookies">Neptune.ai uses cookies to ensure you get the best experience on this website. By continuing you agree to our use of cookies. <a href="https://neptune.ai/wp-content/uploads/privacy-policy.pdf" target="_blank">Learn more</a> <a role='button' tabindex='0' data-cli_action="accept" id="cookie_action_close_header"  class="medium cli-plugin-button cli-plugin-main-button cookie_action_close_header cli_action_button" style="display:inline-block; ">Got it!</a></div></span></div><div id="cookie-law-info-again" style="display:none;" data-nosnippet="true"><span id="cookie_hdr_showagain">Manage consent</span></div><div class="cli-modal" data-nosnippet="true" id="cliSettingsPopup" tabindex="-1" role="dialog" aria-labelledby="cliSettingsPopup" aria-hidden="true">
+  <div class="cli-modal-dialog" role="document">
+	<div class="cli-modal-content cli-bar-popup">
+	  	<button type="button" class="cli-modal-close" id="cliModalClose">
+			<svg class="" viewBox="0 0 24 24"><path d="M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z"></path><path d="M0 0h24v24h-24z" fill="none"></path></svg>
+			<span class="wt-cli-sr-only">Close</span>
+	  	</button>
+	  	<div class="cli-modal-body">
+			<div class="cli-container-fluid cli-tab-container">
+	<div class="cli-row">
+		<div class="cli-col-12 cli-align-items-stretch cli-px-0">
+			<div class="cli-privacy-overview">
+				<h4>Privacy Overview</h4>				<div class="cli-privacy-content">
+					<div class="cli-privacy-content-text">This website uses cookies to improve your experience while you navigate through the website. Out of these, the cookies that are categorized as necessary are stored on your browser as they are essential for the working of basic functionalities of the website. We also use third-party cookies that help us analyze and understand how you use this website. These cookies will be stored in your browser only with your consent. You also have the option to opt-out of these cookies. But opting out of some of these cookies may affect your browsing experience.</div>
+				</div>
+				<a class="cli-privacy-readmore"  aria-label="Show more" tabindex="0" role="button" data-readmore-text="Show more" data-readless-text="Show less"></a>			</div>
+		</div>
+		<div class="cli-col-12 cli-align-items-stretch cli-px-0 cli-tab-section-container">
+												<div class="cli-tab-section">
+						<div class="cli-tab-header">
+							<a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="necessary" data-toggle="cli-toggle-tab">
+								Necessary							</a>
+							<div class="wt-cli-necessary-checkbox">
+                        <input type="checkbox" class="cli-user-preference-checkbox"  id="wt-cli-checkbox-necessary" data-id="checkbox-necessary" checked="checked"  />
+                        <label class="form-check-label" for="wt-cli-checkbox-necessary">Necessary</label>
+                    </div>
+                    <span class="cli-necessary-caption">Always Enabled</span> 						</div>
+						<div class="cli-tab-content">
+							<div class="cli-tab-pane cli-fade" data-id="necessary">
+								<div class="wt-cli-cookie-description">
+									Necessary cookies are absolutely essential for the website to function properly. These cookies ensure basic functionalities and security features of the website, anonymously.
+<table class="cookielawinfo-row-cat-table cookielawinfo-winter"><thead><tr><th class="cookielawinfo-column-1">Cookie</th><th class="cookielawinfo-column-3">Duration</th><th class="cookielawinfo-column-4">Description</th></tr></thead><tbody><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">cookielawinfo-checbox-analytics</td><td class="cookielawinfo-column-3">11 months</td><td class="cookielawinfo-column-4">This cookie is set by GDPR Cookie Consent plugin. The cookie is used to store the user consent for the cookies in the category "Analytics".</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">cookielawinfo-checbox-functional</td><td class="cookielawinfo-column-3">11 months</td><td class="cookielawinfo-column-4">The cookie is set by GDPR cookie consent to record the user consent for the cookies in the category "Functional".</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">cookielawinfo-checbox-others</td><td class="cookielawinfo-column-3">11 months</td><td class="cookielawinfo-column-4">This cookie is set by GDPR Cookie Consent plugin. The cookie is used to store the user consent for the cookies in the category "Other.</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">cookielawinfo-checkbox-necessary</td><td class="cookielawinfo-column-3">11 months</td><td class="cookielawinfo-column-4">This cookie is set by GDPR Cookie Consent plugin. The cookies is used to store the user consent for the cookies in the category "Necessary".</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">cookielawinfo-checkbox-performance</td><td class="cookielawinfo-column-3">11 months</td><td class="cookielawinfo-column-4">This cookie is set by GDPR Cookie Consent plugin. The cookie is used to store the user consent for the cookies in the category "Performance".</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">viewed_cookie_policy</td><td class="cookielawinfo-column-3">11 months</td><td class="cookielawinfo-column-4">The cookie is set by the GDPR Cookie Consent plugin and is used to store whether or not user has consented to the use of cookies. It does not store any personal data.</td></tr></tbody></table>								</div>
+							</div>
+						</div>
+					</div>
+																	<div class="cli-tab-section">
+						<div class="cli-tab-header">
+							<a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="functional" data-toggle="cli-toggle-tab">
+								Functional							</a>
+							<div class="cli-switch">
+                        <input type="checkbox" id="wt-cli-checkbox-functional" class="cli-user-preference-checkbox"  data-id="checkbox-functional"  />
+                        <label for="wt-cli-checkbox-functional" class="cli-slider" data-cli-enable="Enabled" data-cli-disable="Disabled"><span class="wt-cli-sr-only">Functional</span></label>
+                    </div>						</div>
+						<div class="cli-tab-content">
+							<div class="cli-tab-pane cli-fade" data-id="functional">
+								<div class="wt-cli-cookie-description">
+									Functional cookies help to perform certain functionalities like sharing the content of the website on social media platforms, collect feedbacks, and other third-party features.
+								</div>
+							</div>
+						</div>
+					</div>
+																	<div class="cli-tab-section">
+						<div class="cli-tab-header">
+							<a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="performance" data-toggle="cli-toggle-tab">
+								Performance							</a>
+							<div class="cli-switch">
+                        <input type="checkbox" id="wt-cli-checkbox-performance" class="cli-user-preference-checkbox"  data-id="checkbox-performance"  />
+                        <label for="wt-cli-checkbox-performance" class="cli-slider" data-cli-enable="Enabled" data-cli-disable="Disabled"><span class="wt-cli-sr-only">Performance</span></label>
+                    </div>						</div>
+						<div class="cli-tab-content">
+							<div class="cli-tab-pane cli-fade" data-id="performance">
+								<div class="wt-cli-cookie-description">
+									Performance cookies are used to understand and analyze the key performance indexes of the website which helps in delivering a better user experience for the visitors.
+								</div>
+							</div>
+						</div>
+					</div>
+																	<div class="cli-tab-section">
+						<div class="cli-tab-header">
+							<a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="analytics" data-toggle="cli-toggle-tab">
+								Analytics							</a>
+							<div class="cli-switch">
+                        <input type="checkbox" id="wt-cli-checkbox-analytics" class="cli-user-preference-checkbox"  data-id="checkbox-analytics"  />
+                        <label for="wt-cli-checkbox-analytics" class="cli-slider" data-cli-enable="Enabled" data-cli-disable="Disabled"><span class="wt-cli-sr-only">Analytics</span></label>
+                    </div>						</div>
+						<div class="cli-tab-content">
+							<div class="cli-tab-pane cli-fade" data-id="analytics">
+								<div class="wt-cli-cookie-description">
+									Analytical cookies are used to understand how visitors interact with the website. These cookies help provide information on metrics the number of visitors, bounce rate, traffic source, etc.
+								</div>
+							</div>
+						</div>
+					</div>
+																	<div class="cli-tab-section">
+						<div class="cli-tab-header">
+							<a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="advertisement" data-toggle="cli-toggle-tab">
+								Advertisement							</a>
+							<div class="cli-switch">
+                        <input type="checkbox" id="wt-cli-checkbox-advertisement" class="cli-user-preference-checkbox"  data-id="checkbox-advertisement"  />
+                        <label for="wt-cli-checkbox-advertisement" class="cli-slider" data-cli-enable="Enabled" data-cli-disable="Disabled"><span class="wt-cli-sr-only">Advertisement</span></label>
+                    </div>						</div>
+						<div class="cli-tab-content">
+							<div class="cli-tab-pane cli-fade" data-id="advertisement">
+								<div class="wt-cli-cookie-description">
+									Advertisement cookies are used to provide visitors with relevant ads and marketing campaigns. These cookies track visitors across websites and collect information to provide customized ads.
+								</div>
+							</div>
+						</div>
+					</div>
+																	<div class="cli-tab-section">
+						<div class="cli-tab-header">
+							<a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="others" data-toggle="cli-toggle-tab">
+								Others							</a>
+							<div class="cli-switch">
+                        <input type="checkbox" id="wt-cli-checkbox-others" class="cli-user-preference-checkbox"  data-id="checkbox-others"  />
+                        <label for="wt-cli-checkbox-others" class="cli-slider" data-cli-enable="Enabled" data-cli-disable="Disabled"><span class="wt-cli-sr-only">Others</span></label>
+                    </div>						</div>
+						<div class="cli-tab-content">
+							<div class="cli-tab-pane cli-fade" data-id="others">
+								<div class="wt-cli-cookie-description">
+									Other uncategorized cookies are those that are being analyzed and have not been classified into a category as yet.
+								</div>
+							</div>
+						</div>
+					</div>
+										</div>
+	</div>
+</div>
+	  	</div>
+	  	<div class="cli-modal-footer">
+			<div class="wt-cli-element cli-container-fluid cli-tab-container">
+				<div class="cli-row">
+					<div class="cli-col-12 cli-align-items-stretch cli-px-0">
+						<div class="cli-tab-footer wt-cli-privacy-overview-actions">
+						
+															<a id="wt-cli-privacy-save-btn" role="button" tabindex="0" data-cli-action="accept" class="wt-cli-privacy-btn cli_setting_save_button wt-cli-privacy-accept-btn cli-btn">SAVE & ACCEPT</a>
+													</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+  </div>
+</div>
+<div class="cli-modal-backdrop cli-fade cli-settings-overlay"></div>
+<div class="cli-modal-backdrop cli-fade cli-popupbar-overlay"></div>
+<!--googleon: all--><div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="pswp__bg"></div>
+    <div class="pswp__scroll-wrap">
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip">
+                </div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>		<div id="jp-carousel-loading-overlay">
+			<div id="jp-carousel-loading-wrapper">
+				<span id="jp-carousel-library-loading">&nbsp;</span>
+			</div>
+		</div>
+		<div class="jp-carousel-overlay" style="display: none;">
+
+		<div class="jp-carousel-container">
+			<!-- The Carousel Swiper -->
+			<div
+				class="jp-carousel-wrap swiper-container jp-carousel-swiper-container jp-carousel-transitions"
+				itemscope
+				itemtype="https://schema.org/ImageGallery">
+				<div class="jp-carousel swiper-wrapper"></div>
+				<div class="jp-swiper-button-prev swiper-button-prev">
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<mask id="maskPrev" mask-type="alpha" maskUnits="userSpaceOnUse" x="8" y="6" width="9" height="12">
+							<path d="M16.2072 16.59L11.6496 12L16.2072 7.41L14.8041 6L8.8335 12L14.8041 18L16.2072 16.59Z" fill="white"/>
+						</mask>
+						<g mask="url(#maskPrev)">
+							<rect x="0.579102" width="23.8823" height="24" fill="#FFFFFF"/>
+						</g>
+					</svg>
+				</div>
+				<div class="jp-swiper-button-next swiper-button-next">
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<mask id="maskNext" mask-type="alpha" maskUnits="userSpaceOnUse" x="8" y="6" width="8" height="12">
+							<path d="M8.59814 16.59L13.1557 12L8.59814 7.41L10.0012 6L15.9718 12L10.0012 18L8.59814 16.59Z" fill="white"/>
+						</mask>
+						<g mask="url(#maskNext)">
+							<rect x="0.34375" width="23.8822" height="24" fill="#FFFFFF"/>
+						</g>
+					</svg>
+				</div>
+			</div>
+			<!-- The main close buton -->
+			<div class="jp-carousel-close-hint">
+				<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<mask id="maskClose" mask-type="alpha" maskUnits="userSpaceOnUse" x="5" y="5" width="15" height="14">
+						<path d="M19.3166 6.41L17.9135 5L12.3509 10.59L6.78834 5L5.38525 6.41L10.9478 12L5.38525 17.59L6.78834 19L12.3509 13.41L17.9135 19L19.3166 17.59L13.754 12L19.3166 6.41Z" fill="white"/>
+					</mask>
+					<g mask="url(#maskClose)">
+						<rect x="0.409668" width="23.8823" height="24" fill="#FFFFFF"/>
+					</g>
+				</svg>
+			</div>
+			<!-- Image info, comments and meta -->
+			<div class="jp-carousel-info">
+				<div class="jp-carousel-info-footer">
+					<div class="jp-carousel-pagination-container">
+						<div class="jp-swiper-pagination swiper-pagination"></div>
+						<div class="jp-carousel-pagination"></div>
+					</div>
+					<div class="jp-carousel-photo-title-container">
+						<h2 class="jp-carousel-photo-caption"></h2>
+					</div>
+					<div class="jp-carousel-photo-icons-container">
+						<a href="#" class="jp-carousel-icon-btn jp-carousel-icon-info" aria-label="Toggle photo metadata visibility">
+							<span class="jp-carousel-icon">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="maskInfo" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="20">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M12.7537 2C7.26076 2 2.80273 6.48 2.80273 12C2.80273 17.52 7.26076 22 12.7537 22C18.2466 22 22.7046 17.52 22.7046 12C22.7046 6.48 18.2466 2 12.7537 2ZM11.7586 7V9H13.7488V7H11.7586ZM11.7586 11V17H13.7488V11H11.7586ZM4.79292 12C4.79292 16.41 8.36531 20 12.7537 20C17.142 20 20.7144 16.41 20.7144 12C20.7144 7.59 17.142 4 12.7537 4C8.36531 4 4.79292 7.59 4.79292 12Z" fill="white"/>
+									</mask>
+									<g mask="url(#maskInfo)">
+										<rect x="0.8125" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+							</span>
+						</a>
+												<a href="#" class="jp-carousel-icon-btn jp-carousel-icon-comments" aria-label="Toggle photo comments visibility">
+							<span class="jp-carousel-icon">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="maskComments" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="20">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M4.3271 2H20.2486C21.3432 2 22.2388 2.9 22.2388 4V16C22.2388 17.1 21.3432 18 20.2486 18H6.31729L2.33691 22V4C2.33691 2.9 3.2325 2 4.3271 2ZM6.31729 16H20.2486V4H4.3271V18L6.31729 16Z" fill="white"/>
+									</mask>
+									<g mask="url(#maskComments)">
+										<rect x="0.34668" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+
+								<span class="jp-carousel-has-comments-indicator" aria-label="This image has comments."></span>
+							</span>
+						</a>
+											</div>
+				</div>
+				<div class="jp-carousel-info-extra">
+					<div class="jp-carousel-info-content-wrapper">
+						<div class="jp-carousel-photo-title-container">
+							<h2 class="jp-carousel-photo-title"></h2>
+						</div>
+						<div class="jp-carousel-comments-wrapper">
+															<div id="jp-carousel-comments-loading">
+									<span>Loading Comments...</span>
+								</div>
+								<div class="jp-carousel-comments"></div>
+								<div id="jp-carousel-comment-form-container">
+									<span id="jp-carousel-comment-form-spinner">&nbsp;</span>
+									<div id="jp-carousel-comment-post-results"></div>
+																														<form id="jp-carousel-comment-form">
+												<label for="jp-carousel-comment-form-comment-field" class="screen-reader-text">Write a Comment...</label>
+												<textarea
+													name="comment"
+													class="jp-carousel-comment-form-field jp-carousel-comment-form-textarea"
+													id="jp-carousel-comment-form-comment-field"
+													placeholder="Write a Comment..."
+												></textarea>
+												<div id="jp-carousel-comment-form-submit-and-info-wrapper">
+													<div id="jp-carousel-comment-form-commenting-as">
+																													<fieldset>
+																<label for="jp-carousel-comment-form-email-field">Email (Required)</label>
+																<input type="text" name="email" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-email-field" />
+															</fieldset>
+															<fieldset>
+																<label for="jp-carousel-comment-form-author-field">Name (Required)</label>
+																<input type="text" name="author" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-author-field" />
+															</fieldset>
+															<fieldset>
+																<label for="jp-carousel-comment-form-url-field">Website</label>
+																<input type="text" name="url" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-url-field" />
+															</fieldset>
+																											</div>
+													<input
+														type="submit"
+														name="submit"
+														class="jp-carousel-comment-form-button"
+														id="jp-carousel-comment-form-button-submit"
+														value="Post Comment" />
+												</div>
+											</form>
+																											</div>
+													</div>
+						<div class="jp-carousel-image-meta">
+							<div class="jp-carousel-title-and-caption">
+								<div class="jp-carousel-photo-info">
+									<h3 class="jp-carousel-caption" itemprop="caption description"></h3>
+								</div>
+
+								<div class="jp-carousel-photo-description"></div>
+							</div>
+							<ul class="jp-carousel-image-exif" style="display: none;"></ul>
+							<a class="jp-carousel-image-download" target="_blank" style="display: none;">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="3" y="3" width="19" height="18">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M5.84615 5V19H19.7775V12H21.7677V19C21.7677 20.1 20.8721 21 19.7775 21H5.84615C4.74159 21 3.85596 20.1 3.85596 19V5C3.85596 3.9 4.74159 3 5.84615 3H12.8118V5H5.84615ZM14.802 5V3H21.7677V10H19.7775V6.41L9.99569 16.24L8.59261 14.83L18.3744 5H14.802Z" fill="white"/>
+									</mask>
+									<g mask="url(#mask0)">
+										<rect x="0.870605" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+								<span class="jp-carousel-download-text"></span>
+							</a>
+							<div class="jp-carousel-image-map" style="display: none;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		</div>
+		<link rel='stylesheet' id='table-of-contents-css'  href='https://neptune.ai/wp-content/themes/neptune-experience/gutenberg-css/table-of-contents.css?ver=1.6.8.45' type='text/css' media='all' />
+<link rel='stylesheet' id='blog-intext-cta-css'  href='https://neptune.ai/wp-content/themes/neptune-experience/gutenberg-css/blog-intext-cta.css?ver=1.6.8.45' type='text/css' media='all' />
+<link rel='stylesheet' id='separator-css'  href='https://neptune.ai/wp-content/themes/neptune-experience/gutenberg-css/separator.css' type='text/css' media='all' />
+<link rel='stylesheet' id='author-new-format-box-css'  href='https://neptune.ai/wp-content/themes/neptune-experience/gutenberg-css/author-new-format-box.css?ver=1.6.8.45' type='text/css' media='all' />
+<link rel='stylesheet' id='button-css'  href='https://neptune.ai/wp-content/themes/neptune-experience/gutenberg-css/button.css?ver=1.6.8.45' type='text/css' media='all' />
+<link rel='stylesheet' id='cookie-law-info-table-css'  href='https://neptune.ai/wp-content/plugins/cookie-law-info/public/css/cookie-law-info-table.css?ver=2.0.6' type='text/css' media='all' />
+<script type='text/javascript' src='https://neptune.ai/wp-content/plugins/jetpack/_inc/build/photon/photon.min.js?ver=20191001' id='jetpack-photon-js'></script>
+<script type='text/javascript' src='https://c0.wp.com/c/5.8.1/wp-includes/js/dist/vendor/regenerator-runtime.min.js' id='regenerator-runtime-js'></script>
+<script type='text/javascript' src='https://c0.wp.com/c/5.8.1/wp-includes/js/dist/vendor/wp-polyfill.min.js' id='wp-polyfill-js'></script>
+<script type='text/javascript' id='contact-form-7-js-extra'>
+/* <![CDATA[ */
+var wpcf7 = {"api":{"root":"https:\/\/neptune.ai\/wp-json\/","namespace":"contact-form-7\/v1"},"cached":"1"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://neptune.ai/wp-content/plugins/contact-form-7/includes/js/index.js?ver=5.5.1' id='contact-form-7-js'></script>
+<script type='text/javascript' id='lbwps-js-extra'>
+/* <![CDATA[ */
+var lbwpsOptions = {"label_facebook":"Share on Facebook","label_twitter":"Tweet","label_pinterest":"Pin it","label_download":"Download image","label_copyurl":"Copy image URL","share_facebook":"1","share_twitter":"1","share_pinterest":"1","share_download":"1","share_direct":"0","share_copyurl":"0","share_custom_label":"","share_custom_link":"","wheelmode":"close","close_on_drag":"1","history":"1","show_counter":"1","show_fullscreen":"1","show_zoom":"1","show_caption":"1","loop":"1","pinchtoclose":"1","taptotoggle":"1","spacing":"12","close_on_click":"1","fulldesktop":"0","use_alt":"0","desktop_slider":"1","idletime":"4000","hide_scrollbars":"1"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://neptune.ai/wp-content/plugins/lightbox-photoswipe/assets/scripts.js?ver=3.2.2' id='lbwps-js'></script>
+<script type='text/javascript' id='neptune-ajax-search-js-extra'>
+/* <![CDATA[ */
+var neptune_ajax = {"ajaxurl":"https:\/\/neptune.ai\/wp-admin\/admin-ajax.php"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://neptune.ai/wp-content/themes/neptune-experience/assets/js/suggest-words.js?ver=1.0.0' id='neptune-ajax-search-js'></script>
+<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js?ver=3.3.1' id='jquery2-js'></script>
+<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js?ver=1.14.7' id='popper.js-js'></script>
+<script type='text/javascript' src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js?ver=4.3.1' id='bootstrap-js'></script>
+<script type='text/javascript' src='https://neptune.ai/wp-content/themes/neptune-experience/assets/js/reading.js?ver=1.6.8.45' id='reading-js'></script>
+<script type='text/javascript' src='https://neptune.ai/wp-content/themes/neptune-experience/assets/js/main.js?ver=1.6.8.45' id='main-js'></script>
+<script type='text/javascript' id='neptune-ajax-cf7-js-extra'>
+/* <![CDATA[ */
+var neptune_ajax_cf7 = {"ajaxurl":"https:\/\/neptune.ai\/wp-admin\/admin-ajax.php"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://neptune.ai/wp-content/themes/neptune-experience/assets/js/cf7.js?ver=1.0.0' id='neptune-ajax-cf7-js'></script>
+<script type='text/javascript' src='https://neptune.ai/wp-content/plugins/jetpack/vendor/automattic/jetpack-lazy-images/src/../dist/intersection-observer.js?ver=1.1.3' id='jetpack-lazy-images-polyfill-intersectionobserver-js'></script>
+<script type='text/javascript' id='jetpack-lazy-images-js-extra'>
+/* <![CDATA[ */
+var jetpackLazyImagesL10n = {"loading_warning":"Images are still loading. Please cancel your print and try again."};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://neptune.ai/wp-content/plugins/jetpack/vendor/automattic/jetpack-lazy-images/src/../dist/lazy-images.js?ver=1.1.3' id='jetpack-lazy-images-js'></script>
+<script type='text/javascript' src='https://c0.wp.com/c/5.8.1/wp-includes/js/wp-embed.min.js' id='wp-embed-js'></script>
+<script type='text/javascript' id='jetpack-carousel-js-extra'>
+/* <![CDATA[ */
+var jetpackSwiperLibraryPath = {"url":"https:\/\/neptune.ai\/wp-content\/plugins\/jetpack\/_inc\/build\/carousel\/swiper-bundle.min.js"};
+var jetpackCarouselStrings = {"widths":[370,700,1000,1200,1400,2000],"is_logged_in":"","lang":"en","ajaxurl":"https:\/\/neptune.ai\/wp-admin\/admin-ajax.php","nonce":"444ad4dda6","display_exif":"1","display_comments":"1","display_geo":"1","single_image_gallery":"1","single_image_gallery_media_file":"","background_color":"black","comment":"Comment","post_comment":"Post Comment","write_comment":"Write a Comment...","loading_comments":"Loading Comments...","download_original":"View full size <span class=\"photo-size\">{0}<span class=\"photo-size-times\">\u00d7<\/span>{1}<\/span>","no_comment_text":"Please be sure to submit some text with your comment.","no_comment_email":"Please provide an email address to comment.","no_comment_author":"Please provide your name to comment.","comment_post_error":"Sorry, but there was an error posting your comment. Please try again later.","comment_approved":"Your comment was approved.","comment_unapproved":"Your comment is in moderation.","camera":"Camera","aperture":"Aperture","shutter_speed":"Shutter Speed","focal_length":"Focal Length","copyright":"Copyright","comment_registration":"0","require_name_email":"1","login_url":"https:\/\/neptune.ai\/wp-login.php?redirect_to=https%3A%2F%2Fneptune.ai%2Fblog%2Fretraining-model-during-deployment-continuous-training-continuous-testing","blog_id":"1","meta_data":["camera","aperture","shutter_speed","focal_length","copyright"]};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://neptune.ai/wp-content/plugins/jetpack/_inc/build/carousel/jetpack-carousel.min.js?ver=10.3-2110.1' id='jetpack-carousel-js'></script>
+<!-- Hotjar Tracking Code for neptune.ml -->
+<script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:569747,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MZNL966"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
+
+<!-- Intercom integration -->
+<script>
+    /* !
+   * JavaScript Cookie v2.2.1
+   * https://github.com/js-cookie/js-cookie
+   *
+   * Copyright 2006, 2015 Klaus Hartl & Fagner Brack
+   * Released under the MIT license
+   *
+   * Minified by jsDelivr using Terser v3.14.1.
+   * Original file: /npm/js-cookie@2.2.1/src/js.cookie.js
+   *
+   * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+   */
+    !function(e){var n;if("function"==typeof define&&define.amd&&(define(e),n=!0),"object"==typeof exports&&(module.exports=e(),n=!0),!n){var t=window.Cookies,o=window.Cookies=e();o.noConflict=function(){return window.Cookies=t,o}}}(function(){function e(){for(var e=0,n={};e<arguments.length;e++){var t=arguments[e];for(var o in t)n[o]=t[o]}return n}function n(e){return e.replace(/(%[0-9A-Z]{2})+/g,decodeURIComponent)}return function t(o){function r(){}function i(n,t,i){if("undefined"!=typeof document){"number"==typeof(i=e({path:"/"},r.defaults,i)).expires&&(i.expires=new Date(1*new Date+864e5*i.expires)),i.expires=i.expires?i.expires.toUTCString():"";try{var c=JSON.stringify(t);/^[\{\[]/.test(c)&&(t=c)}catch(e){}t=o.write?o.write(t,n):encodeURIComponent(String(t)).replace(/%(23|24|26|2B|3A|3C|3E|3D|2F|3F|40|5B|5D|5E|60|7B|7D|7C)/g,decodeURIComponent),n=encodeURIComponent(String(n)).replace(/%(23|24|26|2B|5E|60|7C)/g,decodeURIComponent).replace(/[\(\)]/g,escape);var f="";for(var u in i)i[u]&&(f+="; "+u,!0!==i[u]&&(f+="="+i[u].split(";")[0]));return document.cookie=n+"="+t+f}}function c(e,t){if("undefined"!=typeof document){for(var r={},i=document.cookie?document.cookie.split("; "):[],c=0;c<i.length;c++){var f=i[c].split("="),u=f.slice(1).join("=");t||'"'!==u.charAt(0)||(u=u.slice(1,-1));try{var a=n(f[0]);if(u=(o.read||o)(u,a)||n(u),t)try{u=JSON.parse(u)}catch(e){}if(r[a]=u,e===a)break}catch(e){}}return e?r[e]:r}}return r.set=i,r.get=function(e){return c(e,!1)},r.getJSON=function(e){return c(e,!0)},r.remove=function(n,t){i(n,"",e(t,{expires:-1}))},r.defaults={},r.withConverter=t,r}(function(){})});
+
+
+
+    initIntercom(true);
+
+    function initIntercom(isProduction) {
+        var options = {
+            devel: {
+                appId: 'wqilukic',
+            },
+            prod: {
+                appId: 'yoy39he9',
+            },
+        };
+
+        var username = window.Cookies.get('neptune-uid');
+
+        window.intercomSettings = {
+            app_id: isProduction ? options.prod.appId : options.devel.appId,
+        };
+
+        var isUsernamePreserved = typeof username === 'string' && username.length > 0;
+        if (isUsernamePreserved) {
+            window.intercomSettings.user_id = username;
+        }
+
+
+        // Intercom official integration code }}}
+        // eslint-disable-next-line
+        (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',w.intercomSettings);}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/wqilukic';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
+        // Intercom official integration code {{{
+    }
+
+</script>
+<!-- End of Intercom integration -->
+
+
+
+<!-- Heap integration -->
+<script type="text/javascript">   
+window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};   
+heap.load("3102000718"); 
+</script> 
+<!-- End of Heap integration -->
+<script>
+try {
+  const search = new URLSearchParams(window.location.search);
+  if (search.has('chat-with-us') && typeof window.Intercom === 'function') {
+      window.Intercom('show');
+  }
+} catch (e) {}
+</script><script src='https://stats.wp.com/e-202141.js' defer></script>
+<script>
+	_stq = window._stq || [];
+	_stq.push([ 'view', {v:'ext',j:'1:10.3-2110.1',blog:'158350742',post:'51066',tz:'2',srv:'neptune.ai'} ]);
+	_stq.push([ 'clickTrackerInit', '158350742', '51066' ]);
+</script>
+
+
+    <ul class="header__socials nav__social">
+        
+                        <li class="header__socials-single">
+                <a href="https://www.linkedin.com/company/neptuneai" class="header__socials-url">
+                    <img width="30" height="30" src="https://neptune.ai/wp-content/uploads/icon-lk-2.svg" class="header__socials-img jetpack-lazy-image" alt="" loading="lazy" data-attachment-id="1294" data-permalink="https://neptune.ai/icon-lk-2" data-orig-file="https://neptune.ai/wp-content/uploads/icon-lk-2.svg" data-orig-size="30,30" data-comments-opened="1" data-image-meta="[]" data-image-title="icon-lk-2" data-image-description="" data-image-caption="" data-medium-file="https://neptune.ai/wp-content/uploads/icon-lk-2.svg" data-large-file="https://neptune.ai/wp-content/uploads/icon-lk-2.svg" data-lazy-src="https://neptune.ai/wp-content/uploads/icon-lk-2.svg?is-pending-load=1" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />                </a>
+            </li>
+        
+                        <li class="header__socials-single">
+                <a href="https://twitter.com/neptune_ai" class="header__socials-url">
+                    <img width="30" height="30" src="https://neptune.ai/wp-content/uploads/icon-tw-2.svg" class="header__socials-img jetpack-lazy-image" alt="" loading="lazy" data-attachment-id="1295" data-permalink="https://neptune.ai/icon-tw-2" data-orig-file="https://neptune.ai/wp-content/uploads/icon-tw-2.svg" data-orig-size="30,30" data-comments-opened="1" data-image-meta="[]" data-image-title="icon-tw-2" data-image-description="" data-image-caption="" data-medium-file="https://neptune.ai/wp-content/uploads/icon-tw-2.svg" data-large-file="https://neptune.ai/wp-content/uploads/icon-tw-2.svg" data-lazy-src="https://neptune.ai/wp-content/uploads/icon-tw-2.svg?is-pending-load=1" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />                </a>
+            </li>
+        
+                        <li class="header__socials-single">
+                <a href="https://www.facebook.com/neptuneAI" class="header__socials-url">
+                    <img width="30" height="30" src="https://neptune.ai/wp-content/uploads/icon-fb-2.svg" class="header__socials-img jetpack-lazy-image" alt="" loading="lazy" data-attachment-id="1296" data-permalink="https://neptune.ai/icon-fb-2" data-orig-file="https://neptune.ai/wp-content/uploads/icon-fb-2.svg" data-orig-size="30,30" data-comments-opened="1" data-image-meta="[]" data-image-title="icon-fb-2" data-image-description="" data-image-caption="" data-medium-file="https://neptune.ai/wp-content/uploads/icon-fb-2.svg" data-large-file="https://neptune.ai/wp-content/uploads/icon-fb-2.svg" data-lazy-src="https://neptune.ai/wp-content/uploads/icon-fb-2.svg?is-pending-load=1" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />                </a>
+            </li>
+        
+                </ul>
+</body>
+
+</html>
